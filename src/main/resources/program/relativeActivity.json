@@ -1,22 +1,22 @@
 [
 	{
 	"name" : "substrate",
-	"synonyms" : ["substrate" , "Substrate" , "compound" , "cofactor", "metal" , "Coenzyme", "Compound", "Substrate"],
-	"type" : ["S"]
+	"synonyms" : ["substrate", "Substrate", "compound", "cofactor", "metal", "Coenzyme", "Compound", "Substrate"],
+	"types" : ["S"]
 	},
 	{
 	"name" : "relative activity",
-	"synonyms" : ["relativeactivity" , "Relativeactivity", "Relative activity" , "Relative   activity", "Meanrelativeactivity", "Relativeactivity(%)", "Relativeactivity(%)b"],
-	"type" : ["N"]
+	"synonyms" : ["relativeactivity", "Relativeactivity", "Relative activity", "Relative   activity", "Meanrelativeactivity", "Relativeactivity(%)", "Relativeactivity(%)b"],
+	"types" : ["N"]
 	},
 	{
 	"name" : "concentration",
 	"synonyms" : ["Concentration","Concn"],
-	"type" : ["N"]
+	"types" : ["N"]
 	},
 	{
 	"name" : "specific Activity",
 	"synonyms" : ["activity(U/mg)"],
-	"type" : ["N"]
+	"types" : ["N"]
 	}
 ]

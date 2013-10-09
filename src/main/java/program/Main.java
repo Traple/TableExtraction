@@ -21,7 +21,7 @@ public class Main {
     public static void main(String[] args) {
         //csv file containing data
 
-        String strFile = "C:\\Users\\Sander van Boom\\Dropbox\\Tables and Figures\\Corpus 1.1\\CorpusParamMain\\36.pdf.csv";
+        String strFile = "C:\\Users\\Sander van Boom\\Dropbox\\Tables and Figures\\Corpus 1.1\\CorpusParamMain\\41.pdf.csv";
         LOGGER.info("Read file: "+ strFile);
         try {
             read(strFile);

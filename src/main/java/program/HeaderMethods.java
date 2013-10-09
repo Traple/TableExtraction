@@ -26,15 +26,12 @@ import com.google.gson.reflect.TypeToken;
  */
 
 public class HeaderMethods {
-    //private static final ArrayList purificationHeaders = new ArrayList<String>();
     private Set<String> purificationHeaders = new HashSet<String>();
     private Set<String> kineticHeaders = new HashSet<String>();
     private Set<String> activityHeaders = new HashSet<String>();
-    private Set<String> yield = new HashSet<String>();
     private Collection<Purification> Pheaders;
     private Collection<Kinetics> Kheaders;
     private Collection<RelativeActivity> Aheaders;
-    //private Set<String> headerTypes = new HashSet<String>();
 
     public HeaderMethods(){
 
@@ -75,9 +72,9 @@ public class HeaderMethods {
         try{
             Reader reader = new InputStreamReader(HeaderMethods.class.getResourceAsStream("/program/relativeActivity.json"), "UTF-8");
             this.Aheaders = gson.fromJson(reader, collectionType3);
-            for(RelativeActivity p: Aheaders){
-                for(int u =0; u<p.getSynonyms().length;u++){
-                    this.activityHeaders.add(p.getSynonyms()[u]);
+            for(RelativeActivity a: Aheaders){
+                for(int u =0; u<a.getSynonyms().length;u++){
+                    this.activityHeaders.add(a.getSynonyms()[u]);
                 }
             }
         } catch (UnsupportedEncodingException e) {
@@ -88,7 +85,6 @@ public class HeaderMethods {
     }
 
     public boolean containsHeaders(String cell){
-        //System.out.println("Looking for: " + purificationHeaders.size() + " headers");
         if(purificationHeaders.contains(cell)){
             System.out.println("HEADER: " + cell);
             return true;
@@ -126,7 +122,6 @@ public class HeaderMethods {
     }
 
     public String returnHeaders(String cell){
-        //System.out.println("Looking for: " + purificationHeaders.size() + " headers");
         if(purificationHeaders.contains(cell)){
             System.out.println("HEADER: " + cell);
             return cell;
@@ -169,19 +164,7 @@ public class HeaderMethods {
      * The method setHeaderTypes matches the found headers against their type to provide a headerTypes ArrayList.
      */
     public String setHeaderType (String header){
-
         String type = "";
-        ArrayList<String> headerTypes = new ArrayList<String>();
-
-        Gson gson = new Gson();
-        Type collectionType = new TypeToken<Collection<Purification>>(){}.getType();
-
-        try{
-            Reader reader = new InputStreamReader(HeaderMethods.class.getResourceAsStream("/program/purification.json"), "UTF-8");
-            System.out.println(header);
-            ArrayList<String> possibleHeaders = new ArrayList<String>();
-            Collection<Purification> collectionOfHeaderTypes = gson.fromJson(reader, collectionType);
-
             for(Purification p: Pheaders){
                 for(int u =0; u<p.getSynonyms().length;u++){
                     if(header.contains(p.getSynonyms()[u])){
@@ -191,46 +174,23 @@ public class HeaderMethods {
                     }
                 }
             }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         if(type == ""){
-            ArrayList<String> headerTypes2 = new ArrayList<String>();
-
-            Gson gson2 = new Gson();
-            Type collectionType2 = new TypeToken<Collection<Purification>>(){}.getType();
-
-            try{
-                Reader reader = new InputStreamReader(HeaderMethods.class.getResourceAsStream("program/enzymeKinetics.json"), "UTF-8");
-                System.out.println(header);
-                ArrayList<String> possibleHeaders = new ArrayList<String>();
-                Collection<Purification> collectionOfHeaderTypes = gson2.fromJson(reader, collectionType2);
-
-                for(Purification p: collectionOfHeaderTypes){
-                    for(int u =0; u<p.getSynonyms().length;u++){
-                        if(header.contains(p.getSynonyms()[u])){
+                for(Kinetics k: Kheaders){
+                    for(int u =0; u<k.getSynonyms().length;u++){
+                        if(header.contains(k.getSynonyms()[u])){
                             //get it's types:
-                            type = p.getTypes()[0];
+                            type = k.getTypes()[0];
                             System.out.println("Muh Type:" + type);
                         }
                     }
                 }
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
         if(type == ""){
-            ArrayList<String> headerTypes2 = new ArrayList<String>();
-
-            for(Purification p: Pheaders){
-                for(int u =0; u<p.getSynonyms().length;u++){
-                    if(header.contains(p.getSynonyms()[u])){
+            for(RelativeActivity a: Aheaders){
+                for(int u =0; u<a.getSynonyms().length;u++){
+                    if(header.contains(a.getSynonyms()[u])){
                         //get it's types:
-                        type = p.getTypes()[0];
+                        type = a.getTypes()[0];
                         System.out.println("Muh Type:" + type);
                     }
                 }
@@ -261,7 +221,7 @@ public class HeaderMethods {
                     System.out.println("From this point on we know that something went wrong.");
 
 
-                    //TODO: Implement OCR
+                    //TODO: Implement OCR and finnish this method.
                     return line;
                 }
             }

@@ -25,18 +25,18 @@ public class MetaboliteDatabase {
 
     public boolean checkForMetabolites(String possibleMetabolite){
         String s = possibleMetabolite;
-
+        boolean result = false;
         Oscar oscar = new Oscar();
         List<ResolvedNamedEntity> entities = oscar.findAndResolveNamedEntities(s);
         for (ResolvedNamedEntity ne : entities) {
-            if(ne.getType()==NamedEntityType.COMPOUND){
+            if(ne.getType().toString()=="CM"){
                 System.out.println(ne.getSurface());
-                return true;
+                result = true;
             }
             System.out.println("Not a molecule but something chemical. This is a: "+ne.getType().toString());
-            return false;
+            result = false;
         }
-        return false;
+        return result;
     }
     public ArrayList replaceStringsWithMetabolites(ArrayList pattern, String[] row){
         String stringToBeChecked = "";
