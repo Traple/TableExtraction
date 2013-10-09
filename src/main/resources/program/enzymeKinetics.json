@@ -1,0 +1,42 @@
+[
+	{
+	"name" : "Vmax/Km",
+	"synonyms" : ["Vmax/Km"],
+	"types" : ["N"]
+	},
+	{
+	"name" : "Vmax",
+	"synonyms" : ["Vmax", "vmax"],
+	"types" : ["N"]
+	},
+	{
+	"name" : "substrate",
+	"synonyms" : ["substrate", "Co-substrate", "Steroid", "substance"],
+	"types" : ["S"]
+	},
+	{
+	"name" : "kcat",
+	"synonyms" : ["kcat", "Kcat"],
+	"types" : ["N"]
+	},
+	{
+	"name" : "km",
+	"synonyms" : ["km", "Km"],
+	"types" : ["N"]
+	},
+	{
+	"name" : "kcat/km",
+	"synonyms" : ["kcat/km"],
+	"type" : ["N"]
+	},
+	{
+	"name" : "concentration",
+	"synonyms" : ["Conc."],
+	"type" : ["N"]
+	},
+	{
+	"name" : "V",
+	"synonyms" : ["V(s1)"],
+	"type" : ["N"]
+	}
+]
