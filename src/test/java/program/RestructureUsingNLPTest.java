@@ -18,7 +18,7 @@ import static junit.framework.Assert.assertEquals;
 
 public class RestructureUsingNLPTest {
     private String[] line = {"crude extract"};
-
+    private String stringy = "832894089283582492489";
     @Before
     public void initialiser(){
 
@@ -67,6 +67,10 @@ public class RestructureUsingNLPTest {
     public static boolean isNumber(String string) {
         return string.matches("^\\d+$");
     }
-
+@Test
+public void isNumber() {
+    boolean test = stringy.matches("^\\d+$");
+    assertEquals(true, test);
+}
 
 }

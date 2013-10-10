@@ -1,37 +1,44 @@
 [
 	{
 	"name" : "Step",
-	"synonyms" : ["Step", "PuriÂˆcationstep"],
-	"types" : ["S"]
+	"synonyms" : ["Step", "PuriÂˆcationstep", "step"],
+	"types" : ["S"],
+	"units" : []
 	},
 	{
 	"name" : "yield",
 	"synonyms" : ["yield", "Yield"],
-	"types" : ["N"]
+	"types" : ["N"],
+	"units" : ["(%)", "%"]
 	},
 	{
 	"name" : "Totalactivity",
 	"synonyms" : ["Totalactivity", "TotalActivity", "Totalactivity(U)", "Total   activity"],
-	"types" : ["N"]
+	"types" : ["N"],
+	"units" : ["(U)", "U"]
 	},
 	{
 	"name" : "Totalprotein",
 	"synonyms" : ["Totalprotein", "TotalProtein", "Total   protein"],
-	"types" : ["N"]
+	"types" : ["N"],
+	"units" : ["(mg)", "mg"]
 	},
 	{
 	"name" : "Specificactivity",
 	"synonyms" : ["Specificactivity", "SpeciÂˆcactivity(UWmg)", "SpeciÃžcactivity", "Specific   activity", "Spact"],
-	"types" : ["N"]
+	"types" : ["N"],
+	"units" : ["(U/mg)", "U/mg"]
 	},
 	{
 	"name" : "Purification",
 	"synonyms" : ["Purification", "Purication(fold)", "PuriÂˆcation(fold)", "PuriÃžcation", "Purication", "Fold"],
-	"types" : ["N"]
+	"types" : ["N"],
+	"units" : []
 	},
 	{
 	"name" : "Activity",
 	"synonyms" : ["Activity"],
-	"types" : ["N"]
+	"types" : ["N"],
+	"units" : []
 	}
 ]

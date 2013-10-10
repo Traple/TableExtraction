@@ -13,6 +13,7 @@ public class Purification {
     private String name;
     private String[] synonyms;
     private String[] types;
+    private String[] units;
 
     // Getters and setters are not required for this example.
     // GSON sets the fields directly using reflection.
@@ -27,6 +28,9 @@ public class Purification {
     }
     public String[] getTypes(){
         return types;
+    }
+    public String[] getUnits(){
+        return units;
     }
 
 }

@@ -21,9 +21,22 @@ public class Main {
     public static void main(String[] args) {
         //csv file containing data
 
-        String strFile = "C:\\Users\\Sander van Boom\\Dropbox\\Tables and Figures\\Corpus 1.1\\CorpusParamMain\\41.pdf.csv";
+        String strFile = "C:\\Users\\Sander van Boom\\Dropbox\\Tables and Figures\\Corpus 1.1\\CorpusParamMain\\31.pdf.csv";
         LOGGER.info("Read file: "+ strFile);
         try {
+            RestructureUsingOCR OCR = new RestructureUsingOCR();
+            //OCR.lineChecker(4337, 146, "yield");
+            ArrayList mahList = new ArrayList();
+            ArrayList<String> muhList = new ArrayList<String>();
+            mahList = OCR.lineChecker(4187, 200, "yielding");
+            System.out.println(mahList.size());
+            muhList = OCR.evalueteColumn(mahList);
+            System.out.println(muhList.size());
+            for(String muh: muhList){
+                System.out.println(muh);
+            }
+            //OCR.getInfo();
+            System.exit(0);
             read(strFile);
 
 	    	/*

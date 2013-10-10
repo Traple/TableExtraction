@@ -36,7 +36,7 @@ public class PurificationTest {
         names = new ArrayList<String>();
 
             Reader reader;
-            reader = new InputStreamReader(HeaderMethods.class.getResourceAsStream("/program/Purification.json"), "UTF-8");
+            reader = new InputStreamReader(HeaderMethods.class.getResourceAsStream("/program/purification.json"), "UTF-8");
             this.Pheaders = gson.fromJson(reader, collectionType2);
             for(Purification p: Pheaders){
                 names.add(p.getName());
