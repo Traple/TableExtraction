@@ -28,47 +28,17 @@ public class Main {
             //OCR.lineChecker(4337, 146, "yield");
             ArrayList mahList = new ArrayList();
             ArrayList<String> muhList = new ArrayList<String>();
-            mahList = OCR.lineChecker(4187, 200, "yielding");
-            System.out.println(mahList.size());
-            muhList = OCR.evalueteColumn(mahList);
-            System.out.println(muhList.size());
-            for(String muh: muhList){
-                System.out.println(muh);
-            }
-            //OCR.getInfo();
+            //mahList = OCR.lineChecker(4187, 200, "yielding");
+            //System.out.println(mahList.size());
+            //muhList = OCR.evaluateColumn(mahList);
+            //System.out.println(muhList.size());
+            //for(String muh: muhList){
+            //    System.out.println(muh);
+            //}
+            OCR.getInfo();
             System.exit(0);
             read(strFile);
 
-	    	/*
-	    	  CSVReader reader = new CSVReader(new FileReader(strFile));
-	    	  int counter = 0;
-	    	  while(true){
-	    		  counter++;
-	    		  String[] line = reader.readNext();
-	    		  try{
-	    		  System.out.println(counter +" "+ line[0]);
-	    		  }
-	    		  catch(NullPointerException e){
-
-
-	    		  }
-	    				  if(line == null){
-	    			  break;
-	    		  }
-	    	  }
-	    	  */
-
-	    	/*
-	    	Scanner scan = new Scanner(new BufferedReader(new FileReader(new File(strFile))));
-	    	int counter =0;
-	    	while(scan.hasNextLine()){
-	    		counter++;
-	    		String line = scan.nextLine();
-	    		System.out.println(line);
-	    		System.out.println(counter);
-	    	}
-	    	scan.close();
-	    	*/
         } catch (IOException e) {
             e.printStackTrace();
         }

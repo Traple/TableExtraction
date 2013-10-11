@@ -1,7 +1,7 @@
 [
 	{
 	"name" : "Step",
-	"synonyms" : ["Step", "PuriÂˆcationstep", "step"],
+	"synonyms" : ["Step", "PuriÂˆcationstep"],
 	"types" : ["S"],
 	"units" : []
 	},
@@ -15,7 +15,7 @@
 	"name" : "Totalactivity",
 	"synonyms" : ["Totalactivity", "TotalActivity", "Totalactivity(U)", "Total   activity"],
 	"types" : ["N"],
-	"units" : ["(U)", "U"]
+	"units" : ["U"]
 	},
 	{
 	"name" : "Totalprotein",
@@ -31,7 +31,7 @@
 	},
 	{
 	"name" : "Purification",
-	"synonyms" : ["Purification", "Purication(fold)", "PuriÂˆcation(fold)", "PuriÃžcation", "Purication", "Fold"],
+	"synonyms" : ["Purification", "Purication(fold)", "PuriÂˆcation(fold)", "PuriÃžcation", "Purication", "Fold", "Puriﬁcation"],
 	"types" : ["N"],
 	"units" : []
 	},

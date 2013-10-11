@@ -55,6 +55,22 @@ public class RestructureUsingOCR {
             e.printStackTrace();
         }
     }
+    public ArrayList<ArrayList<String>> creatOCRMatrix(){
+        ArrayList<ArrayList<String>> OCRMatrix = new ArrayList<ArrayList<String>>();
+        //First we need to find the headers
+        //TODO : Find the headers
+        //Then we need to extract all the information under the header
+        //TODO : Find all the information under the header
+        //Then we need to evaluate the header (i.e. add a pattern to the header
+        //TODO : Create a pattern of the information under the header
+        //Then we need to merge the headers togheter
+        //TODO : merge all the patterns togheter (non method)
+        //Then we need to flip the columns in the matrix so we can get the rows
+        //TODO : Flip the columns in the Matrix so you get the rows
+        //Then we need to return the OCR Matrix.
+        return OCRMatrix;
+    }
+
     public void getInfo() throws IOException {
         File input = new File("C:\\Users\\Sander van Boom\\Dropbox\\Tables and Figures\\OCR\\31-2.html");
         Document doc = Jsoup.parse(input, "UTF-8", "http://example.com/");
@@ -83,12 +99,14 @@ public class RestructureUsingOCR {
                         System.out.println("X header : " + positions[1]);
                         System.out.println("length: " + (Double.parseDouble(positions[3]) - Double.parseDouble(positions[1])));
                          }
-                       }                            int count =0;
+                       }
+                        int count =0;
                         for(Purification p : Pheaders){
+                            //System.out.println(count);
                             if(p.getUnits().length == 0){
 
                             }
-                            else if(word.equals(p.getUnits()[count])){
+                            else if(word.equals(p.getUnits()[0])){
                                 System.out.println("Unit: " +p.getUnits()[count]);
                                 String pos = span.attr("title");
                                 positions = pos.split("\\s+");
@@ -148,7 +166,7 @@ public class RestructureUsingOCR {
      * However in OCR we read in columns (derived from the headers) and now in lines.
      *
      */
-    public ArrayList evalueteColumn(ArrayList<String> column){
+    public ArrayList evaluateColumn(ArrayList<String> column){
         ArrayList<String> pattern = new ArrayList();
             try{
                 for(int x = 0;x<column.size();x++){
@@ -164,7 +182,9 @@ public class RestructureUsingOCR {
                         }
                         else{
                             //System.out.println(line[x]);
-                            if(column.get(x).equals("ND")||column.get(x).equals("|")||column.get(x).contains(">")||column.get(x).contains("<")||column.get(x).contains("N/D")||column.get(x).contains(".")||(column.get(x).contains("±")&&isNumber(column.get(x+1)))||(column.get(x).equals("-") && isNumber(column.get(x)))||column.get(x)=="NA"||column.get(x)=="/"){
+                            if(column.get(x).equals("ND")||column.get(x).equals("|")||column.get(x).contains(">")||column.get(x).contains("<")
+                                    ||column.get(x).contains("N/D")||column.get(x).contains(".")||(column.get(x).contains("±")&&isNumber(column.get(x+1)))
+                                    ||(column.get(x).equals("-") && isNumber(column.get(x)))||column.get(x)=="NA"||column.get(x)=="/"){
                                 pattern.add("N");
                             }else{
                                 pattern.add("S");
