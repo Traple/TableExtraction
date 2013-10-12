@@ -25,5 +25,93 @@ public class OCRMethods {
             }      */
 
 
+/*
+    public void getInfo() throws IOException {
+        File input = new File("C:\\Users\\Sander van Boom\\Dropbox\\Tables and Figures\\OCR\\31-2.html");
+        Document doc = Jsoup.parse(input, "UTF-8", "http://example.com/");
 
+        Element link = doc.select("span.ocr_line").first();
+        Elements spans = doc.select("span.ocrx_word");
+
+        String[] positions = null;
+
+        for(Element span : spans){
+            if(span.text().contains("TABLE")){
+                String pos = span.attr("title");
+                positions = pos.split("\\s+");
+                System.out.println("Height of the beginning of Table: " + positions[2]);
+                 }
+            String word = span.text();
+            for(String header:purificationHeaders){
+                    if(word.contains(header)){
+                        System.out.println("HEADER: " +header);
+                        String pos = span.attr("title");
+                        positions = pos.split("\\s+");
+                        System.out.println(span.outerHtml());
+                        System.out.println("Y header : " + positions[2]);
+                        System.out.println("X header : " + positions[1]);
+                        System.out.println("length: " + (Double.parseDouble(positions[3]) - Double.parseDouble(positions[1])));
+                         }
+                       }
+                        int count =0;
+                        for(Purification p : Pheaders){
+                            //System.out.println(count);
+                            if(p.getUnits().length == 0){
+
+                            }
+                            else if(word.equals(p.getUnits()[0])){
+                                System.out.println("Unit: " +p.getUnits()[count]);
+                                String pos = span.attr("title");
+                                positions = pos.split("\\s+");
+                                System.out.println(span.outerHtml());
+                                System.out.println("Y unit : " + positions[2]);
+                                System.out.println("X unit : " + positions[1]);
+                                System.out.println("length: " + (Double.parseDouble(positions[3]) - Double.parseDouble(positions[1])));
+                                count++;
+                            }
+            }
+
+        }
+        }
+        public ArrayList lineChecker(double begin, double length, String header) throws IOException {
+            ArrayList columnLine = new ArrayList();
+            File input = new File("C:\\Users\\Sander van Boom\\Dropbox\\Tables and Figures\\OCR\\31-2.html");
+            Document doc = Jsoup.parse(input, "UTF-8", "http://example.com/");
+
+            Elements spans = doc.select("span.ocrx_word");
+            String[] positionsS = null;
+            int[] positionsT = null;
+            ArrayList positionsA = new ArrayList();
+            int count = 0;
+            for(Element span : spans){
+                String pos = span.attr("title");
+                positionsS = pos.split("\\s+");
+                double doupje =0.0 ;
+                for(int i = 0; i<positionsS.length;i++){
+                    //System.out.println(positionsS[i]);
+                    if(positionsS[i].equals("bbox")){
+
+                    }
+                    else{
+                        Integer I = Integer.parseInt(positionsS[1]);
+                        doupje = (I.doubleValue());
+
+                    }
+                }
+                if(doupje>= begin && doupje <=(begin+length)){
+                    //System.out.println("Doupje is bigger then: "+begin+" but smaller then: "+(begin+length)+" doupje is: "+doupje);
+                    //System.out.println(span.text());
+                    if(isNumber(span.text())){
+                        System.out.println("Required information found!");
+                        System.out.println(header + " = "+span.text());
+                        columnLine.add(span.text());
+                        System.out.println("found at: " + span.attr("title"));
+                    }
+                }
+                count++;
+
+            }
+                return columnLine;
+        }
+ */
 }

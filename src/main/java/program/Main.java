@@ -26,8 +26,8 @@ public class Main {
         try {
             RestructureUsingOCR OCR = new RestructureUsingOCR();
             //OCR.lineChecker(4337, 146, "yield");
-            ArrayList mahList = new ArrayList();
-            ArrayList<String> muhList = new ArrayList<String>();
+            //ArrayList mahList = new ArrayList();
+            //ArrayList<String> muhList = new ArrayList<String>();
             //mahList = OCR.lineChecker(4187, 200, "yielding");
             //System.out.println(mahList.size());
             //muhList = OCR.evaluateColumn(mahList);
@@ -35,7 +35,8 @@ public class Main {
             //for(String muh: muhList){
             //    System.out.println(muh);
             //}
-            OCR.getInfo();
+            //OCR.getInfo();
+            OCR.creatOCRMatrix("C:\\Users\\Sander van Boom\\Dropbox\\Tables and Figures\\OCR\\36-3.html");
             System.exit(0);
             read(strFile);
 
