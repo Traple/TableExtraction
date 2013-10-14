@@ -21,7 +21,7 @@ public class Main {
     public static void main(String[] args) {
         //csv file containing data
 
-        String strFile = "C:\\Users\\Sander van Boom\\Dropbox\\Tables and Figures\\Corpus 1.1\\CorpusParamMain\\31.pdf.csv";
+        String strFile = "C:\\Users\\Sander van Boom\\Documents\\School\\tables\\OCR\\OCR\\36-3.html";
         LOGGER.info("Read file: "+ strFile);
         try {
             RestructureUsingOCR OCR = new RestructureUsingOCR();
@@ -36,7 +36,7 @@ public class Main {
             //    System.out.println(muh);
             //}
             //OCR.getInfo();
-            OCR.creatOCRMatrix("C:\\Users\\Sander van Boom\\Dropbox\\Tables and Figures\\OCR\\36-3.html");
+            OCR.creatOCRMatrix("C:\\Users\\Sander van Boom\\Documents\\School\\tables\\OCR\\OCR\\36-3.html");
             System.exit(0);
             read(strFile);
 

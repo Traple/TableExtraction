@@ -15,6 +15,8 @@ public class Purification {
     private String[] types;
     private String[] units;
 
+    //NOTE: deleted "Purification" from the FOLD name!!!
+
     // Getters and setters are not required for this example.
     // GSON sets the fields directly using reflection.
     public Purification(){
