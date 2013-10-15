@@ -13,19 +13,19 @@
 	},
 	{
 	"name" : "Totalactivity",
-	"synonyms" : ["Totalactivity", "TotalActivity", "Totalactivity(U)", "Total   activity"],
+	"synonyms" : ["Totalactivity", "TotalActivity", "Totalactivity(U)", "Total   activity", "Total activity"],
 	"types" : ["N"],
 	"units" : ["U"]
 	},
 	{
 	"name" : "Totalprotein",
-	"synonyms" : ["Totalprotein", "TotalProtein", "Total   protein"],
+	"synonyms" : ["Totalprotein", "TotalProtein", "Total   protein", "Total Protein", "Total protein"],
 	"types" : ["N"],
 	"units" : ["(mg)", "mg"]
 	},
 	{
 	"name" : "Specificactivity",
-	"synonyms" : ["Specificactivity", "SpeciÂˆcactivity(UWmg)", "SpeciÃžcactivity", "Specific   activity", "Spact"],
+	"synonyms" : ["Specificactivity", "SpeciÂˆcactivity(UWmg)", "SpeciÃžcactivity", "Specific   activity", "Spact", "Specific activity"],
 	"types" : ["N"],
 	"units" : ["(U/mg)", "U/mg"]
 	},

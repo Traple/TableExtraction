@@ -114,4 +114,38 @@ public class OCRMethods {
                 return columnLine;
         }
  */
+
+    /*
+            for(ArrayList<String> column : columnsMatrix){
+            header = column.get(0);
+            String type = "";
+            for(String word : column){
+                for(Purification p : Pheaders){
+                    ArrayList<String> syns = new ArrayList<String>();
+                    String synType = "";
+                    for(int i = 0;i<p.getSynonyms().length;i++){
+                        syns.add(p.getSynonyms()[i]);
+                        synType = p.getTypes()[0];
+                    }
+                    try{
+                        if(syns.contains(header)){
+                            type = synType;
+
+                        }
+                    }
+                    catch(ArrayIndexOutOfBoundsException e){
+
+                    }
+                }
+
+            }
+            if(type == ""){     //header wasn't found
+
+            }
+            else{
+                System.out.println("HEADER: "+ header + ", TYPE: " + type);
+                refinedColumnsContentMatrix.add(column);
+            }
+        }
+     */
 }

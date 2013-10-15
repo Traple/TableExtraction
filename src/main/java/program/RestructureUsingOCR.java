@@ -7,7 +7,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.awt.geom.Point2D;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -32,6 +31,7 @@ public class RestructureUsingOCR {
     private Collection<Purification> Pheaders;
     private Collection<Kinetics> Kheaders;
     private Collection<RelativeActivity> Aheaders;
+    private ArrayList<String> Headers;
 
     //TODO: create a method for the detection of whitespace, so more information can be extracted succesfully.
 
@@ -95,9 +95,26 @@ public class RestructureUsingOCR {
         //first we need the types of the headers:
         ArrayList<String> headerTypes= new ArrayList<String>();
         headerTypes = findHeaderTypes(foundHeaders);
+
         System.out.println(foundHeaders);
-        System.out.println(headerTypes);
-        //columnRefining(columnFields, columnPatterns);
+        //System.out.println(headerTypes);
+        //System.out.println(columnFields.get(0));
+        //System.out.println(columnFields.get(1));
+        //System.out.println(columnFields.get(2));
+        //System.out.println(columnFields.get(3));
+        //System.out.println(columnFields.get(4));
+        //System.out.println(columnFields.get(5));
+        //System.out.println(columnPatterns);
+        System.out.println(columnFields);       //TODO: change the fields or give the correct headers to the refinedColumnMatrix. Otherwise the merging of headers is useless.
+        ArrayList<ArrayList<ArrayList<String>>> refinedColumnMatrix = columnRefining(columnFields, columnPatterns, headerTypes);
+        columnFields = new ArrayList<ArrayList<String>>();
+        columnPatterns = new ArrayList<ArrayList<String>>();
+
+            columnFields.addAll(refinedColumnMatrix.get(0));
+            columnPatterns.addAll(refinedColumnMatrix.get(1));
+
+        System.out.println(columnFields);
+        System.out.println(columnPatterns);
         //Then we need to flip the columns in the matrix so we can get the rows (transpose the matrix)
         ArrayList<ArrayList<String>> transposedPattern = new ArrayList<ArrayList<String>>();
         ArrayList<ArrayList<String>> transposedFields;
@@ -109,16 +126,14 @@ public class RestructureUsingOCR {
         //System.out.println(columnPatterns);
         //System.out.println(transposedFields);
         //System.out.println(OCRMatrix);
-        //evaluateLines(OCRMatrix, transposedFields);
+        evaluateLines(OCRMatrix, transposedFields);
         return OCRMatrix;
     }
 
-
-//TODO: Make sure the program doesn't add the headers if their Y locations is below the detection of the word Table.
-
-//TODO: Make a filter method to make sure you don't get any rubbish headers that clearly don't belong to the table (POSITIONS!)
-
-//TODO: Make a method that links 2 words togheter if they become a header.
+    //TODO: Make sure the program doesn't add the headers if their Y locations is below the detection of the word Table.
+    //TODO: Make a filter method to make sure you don't get any rubbish headers that clearly don't belong to the table (POSITIONS!)
+    //TODO: Make a method that links 2 words togheter if they become a header.
+    //TODO: make a method that creates a list of words in the same line. lines with more then 2 headers are marked as headerlines.
 
    /*
     * This method will read in the file and tries to find any headers as soon as it discovers a table.
@@ -131,9 +146,9 @@ public class RestructureUsingOCR {
         Elements spans = doc.select("span.ocrx_word");
 
         String[] positions = null;
-
-        for(Element span : spans){
+            for(Element span : spans){
                 String word = span.text();
+                word = findMergedHeaders(Integer.parseInt(span.attr("ID").replaceAll("\\D", "")), spans, word);
                 for(String header:purificationHeaders){
                     if(word.contains(header)){
                         ArrayList<String> locationsOfHeader = new ArrayList<String>();
@@ -148,9 +163,35 @@ public class RestructureUsingOCR {
                     }
                 }
             }
-
         return locationsOfHeaders;
     }
+    /*
+     * This method checks whetever the found header is actually made up from multiple words.
+     */
+    public String findMergedHeaders(int wordID, Elements spans, String header) throws IOException {
+        String mergedHeader =header;
+
+        String currentID;
+        Element previousSpan = null;
+        for(Element span : spans){
+            currentID = span.attr("ID").replaceAll("\\D", "");
+            if(Integer.parseInt(currentID) == wordID){
+                try{
+                //System.out.println("Trying to merge: "+ span.text() + " with "+ previousSpan.text() );
+                if(previousSpan.text().equals("Total")||previousSpan.text().equals("Specific")){
+                    //System.out.println("NEED TO MERGE: " + span.text() + " with "+ previousSpan.text());
+                    mergedHeader = previousSpan.text() + " "  + span.text();
+                    //System.out.println(mergedHeader);
+                }}
+                catch(NullPointerException e){
+
+                }
+            }
+            previousSpan = span;
+        }
+        return mergedHeader;
+    }
+
     /*
      * This method reads all the information that is below the header. In order to do so, it needs the location of the header.
      * It uses the calcDistance method.
@@ -225,50 +266,61 @@ public class RestructureUsingOCR {
         return headerTypes;
     }
 
-    //TODO: Link the information in instances to the unit of the header.
-    //TODO: Method should allow the containing of the header in the headerlist so *Activity == activity!
     /*
      * This method will link the information of the header to the units below the header. Deleting all the words that
      * Don't match the headers type. If more then 5 words are deleted before a match then the column is deleted.
      */
-    public ArrayList<ArrayList<String>> columnRefining(ArrayList<ArrayList<String>> columnsMatrix, ArrayList<ArrayList<String>> patternMatrix){
-        ArrayList<ArrayList<String>> refinedColumnsMatrix = new ArrayList<ArrayList<String>>();
+
+    //TODO: Make sure we dont lose any information containing the content of the headers.
+
+    public ArrayList<ArrayList<ArrayList<String>>> columnRefining(ArrayList<ArrayList<String>> columnsMatrix, ArrayList<ArrayList<String>> patternMatrix, ArrayList<String> headerTypes){
+        ArrayList<ArrayList<ArrayList<String>>> refinedColumnsMatrix = new ArrayList<ArrayList<ArrayList<String>>>();
         ArrayList<ArrayList<String>> refinedColumnsContentMatrix = new ArrayList<ArrayList<String>>();
         ArrayList<ArrayList<String>> refinedColumnsPatternMatrix = new ArrayList<ArrayList<String>>();
-        String header ="";
-        for(ArrayList<String> column : columnsMatrix){
-            header = column.get(0);
+        ArrayList<String> refinedHeaderTypes = new ArrayList<String>();
+        String type ="";
+        ArrayList<String> currentColumnContent = new ArrayList<String>();
+        ArrayList<String> currentColumnPattern = new ArrayList<String>();
 
-            String type = "";
-            for(String word : column){
-                for(Purification p : Pheaders){
-                    ArrayList<String> syns = new ArrayList<String>();
-                    String synType = "";
-                    for(int i = 0;i<p.getSynonyms().length;i++){
-                        syns.add(p.getSynonyms()[i]);
-                        synType = p.getTypes()[0];
-                    }
-                    try{
-                        if(syns.contains(header)){
-                            type = synType;
+        //System.out.println(columnsMatrix);
 
-                        }
-                    }
-                    catch(ArrayIndexOutOfBoundsException e){
-
-                    }
+        for(int o =0;o<headerTypes.size();o++){
+            currentColumnContent = columnsMatrix.get(o);
+            currentColumnPattern = patternMatrix.get(o);
+            ArrayList<String> newColumnContent = new ArrayList<String>();
+            ArrayList<String> newColumnPattern = new ArrayList<String>();
+            type = headerTypes.get(o);
+            int breaker = 0;
+            boolean stopReading = false;
+            for(int u = 0; u<currentColumnPattern.size();u++){
+                //System.out.println(!currentColumnPattern.get(u).equals(type));
+                if(!currentColumnPattern.get(u).equals(type)||stopReading){
+                    breaker++;
+                    currentColumnPattern.remove(u);
+                    currentColumnContent.remove(u);
                 }
-
+                else if(!stopReading){
+                    //System.out.println(currentColumnPattern.get(u));
+                    newColumnContent.add(currentColumnContent.get(u));
+                    newColumnPattern.add(currentColumnPattern.get(u));
+                }
+                if(breaker>=5){
+                    stopReading = true;
+                }
             }
-            if(type == ""){     //header wasn't found
-
+            if(newColumnContent.isEmpty()){
+             //do nothing, discard the column.
             }
             else{
-                System.out.println("HEADER: "+ header + ", TYPE: " + type);
-                refinedColumnsContentMatrix.add(column);
+            refinedColumnsContentMatrix.add(newColumnContent);
+            refinedColumnsPatternMatrix.add(newColumnPattern);
             }
         }
-
+        //System.out.println(refinedColumnsContentMatrix);
+        //System.out.println(refinedColumnsPatternMatrix);
+        refinedColumnsMatrix.add(refinedColumnsContentMatrix);
+        refinedColumnsMatrix.add(refinedColumnsPatternMatrix);
+        //System.out.println(refinedColumnsMatrix);
         return refinedColumnsMatrix;
     }
     /*
@@ -330,7 +382,7 @@ public class RestructureUsingOCR {
                         else{
                             //System.out.println(line[x]);
                             if(column.get(x).equals("ND")||column.get(x).equals("|")||column.get(x).contains(">")||column.get(x).contains("<")
-                                    ||column.get(x).contains("N/D")||column.get(x).contains(".")||(column.get(x).contains("±")&&isNumber(column.get(x+1)))
+                                    ||column.get(x).contains("N/D")||(column.get(x).contains("±")&&isNumber(column.get(x+1)))
                                     ||(column.get(x).equals("-") && isNumber(column.get(x)))||column.get(x)=="NA"||column.get(x)=="/"){
                                 pattern.add("N");
                             }else{
@@ -357,8 +409,9 @@ public class RestructureUsingOCR {
         for (ArrayList<String> line : lines){
             if(line.equals(lastLine)){
                 System.out.println("PATTERN: " + line + lastLine);
-                System.out.println(content.get(counter));
                 System.out.println(content.get(counter-1));
+                System.out.println(content.get(counter));
+
             }
             lastLine = line;
             counter++;
