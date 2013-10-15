@@ -36,7 +36,7 @@ public class Main {
             //    System.out.println(muh);
             //}
             //OCR.getInfo();
-            OCR.creatOCRMatrix("C:\\Users\\Sander van Boom\\Documents\\School\\tables\\OCR\\OCR\\47-3.html");
+            OCR.creatOCRMatrix("C:\\Users\\Sander van Boom\\Documents\\School\\tables\\OCR\\OCR\\34-3.html");
             System.exit(0);
             read(strFile);
 

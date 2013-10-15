@@ -32,10 +32,13 @@ public class RestructureUsingOCR {
     private Collection<Kinetics> Kheaders;
     private Collection<RelativeActivity> Aheaders;
     private ArrayList<String> Headers;
+    private int LDDistance = 2;
 
     //TODO: create a method for the detection of whitespace, so more information can be extracted succesfully.
 
     public RestructureUsingOCR() throws IOException {
+
+        //TODO: Support the other tableTypes as well.
 
         Gson gson = new Gson();
         Type collectionType = new TypeToken<Collection<Purification>>(){}.getType();
@@ -64,8 +67,16 @@ public class RestructureUsingOCR {
         ArrayList<ArrayList<String>> OCRMatrix = new ArrayList<ArrayList<String>>();
         ArrayList<ArrayList<String>> locations;
         ArrayList<ArrayList<String>> columnContent = new ArrayList<ArrayList<String>>();
+        ArrayList<ArrayList<String>> tableLocations;
+        //Let's start by finding tables:
+        tableLocations = findTablePositions(fileLocation);
+        System.out.println(tableLocations);
+        double lowestY = findLowestYOfTable(tableLocations);
+        System.out.println("Lowest Y is : "+lowestY);
+        //Now for the information:
         //First we need to find the headers
-        locations = findHeaders(fileLocation);
+        locations = findHeaders(fileLocation, lowestY);
+        System.out.println(locations);                                                     //<- works now.
         //Then we need to extract all the information under the header
         double X1 = 0.0;
         double X2 = 0.0;
@@ -79,6 +90,7 @@ public class RestructureUsingOCR {
             X2 = Double.parseDouble(location.get(2));
             Y1 = Double.parseDouble(location.get(3));
             columnContent = columnChecker(X1, X2, Y1, fileLocation);
+            System.out.println(columnContent);
             ArrayList<String> fields = new ArrayList<String>();
             for(int x = 0; x< columnContent.size();x++){
                 if((x%2) == 0){
@@ -95,7 +107,7 @@ public class RestructureUsingOCR {
         ArrayList<String> headerTypes= new ArrayList<String>();
         headerTypes = findHeaderTypes(foundHeaders);
 
-        System.out.println(foundHeaders);
+        //System.out.println(foundHeaders);
         //System.out.println(headerTypes);
         //System.out.println(columnFields.get(0));
         //System.out.println(columnFields.get(1));
@@ -104,7 +116,7 @@ public class RestructureUsingOCR {
         //System.out.println(columnFields.get(4));
         //System.out.println(columnFields.get(5));
         //System.out.println(columnPatterns);
-        System.out.println(columnFields);       //TODO: change the fields or give the correct headers to the refinedColumnMatrix. Otherwise the merging of headers is useless.
+        //System.out.println(columnFields);       //TODO: change the fields or give the correct headers to the refinedColumnMatrix. Otherwise the merging of headers is useless.
         ArrayList<ArrayList<ArrayList<String>>> refinedColumnMatrix = columnRefining(columnFields, columnPatterns, headerTypes);
         columnFields = new ArrayList<ArrayList<String>>();
         columnPatterns = new ArrayList<ArrayList<String>>();
@@ -112,8 +124,8 @@ public class RestructureUsingOCR {
             columnFields.addAll(refinedColumnMatrix.get(0));
             columnPatterns.addAll(refinedColumnMatrix.get(1));
 
-        System.out.println(columnFields);
-        System.out.println(columnPatterns);
+        //System.out.println(columnFields);
+        //System.out.println(columnPatterns);
         //Then we need to flip the columns in the matrix so we can get the rows (transpose the matrix)
         ArrayList<ArrayList<String>> transposedPattern = new ArrayList<ArrayList<String>>();
         ArrayList<ArrayList<String>> transposedFields;
@@ -123,7 +135,6 @@ public class RestructureUsingOCR {
 
         //System.out.println(transposedPattern);
         OCRMatrix = transposedPattern;
-
         //System.out.println(columnPatterns);
         //System.out.println(transposedFields);
         //System.out.println(OCRMatrix);
@@ -131,36 +142,91 @@ public class RestructureUsingOCR {
         return OCRMatrix;
     }
 
-    //TODO: Make sure the program doesn't add the headers if their Y locations is below the detection of the word Table.
     //TODO: Make a filter method to make sure you don't get any rubbish headers that clearly don't belong to the table (POSITIONS!)
-    //TODO: Make a method that links 2 words togheter if they become a header.
     //TODO: make a method that creates a list of words in the same line. lines with more then 2 headers are marked as headerlines.
+    public ArrayList<ArrayList<String>> findTablePositions(String fileLocation) throws IOException {
+        File input = new File(fileLocation);
+        Document doc = Jsoup.parse(input, "UTF-8", "http://example.com/");
+        Elements spans = doc.select("span.ocrx_word");
+
+        ArrayList<ArrayList<String>> tablePositions = new ArrayList<ArrayList<String>>();
+        LevenshteinDistance LD = new LevenshteinDistance();
+        String[] positions;
+        for(Element span : spans){
+            int LDword = LD.computeLevenshteinDistance(span.text(), "Table");
+            int LDword2 = LD.computeLevenshteinDistance(span.text(), "TABLE");
+
+            if(lowestNumber(LDword, LDword2) < LDDistance){
+                ArrayList<String> tablePosition = new ArrayList<String>();
+                tablePosition.add(span.text());
+                String pos = span.attr("title");
+                positions = pos.split("\\s+");
+                tablePosition.add(positions[1]);
+                tablePosition.add(positions[3]);
+                tablePosition.add(positions[2]);
+                tablePosition.add(positions[4]);
+                tablePositions.add(tablePosition);
+            }
+        }
+        return tablePositions;
+    }
+    public double findLowestYOfTable (ArrayList<ArrayList<String>> tablePositions){
+        double lowestY = Double.MAX_VALUE;
+            for(ArrayList<String> table : tablePositions){
+                if(Double.parseDouble(table.get(2)) < lowestY){
+                    lowestY = Double.parseDouble(table.get(2));
+                }
+            }
+        return lowestY;
+    }
 
    /*
     * This method will read in the file and tries to find any headers as soon as it discovers a table.
     */
-    public ArrayList<ArrayList<String>> findHeaders(String fileLocation) throws IOException {
+    public ArrayList<ArrayList<String>> findHeaders(String fileLocation, double lowestY) throws IOException {
         ArrayList<ArrayList<String>> locationsOfHeaders = new ArrayList<ArrayList<String>>();
 
         File input = new File(fileLocation);
         Document doc = Jsoup.parse(input, "UTF-8", "http://example.com/");
         Elements spans = doc.select("span.ocrx_word");
 
+        LevenshteinDistance LD = new LevenshteinDistance();
+        int distance =0;
+
         String[] positions = null;
             for(Element span : spans){
                 String word = span.text();
                 word = findMergedHeaders(Integer.parseInt(span.attr("ID").replaceAll("\\D", "")), spans, word);
+                //System.out.println(word);
                 for(String header:purificationHeaders){
                     if(word.contains(header)){
                         ArrayList<String> locationsOfHeader = new ArrayList<String>();
                         locationsOfHeader.add(header);
                         String pos = span.attr("title");
                         positions = pos.split("\\s+");
-                        locationsOfHeader.add(positions[1]);
-                        locationsOfHeader.add(positions[3]);
-                        locationsOfHeader.add(positions[2]);
-                        locationsOfHeader.add(positions[4]);
-                        locationsOfHeaders.add(locationsOfHeader);
+                        if(Double.parseDouble(positions[2]) > lowestY){
+                            System.out.println("FOUND"+word);
+                            locationsOfHeader.add(positions[1]);
+                            locationsOfHeader.add(positions[3]);
+                            locationsOfHeader.add(positions[2]);
+                            locationsOfHeader.add(positions[4]);
+                            locationsOfHeaders.add(locationsOfHeader);
+                        }
+                    }
+                    else {
+                        distance = LD.computeLevenshteinDistance(word, header);
+                        if(distance < LDDistance){
+                            System.out.println("FOUND"+word);
+                            ArrayList<String> locationsOfHeader = new ArrayList<String>();
+                            locationsOfHeader.add(header);
+                            String pos = span.attr("title");
+                            positions = pos.split("\\s+");
+                            locationsOfHeader.add(positions[1]);
+                            locationsOfHeader.add(positions[3]);
+                            locationsOfHeader.add(positions[2]);
+                            locationsOfHeader.add(positions[4]);
+                            locationsOfHeaders.add(locationsOfHeader);
+                        }
                     }
                 }
             }
@@ -168,9 +234,13 @@ public class RestructureUsingOCR {
     }
     /*
      * This method checks whetever the found header is actually made up from multiple words.
+     * It takes the spans, the wordID (currently searched word) and the header as information from the findHeader method.
      */
+
+    //TODO: Refine the findMergedHeaders method so it will catch any double word headers succesfuly.
+
     public String findMergedHeaders(int wordID, Elements spans, String header) throws IOException {
-        String mergedHeader =header;
+        String mergedHeader =header; //the merged header equals the current header. This is only changed if there is a prefix found.
 
         String currentID;
         Element previousSpan = null;
@@ -179,7 +249,7 @@ public class RestructureUsingOCR {
             if(Integer.parseInt(currentID) == wordID){
                 try{
                 //System.out.println("Trying to merge: "+ span.text() + " with "+ previousSpan.text());
-                if(previousSpan.text().equals("Total")||previousSpan.text().equals("Specific")||previousSpan.text().equals("purification")){
+                if(previousSpan.text().equals("Total")||previousSpan.text().equals("Specific")||previousSpan.text().equals("Purification")||previousSpan.text().equals("Puriﬁcation")||previousSpan.text().equals("Speciﬁc")||previousSpan.text().equals("Specific")){
                     //System.out.println("NEED TO MERGE: " + span.text() + " with "+ previousSpan.text());
                     mergedHeader = previousSpan.text() + " "  + span.text();
                     //System.out.println(mergedHeader);
@@ -311,6 +381,7 @@ public class RestructureUsingOCR {
             }
             if(newColumnContent.isEmpty()){
              //do nothing, discard the column.
+                //System.out.println("Deleted a Column!");
             }
             else{
             refinedColumnsContentMatrix.add(newColumnContent);
@@ -342,6 +413,9 @@ public class RestructureUsingOCR {
      * This method transposes a Matrix containing Strings.
      */
     public ArrayList<ArrayList<String>> transpose(ArrayList<ArrayList<String>> matrix) {
+        if(matrix.isEmpty()){
+            return null;
+        }
         ArrayList<ArrayList<String>> trans = new ArrayList<ArrayList<String>>();
         int N = matrix.get(0).size();
         for (int i = 0; i < N; i++) {
@@ -362,10 +436,9 @@ public class RestructureUsingOCR {
 
     /*
      * This method is similar to the RestructureUsingNLP method, evalueSentence.
-     * However in OCR we read in columns (derived from the headers) and now in lines.
+     * However in OCR we read in columns (derived from the headers) and not in lines.
      *
      */
-    //TODO: evaluateColumn needs to take the information of the header type into account as well.
     public ArrayList<String> evaluateColumn(ArrayList<String> column){
         ArrayList<String> pattern = new ArrayList();
             try{
@@ -438,6 +511,16 @@ public class RestructureUsingOCR {
         return matcher.matches();
         //return string.matches("^\\d+$");
     }
+    public int lowestNumber(int number1, int number2){
+        if(number1 > number2){
+            return number2;
+        }
+        if(number2 > number1){
+            return number1;
+        }
+        return number1; //if they are equal.
+    }
+
     }
 
 
