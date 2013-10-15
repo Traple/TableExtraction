@@ -57,7 +57,6 @@ public class RestructureUsingOCR {
             e.printStackTrace();
         }
     }
-
     /*
      * If you want to run a full OCR and retrieve the patternMatrix that way (and ignore any findings of using pdf2csv.js) run this method.
      */
@@ -121,6 +120,8 @@ public class RestructureUsingOCR {
         transposedPattern = transpose(columnPatterns);
         transposedFields = transpose(columnFields);
         //Then we need to return the OCR Matrix.
+
+        //System.out.println(transposedPattern);
         OCRMatrix = transposedPattern;
 
         //System.out.println(columnPatterns);
@@ -177,8 +178,8 @@ public class RestructureUsingOCR {
             currentID = span.attr("ID").replaceAll("\\D", "");
             if(Integer.parseInt(currentID) == wordID){
                 try{
-                //System.out.println("Trying to merge: "+ span.text() + " with "+ previousSpan.text() );
-                if(previousSpan.text().equals("Total")||previousSpan.text().equals("Specific")){
+                //System.out.println("Trying to merge: "+ span.text() + " with "+ previousSpan.text());
+                if(previousSpan.text().equals("Total")||previousSpan.text().equals("Specific")||previousSpan.text().equals("purification")){
                     //System.out.println("NEED TO MERGE: " + span.text() + " with "+ previousSpan.text());
                     mergedHeader = previousSpan.text() + " "  + span.text();
                     //System.out.println(mergedHeader);
