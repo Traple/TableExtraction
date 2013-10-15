@@ -86,7 +86,7 @@ public class RestructureUsingOCR {
             X1 = Double.parseDouble(location.get(1));
             X2 = Double.parseDouble(location.get(2));
             Y1 = Double.parseDouble(location.get(3));
-            System.out.println("IN: "+location.get(0) + " "+X1 +" "+ X2+ " " + Y1);                                //<-  WHY is everything in here twice????
+            System.out.println("IN: "+location.get(0) + " "+X1 +" "+ X2+ " " + Y1);                                //Fixed the duplication.
             columnContent = columnChecker(X1, X2, Y1, fileLocation);
             //System.out.println("maybe:");                                 //<- there is a mistake in here....
             //System.out.println(columnContent);
@@ -245,6 +245,7 @@ public class RestructureUsingOCR {
 
     //TODO: Refine the findMergedHeaders method so it will catch any double word headers succesfuly.
     //TODO: Add the LevenshteinDistance class in this method so it can use the distance in the prefix. Watch out for false positives.
+    //TODO: Make sure that the mergeHeaders also increases the positions and not just the names!!
 
     public String findMergedHeaders(int wordID, Elements spans, String header) throws IOException {
         String mergedHeader =header; //the merged header equals the current header. This is only changed if there is a prefix found.
