@@ -1,7 +1,7 @@
 [
 	{
-	"name" : "Step",
-	"synonyms" : ["Puriﬁcation step", "Step"],
+	"name" : "Purification step",
+	"synonyms" : ["Puriﬁcation step", "Step", "Purification step"],
 	"types" : ["S"],
 	"units" : []
 	},
@@ -12,20 +12,20 @@
 	"units" : ["(%)", "%"]
 	},
 	{
-	"name" : "Totalactivity",
+	"name" : "Total activity",
 	"synonyms" : ["Total activity"],
 	"types" : ["N"],
 	"units" : ["U"]
 	},
 	{
-	"name" : "Totalprotein",
+	"name" : "Total protein",
 	"synonyms" : ["Total protein"],
 	"types" : ["N"],
 	"units" : ["(mg)", "mg"]
 	},
 	{
-	"name" : "Specificactivity",
-	"synonyms" : ["Specific Activity" ,"Speciﬁc activity"],
+	"name" : "Specific activity",
+	"synonyms" : ["Specific Activity" ,"Speciﬁc activity", "Specific activity"],
 	"types" : ["N"],
 	"units" : ["(U/mg)", "U/mg"]
 	},

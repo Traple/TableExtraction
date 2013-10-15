@@ -1,5 +1,7 @@
 package loft;
 
+import java.util.ArrayList;
+
 /**
  * Created for project: TableExtraction
  * In package: loft
@@ -147,5 +149,19 @@ public class OCRMethods {
                 refinedColumnsContentMatrix.add(column);
             }
         }
+     */
+    /*
+
+    public ArrayList<ArrayList<String>> transposeMatrix(ArrayList<ArrayList<String>> matrix){
+        ArrayList<ArrayList<String>> transposedMatrix = new ArrayList<ArrayList<String>>();
+
+        //String field = "";
+        for(ArrayList<String> line : matrix){
+            ArrayList<String> transposedLine = new ArrayList<String>();
+
+        }
+
+        return transposedMatrix;
+    }
      */
 }
