@@ -23,5 +23,7 @@ public class Main {
         int MaxLevenshteinDistance = 0;
         Page page = new Page(fileLocation, MaxLevenshteinDistance);
         page.createTables();
+
+        //System.out.println("The results are here. You are a horrible person. That's fun, we weren't even testing for that!");
     }
 }

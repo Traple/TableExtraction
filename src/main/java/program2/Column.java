@@ -54,7 +54,11 @@ public class Column {
         this.spans = spans;
         this.Pheaders = Pheaders;
         System.out.println("Column " + header + " created.");
-        System.out.println("I start at: " + X1);
+
+        findHeaderTypes();
+        fillCells(columnChecker());
+        evaluateColumn();
+
 
     }
 
@@ -149,7 +153,7 @@ public class Column {
                     headerType= synType;
                 }
             }
-
+        this.headerType = headerType;
         return headerType;
     }
     /*
@@ -174,4 +178,22 @@ public class Column {
         return cells;
     }
 
+    public ArrayList<String> evaluateColumn(){
+        ArrayList<String> types = new ArrayList<String>();
+        String type = "";
+        for(Cell cell : cells){
+            type = cell.getType();
+            if(type.equals(headerType)){
+                types.add(type);
+            }
+        }
+        return types;
+    }
+
+    public String getHeaderType(){
+        return headerType;
+    }
+
+
+    //TODO: Create a method for the detection of whitespace under a table (preferably by taking the size of the font)
 }

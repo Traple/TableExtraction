@@ -100,8 +100,6 @@ public class Page {
         }
         if(foundATable){
             foundTable = new Table(LDDistance, tableSpans);
-            foundTable.findColumns();
-            foundTable.createColumns();
         }
         return foundTable;
     }

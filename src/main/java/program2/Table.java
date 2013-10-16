@@ -8,6 +8,7 @@ import org.jsoup.select.Elements;
 import program.HeaderMethods;
 import program.Purification;
 
+import javax.swing.plaf.synth.ColorType;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -46,8 +47,9 @@ public class Table {
     private Set<String> purificationHeaders = new HashSet<String>();
     private Collection<Purification> Pheaders;
     private ArrayList<ArrayList<String>> locationsOfHeaders;
+    private ArrayList<Column> columns;
 
-    public Table(int LDDistance, Elements spans){
+    public Table(int LDDistance, Elements spans) throws IOException {
         System.out.println("Table Created.");
         this.name = spans.get(0).text() + " "+spans.get(2).text() +" " + spans.get(3).text()+ " " + spans.get(4).text() + " " + spans.get(5).text();
         System.out.println("My name is: " + name);
@@ -84,6 +86,11 @@ public class Table {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        //~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+        findColumns();
+        createColumns();
+        refineColumnsByPattern();
 
     }
 
@@ -156,9 +163,7 @@ public class Table {
      * It takes the spans, the wordID (currently searched word) and the header as information from the findHeader method.
      */
 
-    //TODO: Refine the findMergedHeaders method so it will catch any double word headers succesfuly.
     //TODO: Add the LevenshteinDistance class in this method so it can use the distance in the prefix. Watch out for false positives.
-    //TODO: Make sure that the mergeHeaders also increases the positions and not just the names!!
 
     public String findMergedHeaders(int wordID, Elements spans, String header) throws IOException {
         String mergedHeader =header; //the merged header equals the current header. This is only changed if there is a prefix found.
@@ -170,23 +175,24 @@ public class Table {
             currentID = span.attr("ID").replaceAll("\\D", "");
             if(Integer.parseInt(currentID) == wordID){
                 try{
-                    //System.out.println("Trying to merge: "+ span.text() + " with "+ previousSpan.text());
                     if(previousSpan.text().equals("Total")||previousSpan.text().equals("Specific")||previousSpan.text().equals("Purification")||previousSpan.text().equals("Puriﬁcation")||previousSpan.text().equals("Speciﬁc")||previousSpan.text().equals("Specific")){
-                        //System.out.println("NEED TO MERGE: " + span.text() + " with "+ previousSpan.text());
                         mergedHeader = previousSpan.text() + " "  + span.text();
                         String pos = previousSpan.attr("title");
                         positions = pos.split("\\s+");
                         X1ofCurrentWord = positions[1];
-                        //System.out.println(mergedHeader);
                     }}
                 catch(NullPointerException e){
-
+                    //do nothing.
                 }
             }
             previousSpan = span;
         }
         return mergedHeader;
     }
+
+    /*
+     * This method creates the columns and puts the in the ArrayList.
+     */
     public ArrayList<Column> createColumns(){
         ArrayList<Column> columns = new ArrayList<Column>();
         for(ArrayList<String> location : locationsOfHeaders){
@@ -201,13 +207,28 @@ public class Table {
             Y1 = Double.parseDouble(location.get(3));
             Y2 = Double.parseDouble(location.get(4));
             Column col = new Column(header, X1, X2, Y1, Y2, spans, Pheaders);
-            col.fillCells(col.columnChecker());
-            System.out.println(col.findHeaderTypes());
-
             columns.add(col);
         }
+        this.columns = columns;
         return columns;
     }
 
+    /*
+     * The RefineColumnsByPattern is a complicated method. It searches trough each column object and extracts the type
+     * of the header and the type of the content (cells). Then it matches the type with the content, Anything that doesn't
+     * match is being deleted. Note that units etc. are being removed in this process as well.
+     * For this reason the content will be saved in a new ArrayList.
+     */
+    public ArrayList<String> refineColumnsByPattern(){
+        ArrayList<String> cols = new ArrayList<String>();
+        ArrayList<String> colTypes = new ArrayList<String>();
+        for(Column column : columns){
+            colTypes = column.evaluateColumn();
+            System.out.println(colTypes);
+        }
 
+        return cols;
+    }
+
+    //TODO: Create the refineColumnsByPosition method.
 }
