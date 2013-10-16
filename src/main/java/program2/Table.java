@@ -201,10 +201,13 @@ public class Table {
             Y1 = Double.parseDouble(location.get(3));
             Y2 = Double.parseDouble(location.get(4));
             Column col = new Column(header, X1, X2, Y1, Y2, spans, Pheaders);
-            System.out.println(col.columnChecker());
+            col.fillCells(col.columnChecker());
             System.out.println(col.findHeaderTypes());
+
             columns.add(col);
         }
         return columns;
     }
+
+
 }

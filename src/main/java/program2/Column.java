@@ -42,6 +42,7 @@ public class Column {
     private Elements spans;
     private Collection<Purification> Pheaders;
     private String headerType;
+    private ArrayList<Cell> cells;
 
     public Column(String header, double X1, double X2, double Y1, double Y2, Elements spans, Collection<Purification> Pheaders){
         this.X1 = X1;
@@ -91,12 +92,50 @@ public class Column {
                 columnContent.add(columnContentPositions);
             }
         }
+
+        //Before we return the columnContent we want to refine it. Some cells may be split up. We want every word that is
+        //in the same row to be in the same spot in the array.
+        columnContent = mergeWordsOnSameLine(columnContent);
+
         return columnContent;
     }
 
     /*
- * This method returns the type correlating with the header.
- */
+     * mergeWordsOnSameLine merges words in the columnContent that are on the same line.
+     * NOTE: This does NOT change anything in the SPANS. ONLY in the ArrayList!!!
+     * AFTER this method is being run, the Array and the OCR-HTML do no longer match!!!!
+     */
+
+    public ArrayList<ArrayList<String>> mergeWordsOnSameLine(ArrayList<ArrayList<String>> columnContent){
+        int lastY1 = 0;
+        int loopLength = columnContent.size();
+        for(int x = 0; x< loopLength; x++){
+            String pos = "";
+            String[] positions;
+            String newWord = "";
+            if(x%2 == 1){
+                pos = columnContent.get(x).get(0);
+                positions = pos.split("\\s+");
+                if(5 > Integer.parseInt(positions[2]) - lastY1){
+                    columnContent.get(x-3).add(0, columnContent.get(x - 3).get(0) + columnContent.get(x - 1).get(0));
+                    columnContent.get(x-3).remove(1);
+                    columnContent.remove(x - 1);
+                    columnContent.remove(x - 1);
+                    loopLength = loopLength -2;
+                    x = x -1;
+                }
+                else{
+                    lastY1 = Integer.parseInt(positions[2]);
+                }
+            }
+
+        }
+
+        return columnContent;
+    }
+    /*
+    * This method returns the type correlating with the header.
+    */
     public String findHeaderTypes(){
         String headerType = "";
             for(Purification p : Pheaders){
@@ -112,6 +151,27 @@ public class Column {
             }
 
         return headerType;
+    }
+    /*
+     * This method creates new cells. Because every cell has a position and content this has to be extracted from the column collection.
+     */
+    public ArrayList<Cell> fillCells(ArrayList<ArrayList<String>> column){
+        ArrayList<Cell> cellList = new ArrayList<Cell>();
+        String content = "";
+        String position = "";
+        Cell newCell;
+        for(int x = 0; x<column.size();x++){
+            if(x%2 == 0){
+                content = column.get(x).get(0);
+            }
+            else if(x%2 == 1){
+                position = column.get(x).get(0);
+                newCell = new Cell(content, position);
+                cellList.add(newCell);
+            }
+        }
+        this.cells = cellList;
+        return cells;
     }
 
 }
