@@ -14,10 +14,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /*
  * Created for project: TableExtraction
@@ -43,11 +40,15 @@ public class Table {
     private LevenshteinDistance LD;
     private double lowestY;                               //lowestY is the begining of the table.
     private String X1ofCurrentWord;
+    private double startOfData;
 
     private Set<String> purificationHeaders = new HashSet<String>();
     private Collection<Purification> Pheaders;
     private ArrayList<ArrayList<String>> locationsOfHeaders;
     private ArrayList<Column> columns;
+    private Map <Integer, ArrayList<String>> tableMap;
+    private ArrayList<Integer> X2ColumnBoundaries = new ArrayList<Integer>();
+    private ArrayList<Integer> X1ColumnBoundaries = new ArrayList<Integer>();
 
     public Table(int LDDistance, Elements spans) throws IOException {
         System.out.println("Table Created.");
@@ -91,12 +92,14 @@ public class Table {
         findColumns();
         createColumns();
         refineColumnsByPattern();
-
+        createTableMap();                                               //restructure using the tablemap.
+        this.X2ColumnBoundaries = checkMapForX2Columns();
     }
 
     //In case you have your own TableLocations (note that it is stored in: [keyword, X1, X2, Y1, Y2] You can set the variable here.
     public void setTableLocations(ArrayList<String> newTableLocations){
         this.tableLocations = newTableLocations;
+
     }
 
     //Returns the found table locations.
@@ -194,6 +197,7 @@ public class Table {
      * This method creates the columns and puts the in the ArrayList.
      */
     public ArrayList<Column> createColumns(){
+        this.startOfData = Double.MAX_VALUE;
         ArrayList<Column> columns = new ArrayList<Column>();
         for(ArrayList<String> location : locationsOfHeaders){
             double X1 = 0.0;
@@ -206,6 +210,9 @@ public class Table {
             X2 = Double.parseDouble(location.get(2));
             Y1 = Double.parseDouble(location.get(3));
             Y2 = Double.parseDouble(location.get(4));
+            if(Y1 < startOfData){
+                this.startOfData = Y1;
+            }
             Column col = new Column(header, X1, X2, Y1, Y2, spans, Pheaders);
             columns.add(col);
         }
@@ -230,5 +237,103 @@ public class Table {
         return cols;
     }
 
-    //TODO: Create the refineColumnsByPosition method.
+    public Map<Integer, ArrayList<String>> createTableMap(){
+        Map<Integer, ArrayList<String>> tableMap = new HashMap<Integer, ArrayList<String>>();
+
+        //System.out.println(startOfData);
+
+        int counter = 0;
+        String[] positions;
+        while(counter < 10000){
+            ArrayList<String> pixelContent = new ArrayList<String>();
+            for(Element span : spans){
+                String pos = span.attr("title");
+                positions = pos.split("\\s+");
+                int x1 = Integer.parseInt(positions[1]);
+                int x2 = Integer.parseInt(positions[3]);
+                int y1 = Integer.parseInt(positions[2]);
+                if(counter >= x1 && counter <= x2 && y1>startOfData){
+                    //System.out.println(span.text());
+                    pixelContent.add(span.text());
+                }
+                else if(pixelContent.isEmpty()){
+                    //tableMap.put(counter, emptyList);
+                }
+            }
+            tableMap.put(counter, pixelContent);
+            counter++;
+        }
+        //System.out.println(tableMap.get(600) + " should not be empty.");
+        this.tableMap = tableMap;
+        return tableMap;
+    }
+
+    public ArrayList<Integer> checkMapForX2Columns(){
+        ArrayList<ArrayList<String>> cont = new ArrayList<ArrayList<String>>();
+        ArrayList<String> col = new ArrayList<String>();
+        ArrayList<Integer> X2Col = new ArrayList<Integer>();
+        ArrayList<Integer> X1Col = new ArrayList<Integer>();
+
+        int cols = 0;
+        for(int x = 0; x<tableMap.size();x++){
+            boolean startOfTable = false;
+
+            ArrayList<String> currentPixel = tableMap.get(x);
+            //System.out.println(tableMap.get(x).isEmpty());
+
+            if(!currentPixel.isEmpty()&&!startOfTable){
+                startOfTable = true;
+                X1Col.add(x);
+                //System.out.println(tableMap.get(x));
+                //col = new ArrayList<String>();
+                //col.add(tableMap.get(x));
+            }
+            if(!currentPixel.isEmpty()&&startOfTable){
+                col.add(tableMap.get(x).toString());
+                //System.out.println(col);
+                //startOfTable = false;
+            }
+            if(currentPixel.isEmpty()&&!col.isEmpty()){
+                //System.out.println();
+                cont.add(col);
+                col = new ArrayList<String>();
+                X2Col.add(x);
+                startOfTable = false;
+            }
+        }
+        //System.out.println(cont.get(0));
+        //System.out.println(cont.get(1));
+        //System.out.println(cont.get(2));
+        //System.out.println(X1Col.get(0) + " " + X2Col.get(0));
+        this.X2ColumnBoundaries = X2Col;
+        this.X1ColumnBoundaries = X1Col;
+        return X2Col;
+    }
+    /*
+    * This method creates the columns and puts them in the ArrayList.
+    * NOTE that this method only works if the columns have already been created and run trough the refinement methods.
+    */
+    /*public ArrayList<Column> reCreateColumns(){
+        ArrayList<Column> columns = new ArrayList<Column>();
+        for(int x = 0; x<X1ColumnBoundaries.size();x++){
+            double X1 = 0.0;
+            double X2 = 0.0;
+            double Y1 = 0.0;
+            double Y2 = 0.0;
+            String header = "";
+            header = location.get(0);
+            X1 = X1ColumnBoundaries.get(x);
+            X2 = X2ColumnBoundaries.get(x);
+            Y1 = startOfData;
+            Y2 = Double.parseDouble(location.get(4));
+            if(Y1 < startOfData){
+                this.startOfData = Y1;
+            }
+            Column col = new Column(header, X1, X2, Y1, Y2, spans, Pheaders);
+            columns.add(col);
+        }
+        this.columns = columns;
+        return columns;
+    }
+         */
 }

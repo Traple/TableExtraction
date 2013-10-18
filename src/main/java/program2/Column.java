@@ -32,6 +32,9 @@ import java.util.Collection;
  * In order to do so it needs:
  *
  */
+
+    //TODO: If it is possible, fix the purificaton, step bugg in 33-3.
+
 public class Column {
     private double X1;                                     //The locations of the start of the header.
     private double X2;
