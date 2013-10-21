@@ -92,7 +92,7 @@ public class Page {
             }
             }
             catch(StringIndexOutOfBoundsException e){
-
+                //e.printStackTrace();
             }
             if (foundATable){
                 tableSpans.add(span);

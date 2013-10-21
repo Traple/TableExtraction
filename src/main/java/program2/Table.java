@@ -8,7 +8,6 @@ import org.jsoup.select.Elements;
 import program.HeaderMethods;
 import program.Purification;
 
-import javax.swing.plaf.synth.ColorType;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -49,6 +48,7 @@ public class Table {
     private Map <Integer, ArrayList<String>> tableMap;
     private ArrayList<Integer> X2ColumnBoundaries = new ArrayList<Integer>();
     private ArrayList<Integer> X1ColumnBoundaries = new ArrayList<Integer>();
+    private int endOfTable;
 
     public Table(int LDDistance, Elements spans) throws IOException {
         System.out.println("Table Created.");
@@ -93,10 +93,15 @@ public class Table {
         createColumns();
         refineColumnsByPattern();
         System.out.println("Now we recreate the table using the positions. This might add more data!");
-        createTableMap();                                               //restructure using the tablemap.
+
         Scores score = new Scores(spans);
-        score.score();
-        //checkMapForX2Columns();
+        this.endOfTable = score.findEndOfTable();
+        System.out.println("End of the table at: " + endOfTable);
+        createTableMap(endOfTable);                                               //restructure using the tablemap.
+
+        checkMapForX2Columns();
+
+
         //reFindColumns();
         printNewColumns();
         //refineColumnsByPattern();
@@ -191,6 +196,7 @@ public class Table {
                         X1ofCurrentWord = positions[1];
                     }}
                 catch(NullPointerException e){
+                    e.printStackTrace();
                     //do nothing.
                 }
             }
@@ -243,7 +249,7 @@ public class Table {
         return cols;
     }
 
-    public Map<Integer, ArrayList<String>> createTableMap(){
+    public Map<Integer, ArrayList<String>> createTableMap(int endOfTable){
         Map<Integer, ArrayList<String>> tableMap = new HashMap<Integer, ArrayList<String>>();
         //System.out.println(startOfData +" "+" is the start of all data." );
         int counter = 0;
@@ -256,7 +262,8 @@ public class Table {
                 int x1 = Integer.parseInt(positions[1]);
                 int x2 = Integer.parseInt(positions[3]);
                 int y1 = Integer.parseInt(positions[2]);
-                if(counter >= x1 && counter <= x2 && y1>=startOfData){
+                int y2 = Integer.parseInt(positions[4]);
+                if(counter >= x1 && counter <= x2 && y1>=startOfData &&y2<endOfTable){
                     //System.out.println(span.text());
                     pixelContent.add(span.text());
                 }
@@ -272,7 +279,15 @@ public class Table {
         return tableMap;
     }
 
+    //TODO: implementation of the score refining method to find the end of the table.
+
+    public ArrayList<String> refineByScore(ArrayList<String> matrix){
+
+        return matrix;
+    }
+
     //Dont use this method just jet. We need to fix the columnscoring first.
+    //TODO: What this method needs is the end of the table!!! For this it also needs to know the end of the row!!!
     public ArrayList<Integer> checkMapForX2Columns(){
         ArrayList<ArrayList<String>> cont = new ArrayList<ArrayList<String>>();
         ArrayList<String> col = new ArrayList<String>();
@@ -284,12 +299,14 @@ public class Table {
             boolean startOfTable = false;
 
             ArrayList<String> currentPixel = tableMap.get(x);
-            //System.out.println(tableMap.get(x).isEmpty());
+
+            //System.out.println("Im reading a table : " + startOfTable + " Im also have data : " + !col.isEmpty() + " My current Pixel is : " + x + " contains: " +tableMap.get(x));
 
             if(!currentPixel.isEmpty()&&!startOfTable&&col.isEmpty()){
                 startOfTable = true;
                 X1Col.add(x);
 
+                System.out.println("Begin of Column: "+X1Col);
                 //System.out.println(tableMap.get(x));
                 //col = new ArrayList<String>();
                 //col.add(tableMap.get(x));
@@ -297,20 +314,21 @@ public class Table {
             if(!currentPixel.isEmpty()&&startOfTable){
                 col.add(tableMap.get(x).toString());
                 //System.out.println(col);
-                //startOfTable = false;
+                startOfTable = false;
             }
             if(currentPixel.isEmpty()&&!col.isEmpty()){
-                //System.out.println();
                 cont.add(col);
                 col = new ArrayList<String>();
                 X2Col.add(x);
+                System.out.println("End of Column: " + X2Col);
                 startOfTable = false;
             }
         }
         //System.out.println(cont.get(0));
         //System.out.println(cont.get(1));
         //System.out.println(cont.get(2));
-        System.out.println(X2Col);
+        //System.out.println(X1Col);
+        //System.out.println(X2Col);
         this.X2ColumnBoundaries = X2Col;
         this.X1ColumnBoundaries = X1Col;
         return X2Col;
@@ -386,7 +404,7 @@ public class Table {
     * This method creates the columns and puts them in the ArrayList.
     * NOTE that this method only works if the columns have already been created and run trough the refinement methods.
     */
-
+    //TODO: Make the void method use the end of table integer.
     public void printNewColumns(){
         String[] positions;
         for(int x= 0;x<X1ColumnBoundaries.size();x++){
@@ -395,7 +413,7 @@ public class Table {
                 String pos = span.attr("title");
                 positions = pos.split("\\s+");
                 //System.out.println(lowestY + " " + positions[2]);
-                if(Integer.parseInt(positions[1]) > X1ColumnBoundaries.get(x) && Integer.parseInt(positions[3]) <=X2ColumnBoundaries.get(x)&&Integer.parseInt(positions[2])>lowestY){
+                if(Integer.parseInt(positions[1]) > X1ColumnBoundaries.get(x) && Integer.parseInt(positions[3]) <=X2ColumnBoundaries.get(x)&&Integer.parseInt(positions[2])>lowestY&&Integer.parseInt(positions[4])<endOfTable){
                     System.out.println("I got: " + span.text());
                 }
 
