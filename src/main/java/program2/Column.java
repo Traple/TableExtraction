@@ -39,7 +39,7 @@ public class Column {
     private double X1;                                     //The locations of the start of the header.
     private double X2;
     private double Y1;
-    private double Y2;
+    //private double Y2;
     private String header;
     private CommonMethods CM;
     private Elements spans;
@@ -47,11 +47,11 @@ public class Column {
     private String headerType;
     private ArrayList<Cell> cells;
 
-    public Column(String header, double X1, double X2, double Y1, double Y2, Elements spans, Collection<Purification> Pheaders){
+    public Column(String header, double X1, double X2, double Y1, Elements spans, Collection<Purification> Pheaders){
         this.X1 = X1;
         this.X2 = X2;
         this.Y1 = Y1;
-        this.Y2 = Y2;
+        //this.Y2 = Y2;
         this.header = header;
         this.CM = new CommonMethods();
         this.spans = spans;
@@ -61,8 +61,6 @@ public class Column {
         findHeaderTypes();
         fillCells(columnChecker());
         evaluateColumn();
-
-
     }
 
     /*
@@ -89,7 +87,7 @@ public class Column {
                     doupje2 = (I2.doubleValue());
                 }
             }
-            if(doupje>= X1 && doupje <=(X1+CM.calcDistance(X1, X2))&&doupje2 >= Y2){
+            if(doupje>= X1 && doupje <=(X1+CM.calcDistance(X1, X2))){
                 ArrayList<String> columnContentPositions = new ArrayList<String>();
                 ArrayList<String> columnContentString = new ArrayList<String>();
                 columnContentString.add(span.text());
@@ -112,7 +110,6 @@ public class Column {
      * NOTE: This does NOT change anything in the SPANS. ONLY in the ArrayList!!!
      * AFTER this method is being run, the Array and the OCR-HTML do no longer match!!!!
      */
-
     public ArrayList<ArrayList<String>> mergeWordsOnSameLine(ArrayList<ArrayList<String>> columnContent){
         int lastY1 = 0;
         int loopLength = columnContent.size();
@@ -184,12 +181,15 @@ public class Column {
     public ArrayList<String> evaluateColumn(){
         ArrayList<String> types = new ArrayList<String>();
         String type = "";
+        System.out.println(header);
         for(Cell cell : cells){
             type = cell.getType();
+            System.out.print(cell.getContent() +", ");
             if(type.equals(headerType)){
                 types.add(type);
             }
         }
+        System.out.println();
         return types;
     }
 

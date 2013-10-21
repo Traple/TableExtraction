@@ -19,7 +19,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         //The following variables should be changed to commandline parameters in the future:
-        String fileLocation = "C:\\Users\\Sander van Boom\\Documents\\School\\tables\\OCR\\OCR\\33-3.html";
+        String fileLocation = "C:\\Users\\Sander van Boom\\Documents\\School\\tables\\OCR\\OCR\\36-3.html";
         int MaxLevenshteinDistance = 0;
         Page page = new Page(fileLocation, MaxLevenshteinDistance);
         page.createTables();

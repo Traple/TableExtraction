@@ -92,8 +92,15 @@ public class Table {
         findColumns();
         createColumns();
         refineColumnsByPattern();
+        System.out.println("Now we recreate the table using the positions. This might add more data!");
         createTableMap();                                               //restructure using the tablemap.
-        this.X2ColumnBoundaries = checkMapForX2Columns();
+        Scores score = new Scores(spans);
+        score.score();
+        //checkMapForX2Columns();
+        //reFindColumns();
+        printNewColumns();
+        //refineColumnsByPattern();
+
     }
 
     //In case you have your own TableLocations (note that it is stored in: [keyword, X1, X2, Y1, Y2] You can set the variable here.
@@ -127,7 +134,6 @@ public class Table {
                 if(word.contains(header)){
                     ArrayList<String> locationsOfHeader = new ArrayList<String>();
                     locationsOfHeader.add(header);
-
                     if(Double.parseDouble(positions[2]) > lowestY){
                         //System.out.println("FOUND"+word);
                         locationsOfHeader.add(X1ofCurrentWord);
@@ -213,7 +219,7 @@ public class Table {
             if(Y1 < startOfData){
                 this.startOfData = Y1;
             }
-            Column col = new Column(header, X1, X2, Y1, Y2, spans, Pheaders);
+            Column col = new Column(header, X1, X2, Y1, spans, Pheaders);
             columns.add(col);
         }
         this.columns = columns;
@@ -239,9 +245,7 @@ public class Table {
 
     public Map<Integer, ArrayList<String>> createTableMap(){
         Map<Integer, ArrayList<String>> tableMap = new HashMap<Integer, ArrayList<String>>();
-
-        //System.out.println(startOfData);
-
+        //System.out.println(startOfData +" "+" is the start of all data." );
         int counter = 0;
         String[] positions;
         while(counter < 10000){
@@ -252,7 +256,7 @@ public class Table {
                 int x1 = Integer.parseInt(positions[1]);
                 int x2 = Integer.parseInt(positions[3]);
                 int y1 = Integer.parseInt(positions[2]);
-                if(counter >= x1 && counter <= x2 && y1>startOfData){
+                if(counter >= x1 && counter <= x2 && y1>=startOfData){
                     //System.out.println(span.text());
                     pixelContent.add(span.text());
                 }
@@ -268,6 +272,7 @@ public class Table {
         return tableMap;
     }
 
+    //Dont use this method just jet. We need to fix the columnscoring first.
     public ArrayList<Integer> checkMapForX2Columns(){
         ArrayList<ArrayList<String>> cont = new ArrayList<ArrayList<String>>();
         ArrayList<String> col = new ArrayList<String>();
@@ -281,9 +286,10 @@ public class Table {
             ArrayList<String> currentPixel = tableMap.get(x);
             //System.out.println(tableMap.get(x).isEmpty());
 
-            if(!currentPixel.isEmpty()&&!startOfTable){
+            if(!currentPixel.isEmpty()&&!startOfTable&&col.isEmpty()){
                 startOfTable = true;
                 X1Col.add(x);
+
                 //System.out.println(tableMap.get(x));
                 //col = new ArrayList<String>();
                 //col.add(tableMap.get(x));
@@ -304,36 +310,97 @@ public class Table {
         //System.out.println(cont.get(0));
         //System.out.println(cont.get(1));
         //System.out.println(cont.get(2));
-        //System.out.println(X1Col.get(0) + " " + X2Col.get(0));
+        System.out.println(X2Col);
         this.X2ColumnBoundaries = X2Col;
         this.X1ColumnBoundaries = X1Col;
         return X2Col;
     }
     /*
+     * After checking the maps you want to refind the columns
+     * This is required for creating the column objects.
+     */
+    public ArrayList<ArrayList<String>> reFindColumns() throws IOException {
+        String[] positions = null;
+        int distance =0;
+        ArrayList<ArrayList<String>> locationsOfHeaders = new ArrayList<ArrayList<String>>();
+
+        //System.out.println(X1ColumnBoundaries.size());
+        //System.out.println(X2ColumnBoundaries.size());
+
+        int counter = 0;
+        for(int x : X1ColumnBoundaries){
+            for(Element span : spans){
+                String word = span.text();
+                String pos = span.attr("title");
+                positions = pos.split("\\s+");
+
+                if(Integer.parseInt(positions[1]) >= x-1 &&Integer.parseInt(positions[3]) <= X2ColumnBoundaries.get(counter)-1 ){
+
+                    //System.out.println(span.text());
+
+                X1ofCurrentWord = positions[1];
+
+                word = findMergedHeaders(Integer.parseInt(span.attr("ID").replaceAll("\\D", "")), spans, word);
+                for(String header:purificationHeaders){
+                    if(word.contains(header)){
+                        ArrayList<String> locationsOfHeader = new ArrayList<String>();
+                        locationsOfHeader.add(header);
+
+                        if(Double.parseDouble(positions[2]) >startOfData){
+                            //System.out.println("FOUND"+word);
+                            locationsOfHeader.add(X1ofCurrentWord);
+                            locationsOfHeader.add(positions[3]);
+                            locationsOfHeader.add(positions[2]);
+                            locationsOfHeader.add(positions[4]);
+                            locationsOfHeaders.add(locationsOfHeader);
+                            break;
+                        }
+                    }
+                    else {
+                        distance = LD.computeLevenshteinDistance(word, header);
+                        if(distance < LDDistance){
+                            //System.out.println("FOUND"+word);
+                            ArrayList<String> locationsOfHeader = new ArrayList<String>();
+                            locationsOfHeader.add(header);
+
+                            if(Double.parseDouble(positions[2]) > startOfData){
+                                locationsOfHeader.add(X1ofCurrentWord);
+                                locationsOfHeader.add(positions[3]);
+                                locationsOfHeader.add(positions[2]);
+                                locationsOfHeader.add(positions[4]);
+                                locationsOfHeaders.add(locationsOfHeader);
+                            }
+                        }
+                    }
+            }   }
+
+        }
+        counter++;
+        }
+        //Now we have a list of the location of Headers. The next step is to use the information to create objects.
+        this.locationsOfHeaders = locationsOfHeaders;
+        return locationsOfHeaders;
+    }
+
+    /*
     * This method creates the columns and puts them in the ArrayList.
     * NOTE that this method only works if the columns have already been created and run trough the refinement methods.
     */
-    /*public ArrayList<Column> reCreateColumns(){
-        ArrayList<Column> columns = new ArrayList<Column>();
-        for(int x = 0; x<X1ColumnBoundaries.size();x++){
-            double X1 = 0.0;
-            double X2 = 0.0;
-            double Y1 = 0.0;
-            double Y2 = 0.0;
-            String header = "";
-            header = location.get(0);
-            X1 = X1ColumnBoundaries.get(x);
-            X2 = X2ColumnBoundaries.get(x);
-            Y1 = startOfData;
-            Y2 = Double.parseDouble(location.get(4));
-            if(Y1 < startOfData){
-                this.startOfData = Y1;
+
+    public void printNewColumns(){
+        String[] positions;
+        for(int x= 0;x<X1ColumnBoundaries.size();x++){
+            System.out.println(X1ColumnBoundaries.get(x) +" " + X2ColumnBoundaries.get(x));
+            for(Element span : spans){
+                String pos = span.attr("title");
+                positions = pos.split("\\s+");
+                //System.out.println(lowestY + " " + positions[2]);
+                if(Integer.parseInt(positions[1]) > X1ColumnBoundaries.get(x) && Integer.parseInt(positions[3]) <=X2ColumnBoundaries.get(x)&&Integer.parseInt(positions[2])>lowestY){
+                    System.out.println("I got: " + span.text());
+                }
+
             }
-            Column col = new Column(header, X1, X2, Y1, Y2, spans, Pheaders);
-            columns.add(col);
+            System.out.println("NEW COLUMN!!!");
         }
-        this.columns = columns;
-        return columns;
     }
-         */
 }
