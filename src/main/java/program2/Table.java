@@ -49,6 +49,7 @@ public class Table {
     private ArrayList<Integer> X2ColumnBoundaries = new ArrayList<Integer>();
     private ArrayList<Integer> X1ColumnBoundaries = new ArrayList<Integer>();
     private int endOfTable;
+    private int beginOfTable;
 
     public Table(int LDDistance, Elements spans) throws IOException {
         System.out.println("Table Created.");
@@ -96,11 +97,13 @@ public class Table {
 
         Scores score = new Scores(spans);
         this.endOfTable = score.findEndOfTable();
+        this.beginOfTable = score.findBeginOfTable();
+
+        System.out.println("Begin of the table at " + beginOfTable);
         System.out.println("End of the table at: " + endOfTable);
         createTableMap(endOfTable);                                               //restructure using the tablemap.
 
         checkMapForX2Columns();
-
 
         //reFindColumns();
         printNewColumns();
@@ -196,7 +199,7 @@ public class Table {
                         X1ofCurrentWord = positions[1];
                     }}
                 catch(NullPointerException e){
-                    e.printStackTrace();
+                    //e.printStackTrace();
                     //do nothing.
                 }
             }
@@ -243,7 +246,7 @@ public class Table {
         ArrayList<String> colTypes = new ArrayList<String>();
         for(Column column : columns){
             colTypes = column.evaluateColumn();
-            System.out.println(colTypes);
+           // System.out.println(colTypes);
         }
 
         return cols;
@@ -277,13 +280,6 @@ public class Table {
         //System.out.println(tableMap.get(600) + " should not be empty.");
         this.tableMap = tableMap;
         return tableMap;
-    }
-
-    //TODO: implementation of the score refining method to find the end of the table.
-
-    public ArrayList<String> refineByScore(ArrayList<String> matrix){
-
-        return matrix;
     }
 
     //Dont use this method just jet. We need to fix the columnscoring first.
@@ -404,7 +400,6 @@ public class Table {
     * This method creates the columns and puts them in the ArrayList.
     * NOTE that this method only works if the columns have already been created and run trough the refinement methods.
     */
-    //TODO: Make the void method use the end of table integer.
     public void printNewColumns(){
         String[] positions;
         for(int x= 0;x<X1ColumnBoundaries.size();x++){
@@ -413,10 +408,9 @@ public class Table {
                 String pos = span.attr("title");
                 positions = pos.split("\\s+");
                 //System.out.println(lowestY + " " + positions[2]);
-                if(Integer.parseInt(positions[1]) > X1ColumnBoundaries.get(x) && Integer.parseInt(positions[3]) <=X2ColumnBoundaries.get(x)&&Integer.parseInt(positions[2])>lowestY&&Integer.parseInt(positions[4])<endOfTable){
+                if(Integer.parseInt(positions[1]) >= X1ColumnBoundaries.get(x) && Integer.parseInt(positions[3]) <=X2ColumnBoundaries.get(x)&&Integer.parseInt(positions[2])>=startOfData&&Integer.parseInt(positions[4])<=endOfTable){
                     System.out.println("I got: " + span.text());
                 }
-
             }
             System.out.println("NEW COLUMN!!!");
         }
