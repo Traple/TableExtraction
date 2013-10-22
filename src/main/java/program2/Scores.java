@@ -67,7 +67,6 @@ public class Scores {
     }
 
     //TODO: findEndOfTable should be influenced by many more scores except for just the avg distance between words.
-    //TODO: Create parameter for the distance between words 200.
     public int findEndOfTable(){
         boolean readingData = false;
         int counter = 0;

@@ -1,6 +1,4 @@
-package program2;
-
-import program.LevenshteinDistance;
+package program3;
 
 import java.io.IOException;
 
@@ -16,17 +14,14 @@ import java.io.IOException;
  * The main class parses the pages so the tables can be extracted.
  */
 
- //TODO: Find a name for this software!
+//TODO: Find a name for this software!
 
 public class Main {
     public static void main(String[] args) throws IOException {
-
         //The following variables should be changed to commandline parameters in the future:
         String fileLocation = "C:\\Users\\Sander van Boom\\Documents\\School\\tables\\OCR\\OCR\\36-3.html";
-        int MaxLevenshteinDistance = 0;
-        Page page = new Page(fileLocation, MaxLevenshteinDistance);
+        Page page = new Page(fileLocation);
         page.createTables();
 
-        //System.out.println("The results are here. You are a horrible person. That's fun, we weren't even testing for that!");
     }
 }

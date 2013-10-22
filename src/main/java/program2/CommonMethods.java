@@ -42,6 +42,7 @@ public class CommonMethods {
         return matcher.matches();
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public int lowestNumber(int number1, int number2){
         int lowestNumber = number1;
         if(number1 > number2){
@@ -52,6 +53,8 @@ public class CommonMethods {
         }
         return lowestNumber;
     }
+
+    @SuppressWarnings("UnusedDeclaration")
     public double lowestNumber(double number1, double number2){
         double lowestNumber = number1;
         if(number1 > number2){
