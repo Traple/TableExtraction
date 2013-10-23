@@ -14,12 +14,10 @@ import java.io.IOException;
  * The main class parses the pages so the tables can be extracted.
  */
 
-//TODO: Find a name for this software!
-
 public class Main {
     public static void main(String[] args) throws IOException {
         //The following variables should be changed to commandline parameters in the future:
-        String fileLocation = "C:\\Users\\Sander van Boom\\Documents\\School\\tables\\OCR\\OCR\\36-3.html";
+        String fileLocation = "C:\\Users\\Sander van Boom\\Documents\\School\\tables\\OCR\\OCR\\32-1.html";
         Page page = new Page(fileLocation);
         page.createTables();
 

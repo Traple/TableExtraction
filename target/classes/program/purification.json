@@ -1,0 +1,38 @@
+[
+	{
+	"name" : "Purification step",
+	"synonyms" : ["Puriﬁcation step", "Step", "Purification step"],
+	"types" : ["S"],
+	"units" : []
+	},
+	{
+	"name" : "yield",
+	"synonyms" : ["yield", "Yield"],
+	"types" : ["N"],
+	"units" : ["(%)", "%"]
+	},
+	{
+	"name" : "Total activity",
+	"synonyms" : ["Total activity"],
+	"types" : ["N"],
+	"units" : ["U"]
+	},
+	{
+	"name" : "Total protein",
+	"synonyms" : ["Total protein"],
+	"types" : ["N"],
+	"units" : ["(mg)", "mg"]
+	},
+	{
+	"name" : "Specific activity",
+	"synonyms" : ["Specific Activity" ,"Speciﬁc activity", "Specific activity"],
+	"types" : ["N"],
+	"units" : ["(U/mg)", "U/mg"]
+	},
+	{
+	"name" : "Fold",
+	"synonyms" : ["Fold", "fold"],
+	"types" : ["N"],
+	"units" : []
+	}
+]
