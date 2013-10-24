@@ -1,10 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cc3129f9-2281-45ab-81bb-08e581b5b4f8" name="Default" comment="" />
+    <list default="true" id="cc3129f9-2281-45ab-81bb-08e581b5b4f8" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/program4/Column.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/program4/CommonMethods.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/program4/ImageMagic.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/program4/Main.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_logging_commons_logging_1_1_1.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_pdfbox_fontbox_1_6_0.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_pdfbox_jempbox_1_6_0.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_pdfbox_pdfbox_1_6_0.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_bouncycastle_bcmail_jdk15_1_44.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_bouncycastle_bcprov_jdk15_1_44.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/program4/PDFDownloader.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/program4/Page.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/program4/REXArticleExtractor.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/program4/Scores.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/program4/Table.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/program4/Tesseract.java" />
+      <change type="MODIFICATION" beforePath="C:\Users\Sander van Boom\IdeaProjects\TableExtraction\src\main\java\program3\Main.java" afterPath="$PROJECT_DIR$/src/main/java/program3/Main.java" />
+      <change type="MODIFICATION" beforePath="C:\Users\Sander van Boom\IdeaProjects\TableExtraction\src\main\java\program3\Scores.java" afterPath="$PROJECT_DIR$/src/main/java/program3/Scores.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/TableExtraction.iml" afterPath="$PROJECT_DIR$/TableExtraction.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+    </list>
     <ignored path="TableExtraction.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Main.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1382368297589" ignored="false" />
+    <file path="/Main.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1382623280074" ignored="false" />
     <file path="/pom.xml" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1381315625430" ignored="false" />
     <file path="/Dummy.txt" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1382544278705" ignored="false" />
     <file path="/HeaderMethods.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1381334666646" ignored="false" />
@@ -38,6 +60,7 @@
     <file path="$PROJECT_DIR$/../random/randomJava/.idea/workspace.xml" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1382052979110" ignored="false" />
     <file path="/Scores.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1382542327869" ignored="false" />
     <file path="/Header.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1382523411863" ignored="false" />
+    <file path="/PDFDownloader.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1382624224888" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,79 +122,71 @@
   <component name="FileEditorManager">
     <leaf>
       <file leaf-file-name="Main.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/program3/Main.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/program4/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="19" column="98" selection-start="559" selection-end="559" vertical-scroll-proportion="0.6828753">
+            <state line="31" column="137" selection-start="1508" selection-end="1508" vertical-scroll-proportion="0.5733333">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PDFDownloader.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/program4/PDFDownloader.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="15" column="45" selection-start="382" selection-end="382" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="REXArticleExtractor.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/program4/REXArticleExtractor.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="30" column="36" selection-start="986" selection-end="986" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#1437#1464#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pom.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="65" column="21" selection-start="2328" selection-end="2328" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ImageMagic.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/program4/ImageMagic.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="10" column="13" selection-start="193" selection-end="193" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Tesseract.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/program4/Tesseract.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="10" column="22" selection-start="202" selection-end="202" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="Page.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/program3/Page.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/program4/Page.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="49" column="139" selection-start="1858" selection-end="1858" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Table.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/program3/Table.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="132" column="0" selection-start="5145" selection-end="5145" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#540#549#0" expanded="true" />
-                <element signature="e#618#627#0" expanded="true" />
-                <element signature="e#2121#2149#0" expanded="true" />
-                <element signature="e#2298#2306#0" expanded="true" />
-                <element signature="e#3246#3254#0" expanded="true" />
-                <element signature="e#3306#3315#0" expanded="true" />
-                <element signature="e#3367#3376#0" expanded="true" />
-                <element signature="e#4828#4848#0" expanded="true" />
-                <element signature="e#4995#5004#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Scores.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/program3/Scores.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="25" column="33" selection-start="736" selection-end="736" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Column.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/program3/Column.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="21" column="36" selection-start="761" selection-end="761" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#2160#2169#0" expanded="true" />
-                <element signature="e#2785#2794#0" expanded="true" />
-                <element signature="e#4157#4166#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CommonMethods.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/program3/CommonMethods.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="17" column="113" selection-start="444" selection-end="444" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#450#488#0" expanded="true" />
-                <element signature="e#974#1012#0" expanded="true" />
-              </folding>
+            <state line="23" column="13" selection-start="622" selection-end="622" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -201,12 +216,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/program2/Column.java" />
-        <option value="$PROJECT_DIR$/src/main/java/program2/Page.java" />
-        <option value="$PROJECT_DIR$/src/main/java/program2/Table.java" />
-        <option value="$PROJECT_DIR$/src/main/java/program2/Scores.java" />
-        <option value="$PROJECT_DIR$/src/main/java/program2/CommonMethods.java" />
-        <option value="$PROJECT_DIR$/src/main/java/program2/Main.java" />
         <option value="$PROJECT_DIR$/src/main/java/Program3/Table.java" />
         <option value="$PROJECT_DIR$/src/main/java/Program3/Page.java" />
         <option value="$PROJECT_DIR$/src/main/java/Program3/Main.java" />
@@ -216,7 +225,13 @@
         <option value="$PROJECT_DIR$/src/main/java/program3/Page.java" />
         <option value="$PROJECT_DIR$/src/main/java/program3/Column.java" />
         <option value="$PROJECT_DIR$/src/main/java/program3/Scores.java" />
+        <option value="$PROJECT_DIR$/src/main/java/program4/ImageMagic.java" />
         <option value="$PROJECT_DIR$/src/main/java/program3/Main.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/program4/REXArticleExtractor.java" />
+        <option value="$PROJECT_DIR$/src/main/java/program4/DownloadPDF.java" />
+        <option value="$PROJECT_DIR$/src/main/java/program4/PDFDownloader.java" />
+        <option value="$PROJECT_DIR$/src/main/java/program4/Main.java" />
       </list>
     </option>
   </component>
@@ -403,7 +418,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="program3" />
+              <option name="myItemId" value="program4" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -434,6 +449,7 @@
       <recent name="program2" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Sander van Boom\IdeaProjects\TableExtraction\src\main\java\program4" />
       <recent name="C:\Users\Sander van Boom\IdeaProjects\TableExtraction\src\main\java\program2" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
@@ -534,7 +550,7 @@
       <method />
     </configuration>
     <configuration default="false" name="Main" type="Application" factoryName="Application" temporary="true">
-      <option name="MAIN_CLASS_NAME" value="program3.Main" />
+      <option name="MAIN_CLASS_NAME" value="program4.Main" />
       <option name="VM_PARAMETERS" />
       <option name="PROGRAM_PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -649,7 +665,7 @@
         <item index="0" class="java.lang.String" itemvalue="Application.Main" />
         <item index="1" class="java.lang.String" itemvalue="Application.Main" />
         <item index="2" class="java.lang.String" itemvalue="Application.Main" />
-        <item index="3" class="java.lang.String" itemvalue="JUnit.RestructureUsingOCRTest" />
+        <item index="3" class="java.lang.String" itemvalue="Application.Main" />
         <item index="4" class="java.lang.String" itemvalue="JUnit.RestructureUsingOCRTest" />
       </list>
     </recent_temporary>
@@ -789,27 +805,27 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.16552901" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16552901" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32935154" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38566554" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32935154" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14846416" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3282313" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.14846416" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3282313" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.6587031" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32954547" sideWeight="0.9232082" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20151515" sideWeight="0.85153586" order="1" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6023891" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20151515" sideWeight="0.834471" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26450512" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" x="92" y="92" width="1182" height="544" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.56143343" order="4" side_tool="false" content_ui="combo" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -898,57 +914,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/program2/Scores.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="68" column="115" selection-start="2358" selection-end="2358" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#933#942#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/program2/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="100" selection-start="640" selection-end="640" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/program/purification.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="40" selection-start="638" selection-end="638" vertical-scroll-proportion="1.5768116">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/program2/Page.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="94" column="18" selection-start="3349" selection-end="3349" vertical-scroll-proportion="2.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/program2/Table.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="283" column="0" selection-start="11747" selection-end="11747" vertical-scroll-proportion="9.611111">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/program2/Cell.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="34" column="19" selection-start="847" selection-end="848" vertical-scroll-proportion="0.62203026">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/program2/Column.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="79" column="21" selection-start="2427" selection-end="2427" vertical-scroll-proportion="-5.417197">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/program/Main.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="191" column="82" selection-start="10599" selection-end="10599" vertical-scroll-proportion="0.0">
@@ -963,20 +928,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/program3/CommonMethods.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/program3/Scores.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="113" selection-start="444" selection-end="444" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#450#488#0" expanded="true" />
-            <element signature="e#974#1012#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/program3/Page.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="49" column="139" selection-start="1858" selection-end="1858" vertical-scroll-proportion="0.0">
+        <state line="25" column="33" selection-start="736" selection-end="736" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1001,9 +955,25 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/program3/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="27" selection-start="312" selection-end="312" vertical-scroll-proportion="0.6641975">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/program3/Page.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="49" column="139" selection-start="1858" selection-end="1858" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/program3/Column.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="36" selection-start="761" selection-end="761" vertical-scroll-proportion="0.0">
+        <state line="21" column="36" selection-start="761" selection-end="761" vertical-scroll-proportion="0.39030612">
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#2160#2169#0" expanded="true" />
@@ -1013,19 +983,77 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/program3/Scores.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/program3/CommonMethods.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="33" selection-start="736" selection-end="736" vertical-scroll-proportion="0.0">
+        <state line="17" column="113" selection-start="444" selection-end="444" vertical-scroll-proportion="0.71358025">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#450#488#0" expanded="true" />
+            <element signature="e#974#1012#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/program4/Table.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="13" selection-start="441" selection-end="441" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/program4/Page.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="13" selection-start="622" selection-end="622" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/program4/Tesseract.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="22" selection-start="202" selection-end="202" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/program4/ImageMagic.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="10" column="13" selection-start="193" selection-end="193" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="65" column="21" selection-start="2328" selection-end="2328" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/program4/REXArticleExtractor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="30" column="36" selection-start="986" selection-end="986" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1437#1464#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/program4/PDFDownloader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="45" selection-start="382" selection-end="382" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/program3/Main.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/program4/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="98" selection-start="559" selection-end="559" vertical-scroll-proportion="0.6828753">
-          <folding />
+        <state line="31" column="137" selection-start="1508" selection-end="1508" vertical-scroll-proportion="0.5733333">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
