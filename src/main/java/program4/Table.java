@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /*
  * The table class contains methods and properties of the table.
@@ -16,7 +17,7 @@ import java.util.Map;
  */
 public class Table {
     private Elements spans;
-
+    public static Logger LOGGER = Logger.getLogger(Table.class.getName());
     private Map<Integer, ArrayList<String>> tableMap;
     private ArrayList<Integer> X2ColumnBoundaries = new ArrayList<Integer>();
     private ArrayList<Integer> X1ColumnBoundaries = new ArrayList<Integer>();
@@ -27,6 +28,7 @@ public class Table {
     public Table(Elements spans) throws IOException {
         System.out.println("Table Created.");
         String name = spans.get(0).text() + " " + spans.get(2).text() + " " + spans.get(3).text() + " " + spans.get(4).text() + " " + spans.get(5).text();
+        LOGGER.info("New Table. The title roughly starts with: "+ name);
         System.out.println("My name is: " + name);
 
         this.spans = spans;
@@ -37,6 +39,9 @@ public class Table {
         Scores score = new Scores(spans);
         this.endOfTable = score.findEndOfTable();
         this.beginOfTable = score.findBeginOfTable();
+
+        LOGGER.info("Begin of the table at " + beginOfTable);
+        LOGGER.info("End of the table at: " + endOfTable);
 
         System.out.println("Begin of the table at " + beginOfTable);
         System.out.println("End of the table at: " + endOfTable);
@@ -94,7 +99,7 @@ public class Table {
             if (!currentPixel.isEmpty() && !startOfTable && col.isEmpty()) {
                 startOfTable = true;
                 X1Col.add(x);
-
+                LOGGER.info("Begin of the Column: " + X1Col);
                 System.out.println("Begin of Column: " + X1Col);
             }
             if (!currentPixel.isEmpty() && startOfTable) {
@@ -104,6 +109,7 @@ public class Table {
             if (currentPixel.isEmpty() && !col.isEmpty()) {
                 col = new ArrayList<String>();
                 X2Col.add(x);
+                LOGGER.info("End of Column: " + X2Col);
                 System.out.println("End of Column: " + X2Col);
                 startOfTable = false;
             }

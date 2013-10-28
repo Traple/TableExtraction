@@ -23,7 +23,7 @@ public class Scores {
         this.CM = new CommonMethods();
         this.pottentialEndOFTables = new ArrayList<Integer>();
         this.pottentialBeginOFTables = new ArrayList<Integer>();
-        this.distanceConstant = 8;
+        this.distanceConstant = 2;
 
         System.out.println("AVG CharLength: " + findSpaceDistance());
         this.spaceDistance = findSpaceDistance();
@@ -72,7 +72,7 @@ public class Scores {
             if(distanceBetweenWordsInRow >=distanceTreshold){
                 readingData = true;
             }
-            else if(readingData&&distanceBetweenWordsInRow>0){
+            else if(readingData&&distanceBetweenWordsInRow>0&&counter>2){
                 //the end of the table!
                 return pottentialEndOFTables.get(counter-2);
             }
@@ -96,7 +96,7 @@ public class Scores {
                 //the end of the table!
                 return pottentialBeginOFTables.get(counter-2);
             }
-            else{
+            else if(counter>0){
                 return pottentialBeginOFTables.get(counter-1);
             }
             counter++;
@@ -129,5 +129,14 @@ public class Scores {
             }
         }
         return totalCharLength/spans.size();
+    }
+
+    /**
+     * This method will return the information of the scores. This can then be parsed to the logger.
+     * @return This software returns a string contain the scores and values from the scoring process.
+     */
+    public String getScoreInformation(){
+        String scoreInformation = "";
+        return scoreInformation;
     }
 }

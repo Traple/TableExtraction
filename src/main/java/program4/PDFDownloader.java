@@ -1,18 +1,11 @@
 package program4;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
 public class PDFDownloader {
-
-    private String PDFURL;
-    private String outputLocation;
-
     public PDFDownloader(String PDFURL, String outputLocation) throws IOException {
-        this.PDFURL = PDFURL;
-        this.outputLocation = outputLocation;
 
         URLConnection conn = new URL(PDFURL).openConnection();
         InputStream is = conn.getInputStream();

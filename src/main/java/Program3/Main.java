@@ -19,7 +19,7 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) throws IOException {
         //The following variables should be changed to commandline parameters in the future:
-        String fileLocation = "C:\\Users\\Sander van Boom\\Documents\\School\\tables\\OCR\\OCR\\36-3.html";
+        String fileLocation =  "C:\\Users\\Sander van Boom\\Documents\\School\\tables\\T.E.A. 0.4 test\\24089145-3.html";
 
         Page page = new Page(fileLocation);
         page.createTables();

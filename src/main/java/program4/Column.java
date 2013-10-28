@@ -3,8 +3,10 @@ package program4;
 import org.jsoup.nodes.Element;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class Column {
+    public static Logger LOGGER = Logger.getLogger(Column.class.getName());
     private ArrayList<Element> column;
     private ArrayList<Element> firstElementInEachRow;
     private double averageHeightOfWords;
@@ -24,6 +26,7 @@ public class Column {
         this.averageHeightOfWords = calculateAverageHeightOfWords();
         setAVGHeightThreshold();
 
+        LOGGER.info("The average Height of words is: " + averageHeightOfWords);
         System.out.println("The average Height of words is: " + averageHeightOfWords);
 
         setFirstElementInEachRow();
@@ -140,11 +143,13 @@ public class Column {
     public void printColumn(){
         System.out.print("My header is: " );
         for(Element cell: headerCells){
+            LOGGER.info("This column has header: " + cell.text());
             System.out.print(cell.text());
         }
         System.out.println();
         System.out.println("Which has the following values: ");
         for(Element cell: data){
+            LOGGER.info("Data: " + cell.text());
             System.out.print(cell.text() + ", ");
         }
         System.out.println();
