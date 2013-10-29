@@ -1,15 +1,14 @@
 package program4;
 
+import org.apache.commons.cli.*;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.logging.Level;
+import java.util.Arrays;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -30,7 +29,8 @@ public class Main {
 
     public static Logger LOGGER = Logger.getLogger(Main.class.getName());
 
-    public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, TransformerException {
+    public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, TransformerException, ParseException, InterruptedException {
+        System.out.println("Starting T.E.A. 0.4");
 
         System.setProperty("java.util.logging.config.file", "/program4/log.properties");
         LogManager logMan=LogManager.getLogManager();
@@ -39,20 +39,68 @@ public class Main {
 
         LOGGER.info("Starting T.E.A. 0.4");
         LOGGER.info("Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm. But if you want, you can call me Bob.");
+        /*
+        CommandLineParser parser = new PosixParser();
+        Options options = new Options();
 
-        //TODO: Create the commandline arguments.
-        //The following variables should be changed to commandline parameters in the future:
-        //String fileLocation = "C:\\Users\\Sander van Boom\\Documents\\School\\tables\\OCR\\OCR\\36-3.html";
+        Option help = new Option("H", "Help",false ,"This is the help file of TEA.");
+        Option optionPubmedIDs    = OptionBuilder.withArgName( "classname" )
+                .hasArgs(2)
+                .withValueSeparator()
+                .withDescription( "File with PubmedID's." )
+                .create( "P" );
+        Option optionWorkspace    = OptionBuilder.withArgName( "classname" )
+                .hasArgs(2)
+                .withValueSeparator()
+                .withDescription( "The workspace" )
+                .create( "W" );
 
-        String ID = "24089145";
+        options.addOption(optionPubmedIDs);
+        options.addOption(optionWorkspace);
+
+        CommandLine line = parser.parse(options, args);
+        String pubmedFile = "";
+        String workspaceArg = "";
+        if (line.hasOption("P")&&line.hasOption("W")){
+            pubmedFile = line.getOptionValue("P");
+            workspaceArg = line.getOptionValue("W");
+        }
+        else{
+            System.exit(1);
+        }
+
+        BufferedReader br = new BufferedReader(new FileReader(pubmedFile));
+        String readline;
+        ArrayList<String> pubmedIDs = new ArrayList<String>();
+        while ((readline = br.readLine()) != null) {
+            pubmedIDs.add(readline);
+        }
+        br.close();
+
+        String ID = "";
+        for(String pubmedID : pubmedIDs){
+            ID = pubmedID;
+
+         */
+
+        String pathToImageMagic = args[0];
+        String pathToInput = args[1];
+        String pathToOutput = args[2];
+        String ID = args[3];
+        String workLocation = args[4];
+
+        System.out.println("Currently processing: " + ID);
         LOGGER.info("Used ID: " + ID);
         String resolution = "450";
         LOGGER.info("Used resolution: " + resolution);
-        String workLocation = "C:/Users/Sander van Boom/Documents/School/tables/T.E.A. 0.4 test/";
+       // System.out.println(workspaceArg);
+       // String workLocation = workspaceArg;
+        //String workLocation = "C:/Users/Sander van Boom/Documents/School/tables/T.E.A. 0.4 test/";
         LOGGER.info("Used worklocation: : " + workLocation);
+
+
         REXArticleExtractor rex = new REXArticleExtractor(ID);
         String PDFLink = rex.getPDFLink();
-
 
         if(PDFLink == null){
             LOGGER.info("I'm really sorry but I can't find a PDF link to this pubmedID. I'm gonna skip this PubmedID.");
@@ -61,8 +109,18 @@ public class Main {
         LOGGER.info("I've found a PDF link for this PubmedID: " + PDFLink);
         PDFDownloader PDFDownloader = new PDFDownloader(PDFLink, ""+workLocation+ID+".pdf");
 
-        ImageMagic ImageMagic = new ImageMagic(resolution, ("\"" + workLocation +ID+".pdf\""),"\""+workLocation+ID+".png\"" );
-        ImageMagic.createBitmap();
+        System.out.println("0: " + pathToImageMagic);
+        System.out.println("1:" + pathToInput);
+        System.out.println("2" + pathToOutput);
+        System.out.println("3" + ID);
+        System.out.println("4" + workLocation);
+        System.out.println("Resolution: " + resolution);
+
+
+        ImageMagic imagemagic = new ImageMagic(pathToImageMagic, pathToInput, pathToOutput, resolution);
+        imagemagic.createPNGFiles();
+        /*
+        //ImageMagic.wrapTheMagic();
         ArrayList<File> pngs = ImageMagic.findPNGFilesInWorkingDirectory(workLocation, ID);
 
         int x =0;
@@ -76,25 +134,15 @@ public class Main {
         ArrayList<File> HTMLFiles = tesseract.findHTMLFilesInWorkingDirectory(workLocation, ID);
         for(File file : HTMLFiles){
             LOGGER.info("Searching for tables in: " + file.getName());
-            Page page = new Page(file);
+            System.out.println("Searching for tables in: " + file.getName());
+            Page page = new Page(file, workLocation);
             page.createTables();
             LOGGER.info("------------------------------------------------------------------------------");
-
+            System.out.println("------------------------------------------------------------------------------");
+        }
         }
         LOGGER.info("T.E.A. has run out of workable Bits, Bytes, whatever. Don't worry a new supply will come in next week!");
         LOGGER.info("T.E.A. is now entering sleep mode...");
-    }
+*/    }
 
-    public static void write(String filecontent, String location){
-        FileWriter fileWriter = null;
-        try {
-            File newTextFile = new File(location);
-            fileWriter = new FileWriter(newTextFile);
-            fileWriter.write(filecontent);
-            fileWriter.close();
-        }
-        catch (IOException ex) {
-        }
-
-    }
 }

@@ -25,6 +25,9 @@
         <module name="TableExtraction" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="TableExtraction" target="1.6" />
+    </bytecodeTargetLevel>
   </component>
 </project>
 

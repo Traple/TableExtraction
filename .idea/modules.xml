@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/TableExtraction.iml" filepath="$PROJECT_DIR$/TableExtraction.iml" />
+      <module fileurl="file://$PROJECT_DIR$/testImageMagic/testImageMagic.iml" filepath="$PROJECT_DIR$/testImageMagic/testImageMagic.iml" />
     </modules>
   </component>
 </project>

@@ -4,6 +4,8 @@ package program4;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,14 +25,16 @@ public class Table {
     private ArrayList<Integer> X1ColumnBoundaries = new ArrayList<Integer>();
     private int endOfTable;
     private int beginOfTable;
+    private String workLocation;
     private ArrayList<ArrayList<Element>> columns;
 
-    public Table(Elements spans) throws IOException {
+    public Table(Elements spans, String workLocation) throws IOException {
         System.out.println("Table Created.");
         String name = spans.get(0).text() + " " + spans.get(2).text() + " " + spans.get(3).text() + " " + spans.get(4).text() + " " + spans.get(5).text();
         LOGGER.info("New Table. The title roughly starts with: "+ name);
         System.out.println("My name is: " + name);
 
+        this.workLocation = workLocation;
         this.spans = spans;
         this.columns = new ArrayList<ArrayList<Element>>();
         //~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
@@ -53,8 +57,20 @@ public class Table {
 
         //TODO: Refine to column one more time so it also give the full header.
 
+        String content = "<results>\n"; //used for the XML output
+        String data = "";
+
         for (ArrayList<Element> column : columns){
             Column col = new Column(column);
+            data = data + col.getColumnContentInXML();
+        }
+        if(data.equals("")){
+
+        }else{
+            content = content + data;
+            content = content + "</results>\n";
+            System.out.println("Writing to file: ");
+            write(content, workLocation +name+".xml");
         }
     }
 
@@ -99,9 +115,9 @@ public class Table {
             if (!currentPixel.isEmpty() && !startOfTable && col.isEmpty()) {
                 startOfTable = true;
                 X1Col.add(x);
-                LOGGER.info("Begin of the Column: " + X1Col);
-                System.out.println("Begin of Column: " + X1Col);
+
             }
+
             if (!currentPixel.isEmpty() && startOfTable) {
                 col.add(tableMap.get(x).toString());
                 startOfTable = false;
@@ -109,11 +125,13 @@ public class Table {
             if (currentPixel.isEmpty() && !col.isEmpty()) {
                 col = new ArrayList<String>();
                 X2Col.add(x);
-                LOGGER.info("End of Column: " + X2Col);
-                System.out.println("End of Column: " + X2Col);
                 startOfTable = false;
             }
         }
+        System.out.println("Begin of Column: " + X1Col);
+        LOGGER.info("Begin of the Column: " + X1Col);
+        System.out.println("End of Column: " + X2Col);
+        LOGGER.info("End of Column: " + X2Col);
         this.X2ColumnBoundaries = X2Col;
         this.X1ColumnBoundaries = X1Col;
     }
@@ -148,5 +166,13 @@ public class Table {
             }
         }
         this.columns = columns;
+    }
+    public static void write(String filecontent, String location) throws IOException{
+        FileWriter fileWriter = null;
+
+            File newTextFile = new File(location);
+            fileWriter = new FileWriter(newTextFile);
+            fileWriter.write(filecontent);
+            fileWriter.close();
     }
 }

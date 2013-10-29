@@ -154,4 +154,21 @@ public class Column {
         }
         System.out.println();
     }
+
+    /**
+     *
+     * @return This method returns the content of the column as a String. This can be used for the XML output file.
+     */
+    public String getColumnContentInXML(){
+        String header = "";
+        for(Element cell: headerCells){
+            header = header + cell.text();
+        }
+        String content = "<header>"+header+"</header>\n";
+        //content = content +"Which has the following values: \n";
+        for(Element cell: data){
+            content = content + "<cell>"+cell.text() + "</cell>\n";
+        }
+        return content;
+    }
 }

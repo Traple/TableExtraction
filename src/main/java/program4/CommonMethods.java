@@ -3,14 +3,6 @@ package program4;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created for project: TableExtraction
- * In package: program2
- * Created with IntelliJ IDEA.
- * User: Sander van Boom
- * Date: 15-10-13
- * Time: 16:17
- */
 /*
  * The class CommonMethods contains methods that are usualy very simple and small. These methods can be used for a wide
  * range of classes/Projects. Reuse is key!

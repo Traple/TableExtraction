@@ -16,16 +16,18 @@ import java.util.logging.Logger;
  */
 public class Page {
     private Elements spans;
+    private String workLocation;
     public static Logger LOGGER = Logger.getLogger(Page.class.getName());
     //TODO: create a method for the detection of whitespace, so more information can be extracted succesfully.
 
-    public Page(File file) throws IOException {
+    public Page(File file, String workLocation) throws IOException {
         //~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
         //Now we need to read the file:
 
         Document doc = Jsoup.parse(file, "UTF-8", "http://example.com/");
 
         this.spans = doc.select("span.ocrx_word");
+        this.workLocation = workLocation;
     }
 
     //This method will find the tables in the content. It creates a table object for every table it finds.
@@ -51,7 +53,7 @@ public class Page {
             }
         }
         if (foundATable) {
-            foundTable = new Table(tableSpans);
+            foundTable = new Table(tableSpans, workLocation);
         }
         if(!foundATable){
             LOGGER.info("There was no table found. ");
