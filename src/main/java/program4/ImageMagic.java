@@ -9,19 +9,17 @@ public class ImageMagic {
     private String[] command;
     public static Logger LOGGER = Logger.getLogger(ImageMagic.class.getName());
     //convert -density 600 -units PixelsPerInch input.pdf output.png
+    //Windows:
+    //String path = "\"C:\\Program Files (x86)\\ImageMagick-6.8.7-Q16\\convert.exe\"";
+    //Linux:
+    //String path = "/usr/bin/convert";
 
-    public ImageMagic(String workspace, String path, String ID, String resolution){
-        //Windows:
-        //String path = "\"C:\\Program Files (x86)\\ImageMagick-6.8.7-Q16\\convert.exe\"";
-        //Linux:
-        //String path = "/usr/bin/convert";
-        //String[] command2 = {path, "-density", resolution, "-units","PixelsPerInch", fileLocation, outputLocation};
-        //String[] command2 = {path, "/d/usr5/ubcg60f/TEA0.4/firsttest/24089145.pdf", "/d/usr5/ubcg60f/TEA0.4/firsttest/24089145.png"};
-        String output = workspace + ID + ".png";
-        String input = workspace + ID + ".pdf";
+    //input: workspace without / !!!
+    public ImageMagic(String path, String workspace,String ID, String resolution){
+        String output = workspace+"/" + ID + ".png";
+        String input = workspace +"/"+ ID + ".pdf";
         String[] command = {path, "-density",resolution,"-units","PixelsPerInch",input, output};
         this.command = command;
-        //this.command = path + " -density " + resolution + " -units PixelsPerInch " + fileLocation + " " + outputLocation;
     }
 
     /**

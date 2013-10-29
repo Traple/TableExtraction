@@ -39,21 +39,13 @@ public class Main {
 
         LOGGER.info("Starting T.E.A. 0.4");
         LOGGER.info("Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm. But if you want, you can call me Bob.");
-        /*
+
         CommandLineParser parser = new PosixParser();
         Options options = new Options();
 
         Option help = new Option("H", "Help",false ,"This is the help file of TEA.");
-        Option optionPubmedIDs    = OptionBuilder.withArgName( "classname" )
-                .hasArgs(2)
-                .withValueSeparator()
-                .withDescription( "File with PubmedID's." )
-                .create( "P" );
-        Option optionWorkspace    = OptionBuilder.withArgName( "classname" )
-                .hasArgs(2)
-                .withValueSeparator()
-                .withDescription( "The workspace" )
-                .create( "W" );
+        Option optionPubmedIDs = new Option("P", "pubmedIDFile", true, "The file with the PubmedID's");
+        Option optionWorkspace = new Option("W", "workspace", true, "The workspace for the program.");
 
         options.addOption(optionPubmedIDs);
         options.addOption(optionWorkspace);
@@ -68,6 +60,14 @@ public class Main {
         else{
             System.exit(1);
         }
+        //TODO: replace the hardcoded paths to the dependencies to a config file.
+        System.out.println("From the arguments I got: " + pubmedFile);
+        System.out.println("And :" + workspaceArg);
+        String pathToImageMagic = "/usr/bin/convert";
+        System.out.println("Path to Image Magic is hardcoded to: " + pathToImageMagic);
+        String pathToTesseract = "/d/as2/s/tesseract-ocr/bin/tesseract";
+        System.out.println("And the path to Tesseract is hardcoded to: " + pathToTesseract);
+        String pathToTesseractConfig = "/d/user5/ubcg60f/TEA0.4/config.txt";
 
         BufferedReader br = new BufferedReader(new FileReader(pubmedFile));
         String readline;
@@ -77,27 +77,19 @@ public class Main {
         }
         br.close();
 
+        //TODO: Fix this loop!
         String ID = "";
         for(String pubmedID : pubmedIDs){
             ID = pubmedID;
-
-         */
-
-        String pathToImageMagic = args[0];
-        String pathToInput = args[1];
-        String pathToOutput = args[2];
-        String ID = args[3];
-        String workLocation = args[4];
+        }
 
         System.out.println("Currently processing: " + ID);
         LOGGER.info("Used ID: " + ID);
         String resolution = "450";
         LOGGER.info("Used resolution: " + resolution);
-       // System.out.println(workspaceArg);
-       // String workLocation = workspaceArg;
+        String workLocation = workspaceArg;
         //String workLocation = "C:/Users/Sander van Boom/Documents/School/tables/T.E.A. 0.4 test/";
         LOGGER.info("Used worklocation: : " + workLocation);
-
 
         REXArticleExtractor rex = new REXArticleExtractor(ID);
         String PDFLink = rex.getPDFLink();
@@ -109,28 +101,25 @@ public class Main {
         LOGGER.info("I've found a PDF link for this PubmedID: " + PDFLink);
         PDFDownloader PDFDownloader = new PDFDownloader(PDFLink, ""+workLocation+ID+".pdf");
 
-        System.out.println("0: " + pathToImageMagic);
-        System.out.println("1:" + pathToInput);
-        System.out.println("2" + pathToOutput);
-        System.out.println("3" + ID);
-        System.out.println("4" + workLocation);
+        System.out.println("Path to Magic: " + pathToImageMagic);
+        System.out.println("ID: " + ID);
+        System.out.println("Worklocation: " + workLocation);
         System.out.println("Resolution: " + resolution);
 
-
-        ImageMagic imagemagic = new ImageMagic(pathToImageMagic, pathToInput, pathToOutput, resolution);
+        ImageMagic imagemagic = new ImageMagic(pathToImageMagic,workLocation, ID ,resolution);
         imagemagic.createPNGFiles();
-        /*
-        //ImageMagic.wrapTheMagic();
-        ArrayList<File> pngs = ImageMagic.findPNGFilesInWorkingDirectory(workLocation, ID);
+
+        ArrayList<File> pngs = imagemagic.findPNGFilesInWorkingDirectory(workLocation, ID);
 
         int x =0;
         for(File file : pngs){
             LOGGER.info("Hand me my equipment. I'm going to perform OCR on " + file.getName());
-            Tesseract Tesseract = new Tesseract("\"" + workLocation + ID+"-"+x+".png\"","\""+workLocation+ID+"-"+x+"\"");
+            Tesseract Tesseract = new Tesseract(pathToTesseract, workLocation, ID, Integer.toString(x),pathToTesseractConfig);
             Tesseract.runTesseract();
             x++;
         }
-        Tesseract tesseract = new Tesseract("\"" + workLocation + ID+"-"+x+".png\"","\""+workLocation+ID+"-"+x+"\"");
+
+        Tesseract tesseract = new Tesseract(pathToTesseract, workLocation, ID, Integer.toString(x),pathToTesseractConfig);
         ArrayList<File> HTMLFiles = tesseract.findHTMLFilesInWorkingDirectory(workLocation, ID);
         for(File file : HTMLFiles){
             LOGGER.info("Searching for tables in: " + file.getName());
@@ -140,9 +129,8 @@ public class Main {
             LOGGER.info("------------------------------------------------------------------------------");
             System.out.println("------------------------------------------------------------------------------");
         }
-        }
+
         LOGGER.info("T.E.A. has run out of workable Bits, Bytes, whatever. Don't worry a new supply will come in next week!");
         LOGGER.info("T.E.A. is now entering sleep mode...");
-*/    }
-
+    }
 }

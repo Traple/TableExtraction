@@ -11,10 +11,10 @@ public class Tesseract {
 
 
     public static Logger LOGGER = Logger.getLogger(Tesseract.class.getName());
-    private String command;
-    private String[] command2;
+    private String[] command;
 
-    public Tesseract(String fileLocation, String outputLocation){
+
+    public Tesseract(String pathToTesseract, String workspace, String ID, String page, String pathToConfig){
         //Windows:
         //String path = "\"C:\\Program Files (x86)\\Tesseract-OCR\\tesseract.exe\"";
         //Linux:
@@ -22,10 +22,11 @@ public class Tesseract {
         //Windows:
         //String pathToConfig = "\"C:\\Users\\Sander van Boom\\Downloads\\config.txt\"";
         //Linux:
-        String pathToConfig = "config.txt";
-        String[] command2 = {"tcsh","-c",path, fileLocation, outputLocation,"hocr" ,pathToConfig};
-        this.command2 = command2;
-        this.command = path + " " + fileLocation + " " + outputLocation + " hocr " + pathToConfig;
+
+        String input = workspace + "/" + ID + "-" + page + ".png";
+        String output = workspace + "/" + ID + "-" + page + ".html";
+        String[] command ={pathToTesseract, input, output,"hocr",pathToConfig};
+        this.command = command;
     }
 
     public void runTesseract(){
@@ -33,7 +34,7 @@ public class Tesseract {
         System.out.println("Trying to run command: " + command);
         try {
             Runtime rt = Runtime.getRuntime();
-            Process pr = rt.exec(command2);
+            Process pr = rt.exec(command);
             BufferedReader input = new BufferedReader(new InputStreamReader(pr.getInputStream()));
             String line=null;
             while((line=input.readLine()) != null) {

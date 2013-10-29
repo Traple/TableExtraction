@@ -2,25 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cc3129f9-2281-45ab-81bb-08e581b5b4f8" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_im4java_im4java_1_4_0.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/program4/Column.java" afterPath="$PROJECT_DIR$/src/main/java/program4/Column.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/program4/CommonMethods.java" afterPath="$PROJECT_DIR$/src/main/java/program4/CommonMethods.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/program4/ImageMagic.java" afterPath="$PROJECT_DIR$/src/main/java/program4/ImageMagic.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/program4/Main.java" afterPath="$PROJECT_DIR$/src/main/java/program4/Main.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/program4/Page.java" afterPath="$PROJECT_DIR$/src/main/java/program4/Page.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/program4/Table.java" afterPath="$PROJECT_DIR$/src/main/java/program4/Table.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/TableExtraction.iml" afterPath="$PROJECT_DIR$/TableExtraction.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/program4/Tesseract.java" afterPath="$PROJECT_DIR$/src/main/java/program4/Tesseract.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="TableExtraction.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Main.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1383059745444" ignored="false" />
+    <file path="/Main.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1383063521971" ignored="false" />
     <file path="/pom.xml" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1382971468862" ignored="false" />
-    <file path="/Dummy.txt" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1383043556156" ignored="false" />
+    <file path="/Dummy.txt" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1383060409020" ignored="false" />
     <file path="/HeaderMethods.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1381334666646" ignored="false" />
     <file path="/Purification.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1381757207397" ignored="false" />
     <file path="/RelativeActivity.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1381328054229" ignored="false" />
@@ -53,8 +44,8 @@
     <file path="/Scores.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1382963318842" ignored="false" />
     <file path="/Header.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1382523411863" ignored="false" />
     <file path="/PDFDownloader.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1382624224888" ignored="false" />
-    <file path="/ImageMagic.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1383060327227" ignored="false" />
-    <file path="/Tesseract.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1382981876800" ignored="false" />
+    <file path="/ImageMagic.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1383060530939" ignored="false" />
+    <file path="/Tesseract.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1383062835608" ignored="false" />
     <file path="$PROJECT_DIR$/../random/testImageMagic/src/Main.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1383054867088" ignored="false" />
     <file path="$PROJECT_DIR$/../random/testImageMagic/.idea/misc.xml" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1383054867088" ignored="false" />
     <file path="$PROJECT_DIR$/../random/testImageMagic/.idea/workspace.xml" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1383058456614" ignored="false" />
@@ -118,25 +109,36 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Main.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="Main.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/program4/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="95" column="5" selection-start="3679" selection-end="3679" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="79" column="29" selection-start="3544" selection-end="3544" vertical-scroll-proportion="0.35546038">
+              <folding>
+                <element signature="e#3382#3390#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ImageMagic.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="ImageMagic.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/program4/ImageMagic.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="16" selection-start="575" selection-end="575" vertical-scroll-proportion="0.56666666">
+            <state line="18" column="0" selection-start="640" selection-end="744" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#5481#5487#0" expanded="true" />
-                <element signature="e#5575#5740#0" expanded="true" />
-                <element signature="e#5729#5730#0" expanded="true" />
+                <element signature="e#5131#5137#0" expanded="true" />
+                <element signature="e#5225#5390#0" expanded="true" />
+                <element signature="e#5379#5380#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Tesseract.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/program4/Tesseract.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="20" column="59" selection-start="589" selection-end="625" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -178,10 +180,10 @@
         <option value="$PROJECT_DIR$/src/main/java/program4/CommonMethods.java" />
         <option value="$PROJECT_DIR$/src/main/java/program4/Page.java" />
         <option value="$PROJECT_DIR$/src/main/java/program4/Table.java" />
-        <option value="$PROJECT_DIR$/src/main/java/program4/Tesseract.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/src/main/java/program4/Main.java" />
         <option value="$PROJECT_DIR$/src/main/java/program4/ImageMagic.java" />
+        <option value="$PROJECT_DIR$/src/main/java/program4/Tesseract.java" />
+        <option value="$PROJECT_DIR$/src/main/java/program4/Main.java" />
       </list>
     </option>
   </component>
@@ -289,6 +291,86 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TableExtraction" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TableExtraction" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TableExtraction" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TableExtraction" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TableExtraction" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TableExtraction" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="program4" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TableExtraction" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TableExtraction" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value=".idea" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -325,12 +407,12 @@
       <recent name="C:\Users\Sander van Boom\IdeaProjects\TableExtraction\src\main\java\program4" />
       <recent name="C:\Users\Sander van Boom\IdeaProjects\TableExtraction\src\main\java\program2" />
     </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Sander van Boom\IdeaProjects\TableExtraction\src\main\resources\program" />
       <recent name="C:\Users\Sander van Boom\IdeaProjects\TableExtraction\src\main\resources" />
-    </key>
-    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
-      <recent name="" />
     </key>
   </component>
   <component name="RunManager" selected="Application.Main">
@@ -681,7 +763,11 @@
       <created>1382965737541</created>
       <updated>1382965737541</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="T.E.A. 0.4 Trying to be implementable in Linux.">
+      <created>1383060421577</created>
+      <updated>1383060421577</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TodoView" selected-index="2">
@@ -708,7 +794,7 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16552901" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.13651878" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -716,17 +802,17 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24914676" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32935154" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.14846416" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32764506" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.6587031" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24090908" sideWeight="0.834471" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24318182" sideWeight="0.8634812" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20151515" sideWeight="0.834471" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20151515" sideWeight="0.8634812" order="1" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24744028" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" x="92" y="92" width="1182" height="544" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32935154" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.14846416" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.56143343" order="4" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
     </layout>
@@ -773,7 +859,7 @@
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="T.E.A. 0.4 with logger." />
+    <option name="LAST_COMMIT_MESSAGE" value="T.E.A. 0.4 Trying to be implementable in Linux." />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -810,6 +896,7 @@
     <MESSAGE value="T.E.A. 0.3, without the vertical mapping. See OCRTest5 for results." />
     <MESSAGE value="The start of T.E.A. 0.4" />
     <MESSAGE value="T.E.A. 0.4 with logger." />
+    <MESSAGE value="T.E.A. 0.4 Trying to be implementable in Linux." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -901,13 +988,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/program4/Tesseract.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="15" selection-start="566" selection-end="566" vertical-scroll-proportion="0.042288557">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/program4/Page.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="29" column="41" selection-start="1142" selection-end="1142" vertical-scroll-proportion="0.042288557">
@@ -915,21 +995,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/program4/Main.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/program4/ImageMagic.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="95" column="5" selection-start="3679" selection-end="3679" vertical-scroll-proportion="0.0">
+        <state line="18" column="0" selection-start="640" selection-end="744" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#5131#5137#0" expanded="true" />
+            <element signature="e#5225#5390#0" expanded="true" />
+            <element signature="e#5379#5380#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/program4/Tesseract.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="59" selection-start="589" selection-end="625" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/program4/ImageMagic.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/program4/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="16" selection-start="575" selection-end="575" vertical-scroll-proportion="0.56666666">
+        <state line="79" column="29" selection-start="3544" selection-end="3544" vertical-scroll-proportion="0.35546038">
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#5481#5487#0" expanded="true" />
-            <element signature="e#5575#5740#0" expanded="true" />
-            <element signature="e#5729#5730#0" expanded="true" />
+            <element signature="e#3382#3390#0" expanded="true" />
           </folding>
         </state>
       </provider>
