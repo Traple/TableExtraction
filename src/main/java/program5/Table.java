@@ -1,4 +1,4 @@
-package program4;
+package program5;
 
 
 import org.jsoup.nodes.Element;
@@ -53,7 +53,6 @@ public class Table {
         checkMapForX2Columns();
 
         setColumnsContent();
-        //printNewColumns();
 
         //TODO: Refine to column one more time so it also give the full header.
 

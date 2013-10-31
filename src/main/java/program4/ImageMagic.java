@@ -27,7 +27,7 @@ public class ImageMagic {
      * @throws IOException
      */
     public void createPNGFiles() throws IOException {
-        System.out.println(command);
+        System.out.println("Trying to run command: "+command);
         ProcessBuilder probuilder = new ProcessBuilder(command);
         //You can set up your work directory
         probuilder.directory(new File("/d/user5/ubcg60f/TEA0.4/firsttest"));
@@ -50,7 +50,6 @@ public class ImageMagic {
             int exitValue = process.waitFor();
             System.out.println("\n\nExit Value is " + exitValue);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -103,7 +102,6 @@ public class ImageMagic {
             int exitValue = process.waitFor();
             System.out.println("\n\nExit Value is " + exitValue);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 

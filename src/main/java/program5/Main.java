@@ -1,4 +1,4 @@
-package program4;
+package program5;
 
 import org.apache.commons.cli.*;
 import org.xml.sax.SAXException;
@@ -6,9 +6,11 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -39,7 +41,9 @@ public class Main {
 
         LOGGER.info("Starting T.E.A. 0.4");
         LOGGER.info("Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm. But if you want, you can call me Bob.");
+        System.out.println("Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm. But if you want, you can call me Bob.");
 
+        //TODO: Create a new class that will process the commandline arguments.
         CommandLineParser parser = new PosixParser();
         Options options = new Options();
 
@@ -77,7 +81,7 @@ public class Main {
         }
         br.close();
 
-        String ID = "";
+        String ID;
         for(String pubmedID : pubmedIDs){
             ID = pubmedID;
 
@@ -86,7 +90,6 @@ public class Main {
         String resolution = "450";
         LOGGER.info("Used resolution: " + resolution);
         String workLocation = workspaceArg;
-        //String workLocation = "C:/Users/Sander van Boom/Documents/School/tables/T.E.A. 0.4 test/";
         LOGGER.info("Used worklocation: : " + workLocation);
 
         REXArticleExtractor rex = new REXArticleExtractor(ID);
@@ -96,23 +99,24 @@ public class Main {
             LOGGER.info("I'm really sorry but I can't find a PDF link to this pubmedID. I'm gonna skip this PubmedID.");
             continue;
         }
+            //TODO: rewrite the PDF downloader so it uses more then just the constructor.
         LOGGER.info("I've found a PDF link for this PubmedID: " + PDFLink);
-        PDFDownloader PDFDownloader = new PDFDownloader(PDFLink, ""+workLocation+"/"+ID+".pdf");
+        PDFDownloader PDFDownloader = new program5.PDFDownloader(PDFLink, ""+workLocation+"/"+ID+".pdf");
 
         System.out.println("Path to Magic: " + pathToImageMagic);
         System.out.println("ID: " + ID);
         System.out.println("Worklocation: " + workLocation);
         System.out.println("Resolution: " + resolution);
 
-        ImageMagic imagemagic = new ImageMagic(pathToImageMagic,workLocation, ID ,resolution);
-        imagemagic.createPNGFiles();
+        ImageMagick imagemagick = new ImageMagick(pathToImageMagic,workLocation, ID ,resolution);
+        imagemagick.createPNGFiles();
 
-        ArrayList<File> pngs = imagemagic.findPNGFilesInWorkingDirectory(workLocation, ID);
+        ArrayList<File> pngs = imagemagick.findPNGFilesInWorkingDirectory(workLocation, ID);
 
         int x =0;
         for(File file : pngs){
             LOGGER.info("Hand me my equipment. I'm going to perform OCR on " + file.getName());
-            Tesseract Tesseract = new Tesseract(pathToTesseract, workLocation, ID, Integer.toString(x),pathToTesseractConfig);
+            Tesseract Tesseract = new program5.Tesseract(pathToTesseract, workLocation, ID, Integer.toString(x),pathToTesseractConfig);
             Tesseract.runTesseract();
             x++;
         }
