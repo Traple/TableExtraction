@@ -27,22 +27,29 @@ public class Table {
     private int beginOfTable;
     private String workLocation;
     private ArrayList<ArrayList<Element>> columns;
+    private String name;
+    private double distanceConstant;
+    private double distanceThreshold;
 
-    public Table(Elements spans, String workLocation) throws IOException {
+    public Table(Elements spans, String workLocation, File file) throws IOException {
         System.out.println("Table Created.");
         String name = spans.get(0).text() + " " + spans.get(2).text() + " " + spans.get(3).text() + " " + spans.get(4).text() + " " + spans.get(5).text();
         LOGGER.info("New Table. The title roughly starts with: "+ name);
+        LOGGER.info("I was found in: " + file.getName());
         System.out.println("My name is: " + name);
 
         this.workLocation = workLocation;
         this.spans = spans;
         this.columns = new ArrayList<ArrayList<Element>>();
+        this.name = name;
         //~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
         System.out.println("Now we recreate the table using the positions. This might add more data!");
 
         Scores score = new Scores(spans);
         this.endOfTable = score.findEndOfTable();
         this.beginOfTable = score.findBeginOfTable();
+        this.distanceConstant = score.getDistanceConstant();
+
 
         LOGGER.info("Begin of the table at " + beginOfTable);
         LOGGER.info("End of the table at: " + endOfTable);
@@ -59,18 +66,21 @@ public class Table {
         String content = "<results>\n"; //used for the XML output
         String data = "";
 
+
         for (ArrayList<Element> column : columns){
+            try{
             Column col = new Column(column);
             data = data + col.getColumnContentInXML();
+            this.distanceThreshold = col.getHeightThreshold();
+            }
+            catch(NullPointerException e){
+                continue;
+            }
         }
-        if(data.equals("")){
-
-        }else{
             content = content + data;
             content = content + "</results>\n";
             System.out.println("Writing to file: ");
-            write(content, workLocation +name+".xml");
-        }
+            write(content, workLocation+"/" +name+".xml", file);
     }
 
     private Map<Integer, ArrayList<String>> createTableMap(int endOfTable) {
@@ -166,12 +176,24 @@ public class Table {
         }
         this.columns = columns;
     }
-    public static void write(String filecontent, String location) throws IOException{
-        FileWriter fileWriter = null;
 
-            File newTextFile = new File(location+"/");
-            fileWriter = new FileWriter(newTextFile);
-            fileWriter.write(filecontent);
-            fileWriter.close();
+    public void write(String filecontent, String location, File file) throws IOException{
+        FileWriter fileWriter = null;
+        filecontent = getProvenance(file)+ filecontent;
+
+        File newTextFile = new File(location+"/");
+        fileWriter = new FileWriter(newTextFile);
+        fileWriter.write(filecontent);
+        fileWriter.close();
+    }
+
+    public String getProvenance(File file){
+        String provenance = "<provenane>\n"+
+                "<fromFile>" + file.getName()+"</fromFile>\n" +
+                "<nameOfTable>" + name + "</nameOfTable>\n"
+                +"<columnDistanceConstant>"+distanceConstant+"</columnDistanceConstant>\n"+
+                "<rowDistanceConstant>"+distanceThreshold+"</rowDistanceConstant>\n"+
+                "</provenance>\n";
+        return provenance;
     }
 }

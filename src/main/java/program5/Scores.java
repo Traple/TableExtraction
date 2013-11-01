@@ -27,7 +27,7 @@ public class Scores {
         this.CM = new CommonMethods();
         this.pottentialEndOFTables = new ArrayList<Integer>();
         this.pottentialBeginOFTables = new ArrayList<Integer>();
-        this.distanceConstant = 2;
+        this.distanceConstant = 4;
 
         System.out.println("AVG CharLength: " + findSpaceDistance());
         this.spaceDistance = findSpaceDistance();
@@ -76,8 +76,6 @@ public class Scores {
     public int findEndOfTable(){
         boolean readingData = false;
         int counter = 0;
-        System.out.println(avgWordDistance);
-        System.out.println(pottentialEndOFTables);
         for(int distanceBetweenWordsInRow : avgWordDistance){
             if(distanceBetweenWordsInRow >=distanceTreshold){
                 readingData = true;
@@ -144,5 +142,8 @@ public class Scores {
             }
         }
         return totalCharLength/spans.size();
+    }
+    public double getDistanceConstant(){
+        return distanceConstant;
     }
 }

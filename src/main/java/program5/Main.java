@@ -1,22 +1,22 @@
 package program5;
 
 import org.apache.commons.cli.*;
+import org.apache.commons.io.IOUtils;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 /**
- * Welcome to the code of T.E.A. 0.4.
+ * Welcome to the code of T.E.A. 0.5.
+ * @version 0.5
  * T.E.A. was made by Sander van Boom at the Birkbeck University in London. This was done with the help of Jan Czarnecki and Adrian Shepherd.
+ * @author Sander van Boom
  * Development started at the 9th of September.
  * The current state of the software is development.
  *
@@ -39,75 +39,79 @@ public class Main {
         logMan.readConfiguration(Main.class.getResourceAsStream("/program4/log.properties"));
         logMan.addLogger(LOGGER);
 
-        LOGGER.info("Starting T.E.A. 0.4");
+        LOGGER.info("Starting T.E.A. 0.5");
         LOGGER.info("Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm. But if you want, you can call me Bob.");
         System.out.println("Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm. But if you want, you can call me Bob.");
 
-        //TODO: Create a new class that will process the commandline arguments.
-        CommandLineParser parser = new PosixParser();
-        Options options = new Options();
-
-        Option help = new Option("H", "Help",false ,"This is the help file of TEA.");
-        Option optionPubmedIDs = new Option("P", "pubmedIDFile", true, "The file with the PubmedID's");
-        Option optionWorkspace = new Option("W", "workspace", true, "The workspace for the program.");
-
-        options.addOption(optionPubmedIDs);
-        options.addOption(optionWorkspace);
-
-        CommandLine line = parser.parse(options, args);
-        String pubmedFile = "";
-        String workspaceArg = "";
-        if (line.hasOption("P")&&line.hasOption("W")){
-            pubmedFile = line.getOptionValue("P");
-            workspaceArg = line.getOptionValue("W");
-        }
-        else{
-            System.exit(1);
-        }
         //TODO: replace the hardcoded paths to the dependencies to a config file.
-        System.out.println("From the arguments I got: " + pubmedFile);
-        System.out.println("And :" + workspaceArg);
         String pathToImageMagic = "/usr/bin/convert";
         System.out.println("Path to Image Magic is hardcoded to: " + pathToImageMagic);
         String pathToTesseract = "/d/as2/s/tesseract-ocr/bin/tesseract";
         System.out.println("And the path to Tesseract is hardcoded to: " + pathToTesseract);
         String pathToTesseractConfig = "/d/user5/ubcg60f/TEA0.4/config.txt";
+        String resolution = "600";
 
-        BufferedReader br = new BufferedReader(new FileReader(pubmedFile));
-        String readline;
-        ArrayList<String> pubmedIDs = new ArrayList<String>();
-        while ((readline = br.readLine()) != null) {
-            pubmedIDs.add(readline);
+        ArgumentProcessor arguments = new ArgumentProcessor(args);
+        String workLocation = arguments.getWorkspace();
+        ArrayList<String> pubmedIDs = arguments.getPubmedIDs();
+
+
+        if(pubmedIDs == null){
+            System.out.println("Pubmed File option disabled.");
         }
-        br.close();
+        else{
+            String ID = "";
+            for(String pubmedID : pubmedIDs){
+                ID = pubmedID;
 
-        String ID;
-        for(String pubmedID : pubmedIDs){
-            ID = pubmedID;
 
         System.out.println("Currently processing: " + ID);
         LOGGER.info("Used ID: " + ID);
-        String resolution = "450";
-        LOGGER.info("Used resolution: " + resolution);
-        String workLocation = workspaceArg;
-        LOGGER.info("Used worklocation: : " + workLocation);
 
-        REXArticleExtractor rex = new REXArticleExtractor(ID);
+        REXArticleExtractor2 rex = new REXArticleExtractor2(ID);
+        if(rex.hasPDFStream()){
+            InputStream stream = rex.getPDFStream();
+            OutputStream  outStream = new BufferedOutputStream(new FileOutputStream(new File(workLocation+"/"+ID+".pdf")));
+            IOUtils.copy(stream, outStream);
+
+        }
+        //for logging purpose:
         String PDFLink = rex.getPDFLink();
-
+                /*
         if(PDFLink == null){
             LOGGER.info("I'm really sorry but I can't find a PDF link to this pubmedID. I'm gonna skip this PubmedID.");
             continue;
         }
             //TODO: rewrite the PDF downloader so it uses more then just the constructor.
-        LOGGER.info("I've found a PDF link for this PubmedID: " + PDFLink);
-        PDFDownloader PDFDownloader = new program5.PDFDownloader(PDFLink, ""+workLocation+"/"+ID+".pdf");
+            LOGGER.info("I've found a PDF link for this PubmedID: " + PDFLink);
+            PDFDownloader PDFDownloader = new program5.PDFDownloader(PDFLink, ""+workLocation+"/"+ID+".pdf");
+                  */
+            System.out.println("Path to Magic: " + pathToImageMagic);
+            System.out.println("ID: " + ID);
+            System.out.println("Worklocation: " + workLocation);
+            System.out.println("Resolution: " + resolution);
+            secondMain(pathToImageMagic, workLocation, ID, resolution,pathToTesseract, pathToTesseractConfig);
+            }
+        }
+        if(arguments.getContainsPDFFiles()){
+            ArrayList<String> PDFFiles = ImageMagick.findPDFs(workLocation);
+            for(String ID : PDFFiles){
+                System.out.println("Path to Magic: " + pathToImageMagic);
+                System.out.println("ID: " + ID);
+                System.out.println("Worklocation: " + workLocation);
+                System.out.println("Resolution: " + resolution);
+                secondMain(pathToImageMagic, workLocation, ID, resolution, pathToTesseract, pathToTesseractConfig);
+            }
+        }
+        if(arguments.getQuery()!=null){
+            PubmedIDQuery pubmedIDQuery = new PubmedIDQuery(arguments.getQuery(), workLocation);
+            ArrayList<String> pubmedIDsFromQuery = pubmedIDQuery.getPubmedIDs();
+        }
+        LOGGER.info("T.E.A. has run out of workable Bits, Bytes, whatever. Don't worry a new supply will come in next week!");
+        LOGGER.info("T.E.A. is now entering sleep mode...");
+    }
 
-        System.out.println("Path to Magic: " + pathToImageMagic);
-        System.out.println("ID: " + ID);
-        System.out.println("Worklocation: " + workLocation);
-        System.out.println("Resolution: " + resolution);
-
+    private static void secondMain(String pathToImageMagic, String workLocation, String ID, String resolution, String pathToTesseract, String pathToTesseractConfig) throws IOException {
         ImageMagick imagemagick = new ImageMagick(pathToImageMagic,workLocation, ID ,resolution);
         imagemagick.createPNGFiles();
 
@@ -131,8 +135,5 @@ public class Main {
             LOGGER.info("------------------------------------------------------------------------------");
             System.out.println("------------------------------------------------------------------------------");
         }
-        }
-        LOGGER.info("T.E.A. has run out of workable Bits, Bytes, whatever. Don't worry a new supply will come in next week!");
-        LOGGER.info("T.E.A. is now entering sleep mode...");
     }
 }

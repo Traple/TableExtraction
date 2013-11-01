@@ -18,6 +18,7 @@ public class Page {
 
     private Elements spans;
     private String workLocation;
+    private File file;
     public static Logger LOGGER = Logger.getLogger(Page.class.getName());
 
     public Page(File file, String workLocation) throws IOException {
@@ -28,6 +29,7 @@ public class Page {
 
         this.spans = doc.select("span.ocrx_word");
         this.workLocation = workLocation;
+        this.file = file;
     }
 
     //This method will find the tables in the content. It creates a table object for every table it finds.
@@ -53,7 +55,7 @@ public class Page {
             }
         }
         if (foundATable) {
-            foundTable = new Table(tableSpans, workLocation);
+            foundTable = new Table(tableSpans, workLocation, file);
         }
         if(!foundATable){
             LOGGER.info("There was no table found. ");

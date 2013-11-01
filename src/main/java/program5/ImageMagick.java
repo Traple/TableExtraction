@@ -81,11 +81,27 @@ public class ImageMagick {
         });
         for(File file : files){
             if(file.getName().startsWith(ID)){
-                System.out.println(file.getAbsolutePath());
                 pngFiles.add(file);
             }
         }
         return pngFiles;
     }
-    //TODO: Create checkPDF method so we can have different starting points in our software.
+
+    /**
+     * This method finds the PDFs in a directory.
+     * @return A list of all the pdf files in that location.
+     */
+    public static ArrayList<String> findPDFs(String workspace){
+        ArrayList<String> PDFFiles = new ArrayList<String>();
+        File dir = new File(workspace);
+        File[] files = dir.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.toLowerCase().endsWith(".pdf");
+            }
+        });
+        for(File file : files){
+                PDFFiles.add(file.getName().substring(0, file.getName().length()-4));
+        }
+        return PDFFiles;
+    }
 }

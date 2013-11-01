@@ -25,7 +25,7 @@ public class Column {
         System.out.println("-------------------------------------------------New Column!-----------------------------------------------------");
 
         this.column = column;
-        this.thresholdConstant = 0.8;
+        this.thresholdConstant = 1.0;
 
         this.averageHeightOfWords = calculateAverageHeightOfWords();
         setAVGHeightThreshold();
@@ -171,20 +171,29 @@ public class Column {
         System.out.println();
     }
 
-    //TODO: Add provenance to the creation of the column content.
     /**
      * This method returns the content of the column (in XML) so it can be written to a output file.
      * @return This method returns the content of the column as a String. This can be used for the XML output file.
      */
     public String getColumnContentInXML(){
         String header = "";
+        boolean noData = true;
         for(Element cell: headerCells){
             header = header + cell.text();
         }
         String content = "<header>"+header+"</header>\n";
         for(Element cell: data){
+            noData = false;
             content = content + "<cell>"+cell.text() + "</cell>\n";
         }
+        if(noData){
+            return null;
+        }
+
         return content;
     }
+    public double getHeightThreshold(){
+        return heightThreshold;
+    }
+
 }
