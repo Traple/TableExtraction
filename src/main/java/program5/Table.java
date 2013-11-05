@@ -178,7 +178,7 @@ public class Table {
     }
 
     public void write(String filecontent, String location, File file) throws IOException{
-        FileWriter fileWriter = null;
+        FileWriter fileWriter;
         filecontent = getProvenance(file)+ filecontent;
 
         File newTextFile = new File(location+"/");

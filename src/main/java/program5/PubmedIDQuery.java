@@ -15,15 +15,15 @@ public class PubmedIDQuery {
     private String workspace;
     private ArrayList<String> pubmedIDs;
 
-    public PubmedIDQuery(String query, String workspace) throws IOException {
-        this.url = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmedc&term="+query+"&datetype=pdat&maxdate=2010&mindate=1990";
+    public PubmedIDQuery(String query, String workspace, String maxPubmedIDs) throws IOException {
+        this.url = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmedc&term="+query+"&datetype=pdat&maxdate=2010&mindate=1990&retmax="+maxPubmedIDs;
         this.fileName  = query+".xml";
         this.pubmedIDs = new ArrayList<String>();
         this.workspace = workspace;
 
     }
     public ArrayList<String> getPubmedIDs() throws IOException, InterruptedException {
-        wait(1000);
+        //wait(1000);
         BufferedInputStream inputStream = null;
         OutputStream out = null;
 

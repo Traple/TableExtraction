@@ -8,7 +8,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -34,6 +37,7 @@ public class Main {
     public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, TransformerException, ParseException, InterruptedException {
         System.out.println("Starting T.E.A. 0.4");
 
+
         System.setProperty("java.util.logging.config.file", "/program4/log.properties");
         LogManager logMan=LogManager.getLogManager();
         logMan.readConfiguration(Main.class.getResourceAsStream("/program4/log.properties"));
@@ -50,6 +54,7 @@ public class Main {
         System.out.println("And the path to Tesseract is hardcoded to: " + pathToTesseract);
         String pathToTesseractConfig = "/d/user5/ubcg60f/TEA0.4/config.txt";
         String resolution = "600";
+        long start = System.currentTimeMillis();
 
         ArgumentProcessor arguments = new ArgumentProcessor(args);
         String workLocation = arguments.getWorkspace();
@@ -73,7 +78,6 @@ public class Main {
             InputStream stream = rex.getPDFStream();
             OutputStream  outStream = new BufferedOutputStream(new FileOutputStream(new File(workLocation+"/"+ID+".pdf")));
             IOUtils.copy(stream, outStream);
-
         }
         //for logging purpose:
         String PDFLink = rex.getPDFLink();
@@ -100,12 +104,33 @@ public class Main {
                 System.out.println("ID: " + ID);
                 System.out.println("Worklocation: " + workLocation);
                 System.out.println("Resolution: " + resolution);
+                LOGGER.info("Currently Processing: " + ID);
                 secondMain(pathToImageMagic, workLocation, ID, resolution, pathToTesseract, pathToTesseractConfig);
             }
         }
         if(arguments.getQuery()!=null){
-            PubmedIDQuery pubmedIDQuery = new PubmedIDQuery(arguments.getQuery(), workLocation);
+            String numberOfArticles = "100";
+            System.out.println("Im gonna extract " + numberOfArticles+".");
+            LOGGER.info("I'm going to extract " + numberOfArticles + " articles.");
+            PubmedIDQuery pubmedIDQuery = new PubmedIDQuery(arguments.getQuery(), workLocation, numberOfArticles);
             ArrayList<String> pubmedIDsFromQuery = pubmedIDQuery.getPubmedIDs();
+            for(String ID : pubmedIDsFromQuery){
+                System.out.println("Time spend: ");
+                System.out.println((System.currentTimeMillis()-start)/1000);
+                if((System.currentTimeMillis()-start)/1000>5){
+                    long waitTime = 5-(System.currentTimeMillis()-start)/1000;
+                    System.out.println("I have to wait :" + waitTime);
+                    Main.class.wait(waitTime);
+                }
+                REXArticleExtractor2 rex = new REXArticleExtractor2(ID);
+                if(rex.hasPDFStream()){
+                    InputStream stream = rex.getPDFStream();
+                    OutputStream  outStream = new BufferedOutputStream(new FileOutputStream(new File(workLocation+"/"+ID+".pdf")));
+                    IOUtils.copy(stream, outStream);
+                    start = System.currentTimeMillis();
+                }
+                secondMain(pathToImageMagic, workLocation,ID, resolution, pathToTesseract, pathToTesseractConfig);
+            }
         }
         LOGGER.info("T.E.A. has run out of workable Bits, Bytes, whatever. Don't worry a new supply will come in next week!");
         LOGGER.info("T.E.A. is now entering sleep mode...");
@@ -135,5 +160,12 @@ public class Main {
             LOGGER.info("------------------------------------------------------------------------------");
             System.out.println("------------------------------------------------------------------------------");
         }
+    }
+
+    private static String getDateTime() {
+        DateFormat dateFormat = new SimpleDateFormat("mm:ss");
+        Date date = new Date();
+        System.out.println(dateFormat.format(date));
+        return dateFormat.format(date);
     }
 }
