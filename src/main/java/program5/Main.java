@@ -2,12 +2,16 @@ package program5;
 
 import org.apache.commons.cli.*;
 import org.apache.commons.io.IOUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.jsoup.HttpStatusException;
+import org.jsoup.UnsupportedMimeTypeException;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.*;
+import java.net.SocketTimeoutException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,19 +51,18 @@ public class Main {
         LOGGER.info("Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm. But if you want, you can call me Bob.");
         System.out.println("Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm. But if you want, you can call me Bob.");
 
-        //TODO: replace the hardcoded paths to the dependencies to a config file.
-        String pathToImageMagic = "/usr/bin/convert";
-        System.out.println("Path to Image Magic is hardcoded to: " + pathToImageMagic);
-        String pathToTesseract = "/d/as2/s/tesseract-ocr/bin/tesseract";
-        System.out.println("And the path to Tesseract is hardcoded to: " + pathToTesseract);
-        String pathToTesseractConfig = "/d/user5/ubcg60f/TEA0.4/config.txt";
-        String resolution = "600";
-        long start = System.currentTimeMillis();
-
         ArgumentProcessor arguments = new ArgumentProcessor(args);
         String workLocation = arguments.getWorkspace();
         ArrayList<String> pubmedIDs = arguments.getPubmedIDs();
 
+        String pathToImageMagic = arguments.getPathToImageMagick();
+        System.out.println("Path to Image Magic is: " + pathToImageMagic);
+        String pathToTesseract = arguments.getPathToTesseract();
+        System.out.println("And the path to Tesseract is: " + pathToTesseract);
+        String pathToTesseractConfig = arguments.getPathToTesseractConfigFile();
+        System.out.println("Which uses the following configuration file: " + pathToTesseractConfig);
+        String resolution = "600";
+        long start = System.currentTimeMillis();
 
         if(pubmedIDs == null){
             System.out.println("Pubmed File option disabled.");
@@ -73,7 +76,7 @@ public class Main {
         System.out.println("Currently processing: " + ID);
         LOGGER.info("Used ID: " + ID);
 
-        REXArticleExtractor2 rex = new REXArticleExtractor2(ID);
+        REXArticleExtractor3 rex = new REXArticleExtractor3(ID);
         if(rex.hasPDFStream()){
             InputStream stream = rex.getPDFStream();
             OutputStream  outStream = new BufferedOutputStream(new FileOutputStream(new File(workLocation+"/"+ID+".pdf")));
@@ -109,29 +112,57 @@ public class Main {
             }
         }
         if(arguments.getQuery()!=null){
-            String numberOfArticles = "100";
+            String numberOfArticles = "1000";
             System.out.println("Im gonna extract " + numberOfArticles+".");
             LOGGER.info("I'm going to extract " + numberOfArticles + " articles.");
             PubmedIDQuery pubmedIDQuery = new PubmedIDQuery(arguments.getQuery(), workLocation, numberOfArticles);
             ArrayList<String> pubmedIDsFromQuery = pubmedIDQuery.getPubmedIDs();
+            System.out.println("Extracted " +pubmedIDsFromQuery.size() + " articles");
+            LOGGER.info("Extracted " +pubmedIDsFromQuery.size() + " articles");
             for(String ID : pubmedIDsFromQuery){
+                System.out.println("processing ID: "+ID);
                 System.out.println("Time spend: ");
                 System.out.println((System.currentTimeMillis()-start)/1000);
-                if((System.currentTimeMillis()-start)/1000>5){
+                if((System.currentTimeMillis()-start)/1000<5){
                     long waitTime = 5-(System.currentTimeMillis()-start)/1000;
-                    System.out.println("I have to wait :" + waitTime);
-                    Main.class.wait(waitTime);
+                    System.out.println("I have to wait :" + waitTime + " seconds");
+                    Thread.sleep(waitTime);
                 }
-                REXArticleExtractor2 rex = new REXArticleExtractor2(ID);
+                try{
+                REXArticleExtractor3 rex = new REXArticleExtractor3(ID);
                 if(rex.hasPDFStream()){
                     InputStream stream = rex.getPDFStream();
+                    PDDocument doc = PDDocument.load(stream);
+                    if(doc.getNumberOfPages() > 40){
+                        System.out.println("This document has been removed for having to many pages.");
+                        LOGGER.info("This document has " + doc.getNumberOfPages() + " pages. I think I have something better to do!");
+                        doc.close();
+                        continue;
+                    }
+                    doc.close();
+                    InputStream inputStream = rex.getPDFStream();
                     OutputStream  outStream = new BufferedOutputStream(new FileOutputStream(new File(workLocation+"/"+ID+".pdf")));
-                    IOUtils.copy(stream, outStream);
+                    IOUtils.copy(inputStream, outStream);
                     start = System.currentTimeMillis();
+                    outStream.close();
+                    inputStream.close();
                 }
                 secondMain(pathToImageMagic, workLocation,ID, resolution, pathToTesseract, pathToTesseractConfig);
             }
-        }
+
+
+            catch(SocketTimeoutException e){
+                System.out.println(e);
+            }
+            catch (HttpStatusException e){
+                System.out.println(e);
+            }
+                catch (UnsupportedMimeTypeException e){
+                    System.out.println(e);
+                }
+            }
+            }
+
         LOGGER.info("T.E.A. has run out of workable Bits, Bytes, whatever. Don't worry a new supply will come in next week!");
         LOGGER.info("T.E.A. is now entering sleep mode...");
     }

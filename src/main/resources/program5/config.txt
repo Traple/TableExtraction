@@ -1,0 +1,3 @@
+/usr/bin/convert
+/d/as2/s/tesseract-ocr/bin/tesseract
+/d/user5/ubcg60f/TEA0.4/config.txt

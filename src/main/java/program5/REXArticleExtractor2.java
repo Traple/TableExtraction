@@ -548,7 +548,7 @@ public class REXArticleExtractor2
             return null;
         }
         String text = stripper.getText(doc);
-
+        doc.close();
         text = text.replaceAll("-\\n", "-");
         text = text.replaceAll("\\n", " ");
         text = text.replaceAll("[^A-Za-z\\s(){}_,.:;<>!=&\\-+\"'0-9|%]", " ");

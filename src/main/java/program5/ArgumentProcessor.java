@@ -1,7 +1,6 @@
 package program5;
 
 
-import nu.xom.jaxen.expr.CommentNodeStep;
 import org.apache.commons.cli.*;
 
 import java.io.BufferedReader;
@@ -18,8 +17,10 @@ public class ArgumentProcessor {
     private String workspace;
     private boolean PDFFiles;
     private String query;
-    private String configFile;
-
+    private String pathToConfigFile;
+    private String pathToImageMagick;
+    private String pathToTesseract;
+    private String pathToTesseractConfigFile;
     public ArgumentProcessor(String[] args) throws ParseException, IOException {
         CommandLineParser parser = new PosixParser();
         Options options = new Options();
@@ -28,13 +29,15 @@ public class ArgumentProcessor {
         Option optionPubmedIDs = new Option("PUB", "pubmedIDFile", true, "The file with the PubmedID's");
         Option optionWorkspace = new Option("W", "workspace", true, "The workspace for the program.");
         Option optionPDFFiles= new Option("PDF", "PDFFiles", false, "Instead of using a query or a pubmedID file, use the PDFs in the workspace.");
-        Option optionQuery= new Option("QUE", "QUERY", true, "Use a given query to search pubmed and extract the articles.");
+        Option optionQuery= new Option("QUE", "Query", true, "Use a given query to search pubmed and extract the articles.");
+        Option optionConfig = new Option("C", "Config", true, "Specify the path to the configuration file.");
 
         options.addOption(help);
         options.addOption(optionPubmedIDs);
         options.addOption(optionWorkspace);
         options.addOption(optionPDFFiles);
         options.addOption(optionQuery);
+        options.addOption(optionConfig);
 
         CommandLine line = parser.parse(options, args);
 
@@ -43,6 +46,7 @@ public class ArgumentProcessor {
         this.workspace = setWorkspace(line);
         this.PDFFiles = setPDFFiles(line);
         this.query = setQuery(line);
+        setPathToConfigFileValues(line);
 
 
     }
@@ -92,12 +96,7 @@ public class ArgumentProcessor {
     }
 
     private boolean setPDFFiles(CommandLine line){
-        if(line.hasOption("PDF")){
-            return true;
-        }
-        else{
-            return false;
-        }
+        return line.hasOption("PDF");
     }
 
     private String setQuery(CommandLine line){
@@ -107,6 +106,21 @@ public class ArgumentProcessor {
 
         }
         return Query;
+    }
+    private void setPathToConfigFileValues(CommandLine line) throws IOException {
+        if(line.hasOption("C")){
+            pathToConfigFile = line.getOptionValue("C");
+            Configuration config = new Configuration(pathToConfigFile);
+            pathToImageMagick = config.getPathToImageMagick();
+            pathToTesseract = config.getPathToTesseract();
+            pathToTesseractConfigFile = config.getPathToTesseractConfigFile();
+        }
+        else{
+            pathToConfigFile = null;
+            pathToImageMagick = "/usr/bin/convert";
+            pathToTesseract = "/usr/bin/tesseract";
+            pathToTesseractConfigFile = "/usr/bin/config.txt";
+        }
     }
 
     //~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
@@ -127,5 +141,17 @@ public class ArgumentProcessor {
     }
     public String getQuery(){
         return query;
+    }
+    public String getPathToConfigFile(){
+        return pathToConfigFile;
+    }
+    public String getPathToImageMagick(){
+        return pathToImageMagick;
+    }
+    public String getPathToTesseract(){
+        return pathToTesseract;
+    }
+    public String getPathToTesseractConfigFile(){
+        return pathToTesseractConfigFile;
     }
 }

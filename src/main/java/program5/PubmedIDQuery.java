@@ -16,7 +16,7 @@ public class PubmedIDQuery {
     private ArrayList<String> pubmedIDs;
 
     public PubmedIDQuery(String query, String workspace, String maxPubmedIDs) throws IOException {
-        this.url = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmedc&term="+query+"&datetype=pdat&maxdate=2010&mindate=1990&retmax="+maxPubmedIDs;
+        this.url = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term="+query+"&datetype=pdat&maxdate=2010&mindate=1990&retmax="+maxPubmedIDs;
         this.fileName  = query+".xml";
         this.pubmedIDs = new ArrayList<String>();
         this.workspace = workspace;
@@ -39,7 +39,7 @@ public class PubmedIDQuery {
             inputStream = new BufferedInputStream(connection.getInputStream());
 
             // Replace your save path here.
-            File fileDir = new File(fileName);
+            File fileDir = new File(workspace);
             fileDir.mkdirs();
             savedFile = new File(workspace, fileName);
             out = new FileOutputStream(savedFile);
@@ -63,7 +63,7 @@ public class PubmedIDQuery {
         FileInputStream fis = null;
         BufferedReader reader = null;
 
-        fis = new FileInputStream(workspace+"\\"+fileName);
+        fis = new FileInputStream(workspace+"/"+fileName);
         reader = new BufferedReader(new InputStreamReader(fis));
 
         System.out.println("Reading File line by line using BufferedReader");
