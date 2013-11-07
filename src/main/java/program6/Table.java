@@ -1,4 +1,4 @@
-package program5;
+package program6;
 
 
 import org.jsoup.nodes.Element;
@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 /*
  * The table class contains methods and properties of the table.
- * You can call getters and setters to acces the various properties of a Table.
+ * You can call getters and setters to access the various properties of a Table.
  * It also contains methods calling it's subclass Column to change it's attributes.
  */
 public class Table {
@@ -25,25 +25,33 @@ public class Table {
     private ArrayList<Integer> X1ColumnBoundaries = new ArrayList<Integer>();
     private int endOfTable;
     private int beginOfTable;
-    private String workLocation;
     private ArrayList<ArrayList<Element>> columns;
     private String name;
     private double distanceConstant;
     private double distanceThreshold;
 
+    /**
+     * The constructor of this class consists of two parts: the first part sets some of the local variables that are required
+     * for the initial reconstruction of the Table. The second part calls methods
+     * @param spans the spans that are below the span table, which was picked up in the pages class.
+     * @param workLocation The worklocation as specified by the user.
+     * @param file The file which was used to extract the table from.
+     * @throws IOException
+     */
     public Table(Elements spans, String workLocation, File file) throws IOException {
+        //first part of the constructor:
         System.out.println("Table Created.");
         String name = spans.get(0).text() + " " + spans.get(2).text() + " " + spans.get(3).text() + " " + spans.get(4).text() + " " + spans.get(5).text();
         LOGGER.info("New Table. The title roughly starts with: "+ name);
         LOGGER.info("I was found in: " + file.getName());
         System.out.println("My name is: " + name);
 
-        this.workLocation = workLocation;
         this.spans = spans;
         this.columns = new ArrayList<ArrayList<Element>>();
         this.name = name;
         //~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-        System.out.println("Now we recreate the table using the positions. This might add more data!");
+        //Second part of the constructor:
+        System.out.println("Table reconstruction time:");
 
         Scores score = new Scores(spans);
         this.endOfTable = score.findEndOfTable();
@@ -60,8 +68,6 @@ public class Table {
         checkMapForX2Columns();
 
         setColumnsContent();
-
-        //TODO: Refine to column one more time so it also give the full header.
 
         String content = "<results>\n"; //used for the XML output
         String data = "";
@@ -83,6 +89,12 @@ public class Table {
             write(content, workLocation+"/" +name+".xml", file);
     }
 
+    /**
+     * This method creates a map that links the words in the rowspans to the pixels in the table. This is done horizontally
+     * so it matches every pixel on the X-as with all the words the collide with that pixel
+     * @param endOfTable The found end of the table.
+     * @return A map containing integer:ArrayList<String> in other words: pixel:List of words that collide with this pixel.
+     */
     private Map<Integer, ArrayList<String>> createTableMap(int endOfTable) {
         Map<Integer, ArrayList<String>> tableMap = new HashMap<Integer, ArrayList<String>>();
         int counter = 0;
@@ -106,8 +118,7 @@ public class Table {
         return tableMap;
     }
 
-    //Dont use this method just jet. We need to fix the columnscoring first.
-    //TODO: What this method needs is the end of the table!!! For this it also needs to know the end of the row!!!
+    //this method tries to find the X2 of each column using local variables.
     private void checkMapForX2Columns() {
         ArrayList<String> col = new ArrayList<String>();
         ArrayList<Integer> X2Col = new ArrayList<Integer>();
@@ -145,19 +156,9 @@ public class Table {
         this.X1ColumnBoundaries = X1Col;
     }
 
-    /*
-    * This method creates the columns and puts them in the ArrayList.
-    * NOTE that this method only works if the columns have already been created and run trough the refinement methods.
-    */
-    public void printNewColumns() {
-        for(ArrayList<Element> column : columns){
-            for(Element span : column){
-                System.out.print(span.text() + ", ");
-            }
-            System.out.println();
-        }
-    }
-
+    /**
+     * This methods searches for the content of the column using local variables.
+     */
     private void setColumnsContent(){
         ArrayList<ArrayList<Element>> columns = new ArrayList<ArrayList<Element>>();
         String[] positions;
@@ -177,6 +178,13 @@ public class Table {
         this.columns = columns;
     }
 
+    /**
+     * This method writes the results to the results directory in the workspace. Output is in XML.
+     * @param filecontent The results as being collected during the reconstruction of this table.
+     * @param location The path to the workspace as specified by the user.
+     * @param file The file which was used to reconstruct this table.
+     * @throws IOException
+     */
     public void write(String filecontent, String location, File file) throws IOException{
         FileWriter fileWriter;
         filecontent = getProvenance(file)+ filecontent;
@@ -187,13 +195,17 @@ public class Table {
         fileWriter.close();
     }
 
+    /**
+     * This method creates the provenance that is being used for writing the output.
+     * @param file The file which was used to create this table.
+     * @return A string containing the provenance in XML format.
+     */
     public String getProvenance(File file){
-        String provenance = "<provenane>\n"+
+        return "<provenane>\n"+
                 "<fromFile>" + file.getName()+"</fromFile>\n" +
                 "<nameOfTable>" + name + "</nameOfTable>\n"
                 +"<columnDistanceConstant>"+distanceConstant+"</columnDistanceConstant>\n"+
                 "<rowDistanceConstant>"+distanceThreshold+"</rowDistanceConstant>\n"+
                 "</provenance>\n";
-        return provenance;
     }
 }

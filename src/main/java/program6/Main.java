@@ -1,6 +1,6 @@
-package program5;
+package program6;
 
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.jsoup.HttpStatusException;
@@ -12,16 +12,13 @@ import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.*;
 import java.net.SocketTimeoutException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 /**
- * Welcome to the code of T.E.A. 0.5.
- * @version 0.5
+ * Welcome to the code of T.E.A. 0.6.
+ * @version 0.6
  * T.E.A. was made by Sander van Boom at the Birkbeck University in London. This was done with the help of Jan Czarnecki and Adrian Shepherd.
  * @author Sander van Boom
  * Development started at the 9th of September.
@@ -31,30 +28,29 @@ import java.util.logging.Logger;
  * You put some Pubmed ID's in your T.E.A. and T.E.A. extracts the PDF and uses ImageMagick (PDF -> bitmap converter) and
  * Tesseract (OCR software) to create an HTML of the words.
  * The rest of the code extracts the table and stores it in an XML file.
- *
- * Note that none of the used code/software has 100% accuracy.
  */
 public class Main {
 
     public static Logger LOGGER = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, TransformerException, ParseException, InterruptedException {
-        System.out.println("Starting T.E.A. 0.4");
+        System.out.println("Starting T.E.A. 0.6");
 
-
-        System.setProperty("java.util.logging.config.file", "/program4/log.properties");
+        System.setProperty("java.util.logging.config.file", "/program6/log.properties");
         LogManager logMan=LogManager.getLogManager();
-        logMan.readConfiguration(Main.class.getResourceAsStream("/program4/log.properties"));
+        logMan.readConfiguration(Main.class.getResourceAsStream("/program6/log.properties"));
         logMan.addLogger(LOGGER);
 
-        LOGGER.info("Starting T.E.A. 0.5");
+        LOGGER.info("Starting T.E.A. 0.6");
         LOGGER.info("Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm. But if you want, you can call me Bob.");
         System.out.println("Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm. But if you want, you can call me Bob.");
 
+        //
         ArgumentProcessor arguments = new ArgumentProcessor(args);
         String workLocation = arguments.getWorkspace();
         ArrayList<String> pubmedIDs = arguments.getPubmedIDs();
 
+        //prepare the workspace so we have a separate place to store our output files.
         prepareWorkspace(workLocation);
 
         String pathToImageMagic = arguments.getPathToImageMagick();
@@ -75,31 +71,20 @@ public class Main {
                 ID = pubmedID;
 
 
-        System.out.println("Currently processing: " + ID);
-        LOGGER.info("Used ID: " + ID);
+                System.out.println("Currently processing: " + ID);
+                LOGGER.info("Used ID: " + ID);
 
-        REXArticleExtractor3 rex = new REXArticleExtractor3(ID);
-        if(rex.hasPDFStream()){
-            InputStream stream = rex.getPDFStream();
-            OutputStream  outStream = new BufferedOutputStream(new FileOutputStream(new File(workLocation+"/"+ID+".pdf")));
-            IOUtils.copy(stream, outStream);
-        }
-        //for logging purpose:
-        String PDFLink = rex.getPDFLink();
-                /*
-        if(PDFLink == null){
-            LOGGER.info("I'm really sorry but I can't find a PDF link to this pubmedID. I'm gonna skip this PubmedID.");
-            continue;
-        }
-            //TODO: rewrite the PDF downloader so it uses more then just the constructor.
-            LOGGER.info("I've found a PDF link for this PubmedID: " + PDFLink);
-            PDFDownloader PDFDownloader = new program5.PDFDownloader(PDFLink, ""+workLocation+"/"+ID+".pdf");
-                  */
-            System.out.println("Path to Magic: " + pathToImageMagic);
-            System.out.println("ID: " + ID);
-            System.out.println("Worklocation: " + workLocation);
-            System.out.println("Resolution: " + resolution);
-            secondMain(pathToImageMagic, workLocation, ID, resolution,pathToTesseract, pathToTesseractConfig);
+                REXArticleExtractor3 rex = new REXArticleExtractor3(ID);
+                if(rex.hasPDFStream()){
+                    InputStream stream = rex.getPDFStream();
+                    OutputStream  outStream = new BufferedOutputStream(new FileOutputStream(new File(workLocation+"/"+ID+".pdf")));
+                    IOUtils.copy(stream, outStream);
+                }
+                    System.out.println("Path to Magic: " + pathToImageMagic);
+                    System.out.println("ID: " + ID);
+                    System.out.println("Worklocation: " + workLocation);
+                    System.out.println("Resolution: " + resolution);
+                    secondMain(pathToImageMagic, workLocation, ID, resolution,pathToTesseract, pathToTesseractConfig);
             }
         }
         if(arguments.getContainsPDFFiles()){
@@ -150,25 +135,32 @@ public class Main {
                     inputStream.close();
                 }
                 secondMain(pathToImageMagic, workLocation,ID, resolution, pathToTesseract, pathToTesseractConfig);
-            }
-
-
-            catch(SocketTimeoutException e){
-                System.out.println(e);
-            }
-            catch (HttpStatusException e){
-                System.out.println(e);
-            }
+                }
+                catch(SocketTimeoutException e){
+                    System.out.println(e);
+                }
+                catch (HttpStatusException e){
+                    System.out.println(e);
+                }
                 catch (UnsupportedMimeTypeException e){
                     System.out.println(e);
                 }
             }
-            }
-
-        LOGGER.info("T.E.A. has run out of workable Bits, Bytes, whatever. Don't worry a new supply will come in next week!");
+        }
         LOGGER.info("T.E.A. is now entering sleep mode...");
     }
 
+    /**
+     * This method is the second. This part of the code is always run, no matter what the current mode is.
+     * The starting point of this method is the workspace with the PDF files.
+     * @param pathToImageMagic The path to one of the dependencies: ImageMagick
+     * @param workLocation The work location, containing the PDF
+     * @param ID The name of the PDF with the extension.
+     * @param resolution The resolution to be used by ImageMagick.
+     * @param pathToTesseract The path to the second dependency : Tesseract.
+     * @param pathToTesseractConfig The path to the configuration file to be used by Tesseract.
+     * @throws IOException
+     */
     private static void secondMain(String pathToImageMagic, String workLocation, String ID, String resolution, String pathToTesseract, String pathToTesseractConfig) throws IOException {
         ImageMagick imagemagick = new ImageMagick(pathToImageMagic,workLocation, ID ,resolution);
         imagemagick.createPNGFiles();
@@ -178,7 +170,7 @@ public class Main {
         int x =0;
         for(File file : pngs){
             LOGGER.info("Hand me my equipment. I'm going to perform OCR on " + file.getName());
-            Tesseract Tesseract = new program5.Tesseract(pathToTesseract, workLocation, ID, Integer.toString(x),pathToTesseractConfig);
+            Tesseract Tesseract = new program6.Tesseract(pathToTesseract, workLocation, ID, Integer.toString(x),pathToTesseractConfig);
             Tesseract.runTesseract();
             x++;
         }
@@ -197,6 +189,7 @@ public class Main {
 
     /**
      * This method prepares the workspace by creating the necessary directories.
+     * Currently it only creates the results directory in the workspace to store the results.
      */
     private static void prepareWorkspace(String workspace){
         File file = new File(workspace + "/results");
