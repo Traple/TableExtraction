@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2013-11-04T15:43:38</date>
+  <millis>1383579818500</millis>
+  <sequence>0</sequence>
+  <logger>program5.Main</logger>
+  <level>INFO</level>
+  <class>program5.Main</class>
+  <method>main</method>
+  <thread>1</thread>
+  <message>Starting T.E.A. 0.5</message>
+</record>
+<record>
+  <date>2013-11-04T15:43:38</date>
+  <millis>1383579818508</millis>
+  <sequence>1</sequence>
+  <logger>program5.Main</logger>
+  <level>INFO</level>
+  <class>program5.Main</class>
+  <method>main</method>
+  <thread>1</thread>
+  <message>Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm. But if you want, you can call me Bob.</message>
+</record>
+<record>
+  <date>2013-11-04T15:43:38</date>
+  <millis>1383579818529</millis>
+  <sequence>2</sequence>
+  <logger>program5.ArgumentProcessor</logger>
+  <level>INFO</level>
+  <class>program5.ArgumentProcessor</class>
+  <method>setPubmedIDs</method>
+  <thread>1</thread>
+  <message>Couldn't find a PubmedID file.</message>
+</record>
+<record>
+  <date>2013-11-04T15:43:38</date>
+  <millis>1383579818530</millis>
+  <sequence>3</sequence>
+  <logger>program5.Main</logger>
+  <level>INFO</level>
+  <class>program5.Main</class>
+  <method>main</method>
+  <thread>1</thread>
+  <message>T.E.A. has run out of workable Bits, Bytes, whatever. Don't worry a new supply will come in next week!</message>
+</record>
+<record>
+  <date>2013-11-04T15:43:38</date>
+  <millis>1383579818530</millis>
+  <sequence>4</sequence>
+  <logger>program5.Main</logger>
+  <level>INFO</level>
+  <class>program5.Main</class>
+  <method>main</method>
+  <thread>1</thread>
+  <message>T.E.A. is now entering sleep mode...</message>
+</record>

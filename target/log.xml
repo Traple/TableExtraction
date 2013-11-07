@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="windows-1252" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2013-10-28T17:37:17</date>
+  <millis>1382981837829</millis>
+  <sequence>0</sequence>
+  <logger>program4.Main</logger>
+  <level>INFO</level>
+  <class>program4.Main</class>
+  <method>main</method>
+  <thread>1</thread>
+  <message>Starting T.E.A. 0.4</message>
+</record>
+<record>
+  <date>2013-10-28T17:37:17</date>
+  <millis>1382981837886</millis>
+  <sequence>1</sequence>
+  <logger>program4.Main</logger>
+  <level>INFO</level>
+  <class>program4.Main</class>
+  <method>main</method>
+  <thread>1</thread>
+  <message>Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm. But if you want, you can call me Bob.</message>
+</record>
+<record>
+  <date>2013-10-28T17:37:17</date>
+  <millis>1382981837899</millis>
+  <sequence>2</sequence>
+  <logger>program4.Main</logger>
+  <level>INFO</level>
+  <class>program4.Main</class>
+  <method>main</method>
+  <thread>1</thread>
+  <message>Used ID: 24089145</message>
+</record>
+<record>
+  <date>2013-10-28T17:37:17</date>
+  <millis>1382981837899</millis>
+  <sequence>3</sequence>
+  <logger>program4.Main</logger>
+  <level>INFO</level>
+  <class>program4.Main</class>
+  <method>main</method>
+  <thread>1</thread>
+  <message>Used resolution: 450</message>
+</record>
+<record>
+  <date>2013-10-28T17:37:17</date>
+  <millis>1382981837899</millis>
+  <sequence>4</sequence>
+  <logger>program4.Main</logger>
+  <level>INFO</level>
+  <class>program4.Main</class>
+  <method>main</method>
+  <thread>1</thread>
+  <message>Used worklocation: : C:/Users/Sander van Boom/Documents/School/tables/T.E.A. 0.4 test/</message>
+</record>
+<record>
+  <date>2013-10-28T17:37:19</date>
+  <millis>1382981839785</millis>
+  <sequence>25</sequence>
+  <logger>program4.REXArticleExtractor</logger>
+  <level>INFO</level>
+  <class>program4.REXArticleExtractor</class>
+  <method>fetchWebPage</method>
+  <thread>1</thread>
+  <message>Fetching http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=pubmed&amp;id=24089145&amp;retmode=ref&amp;cmd=prlinks</message>
+</record>
+</log>

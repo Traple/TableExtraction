@@ -1,0 +1,1 @@
+textord_tablefind_recognize_tables 1
