@@ -2,24 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cc3129f9-2281-45ab-81bb-08e581b5b4f8" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/program6/Table2.java" />
-      <change type="DELETED" beforePath="C:\Users\Sander van Boom\IdeaProjects\TableExtraction\log.xml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/program6/ArgumentProcessor.java" afterPath="$PROJECT_DIR$/src/main/java/program6/ArgumentProcessor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/program6/Main.java" afterPath="$PROJECT_DIR$/src/main/java/program6/Main.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/program6/Page.java" afterPath="$PROJECT_DIR$/src/main/java/program6/Page.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/program6/PubmedIDQuery.java" afterPath="$PROJECT_DIR$/src/main/java/program6/PubmedIDQuery.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/program6/Scores.java" afterPath="$PROJECT_DIR$/src/main/java/program6/Scores.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/program5/Table.java" afterPath="$PROJECT_DIR$/src/main/java/program5/Table.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/program6/Table.java" afterPath="$PROJECT_DIR$/src/main/java/program6/Table.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/program6/config.txt" afterPath="$PROJECT_DIR$/src/main/resources/program6/config.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="TableExtraction.iws" />
     <ignored path=".idea/workspace.xml" />
     <file path="/Main.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1383918234165" ignored="false" />
     <file path="/pom.xml" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1382971468862" ignored="false" />
-    <file path="/Dummy.txt" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1383922783519" ignored="false" />
+    <file path="/Dummy.txt" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1383925434876" ignored="false" />
     <file path="/HeaderMethods.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1381334666646" ignored="false" />
     <file path="/Purification.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1381757207397" ignored="false" />
     <file path="/RelativeActivity.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1381328054229" ignored="false" />
@@ -865,7 +854,11 @@
       <created>1383833094399</created>
       <updated>1383833094399</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="First version of T.E.A. 0.6. This includes the fixing of some bugs in the Query mode.">
+      <created>1383925453416</created>
+      <updated>1383925453416</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TodoView" selected-index="0">
