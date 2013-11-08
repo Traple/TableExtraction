@@ -38,10 +38,16 @@ public class Table {
      * @param file The file which was used to extract the table from.
      * @throws IOException
      */
-    public Table(Elements spans, String workLocation, File file) throws IOException {
+    public Table(Elements spans, String workLocation, File file, double spaceDistance) throws IOException {
         //first part of the constructor:
         System.out.println("Table Created.");
-        String name = spans.get(0).text() + " " + spans.get(2).text() + " " + spans.get(3).text() + " " + spans.get(4).text() + " " + spans.get(5).text();
+        try{
+            String name = spans.get(0).text() + " " + spans.get(2).text() + " " + spans.get(3).text() + " " + spans.get(4).text() + " " + spans.get(5).text();
+        }
+        catch(IndexOutOfBoundsException e){
+            System.out.println("To little spans!");
+            String name = "I only have " +spans.size() + " words.";
+        }
         LOGGER.info("New Table. The title roughly starts with: "+ name);
         LOGGER.info("I was found in: " + file.getName());
         System.out.println("My name is: " + name);
@@ -53,11 +59,10 @@ public class Table {
         //Second part of the constructor:
         System.out.println("Table reconstruction time:");
 
-        Scores score = new Scores(spans);
+        Scores score = new Scores(spans, spaceDistance);
         this.endOfTable = score.findEndOfTable();
         this.beginOfTable = score.findBeginOfTable();
         this.distanceConstant = score.getDistanceConstant();
-
 
         LOGGER.info("Begin of the table at " + beginOfTable);
         LOGGER.info("End of the table at: " + endOfTable);
@@ -72,7 +77,6 @@ public class Table {
         String content = "<results>\n"; //used for the XML output
         String data = "";
 
-
         for (ArrayList<Element> column : columns){
             try{
             Column col = new Column(column);
@@ -86,7 +90,7 @@ public class Table {
             content = content + data;
             content = content + "</results>\n";
             System.out.println("Writing to file: ");
-            write(content, workLocation+"/" +name+".xml", file);
+            write(content, workLocation+"/results/" +name+".xml", file);
     }
 
     /**
@@ -118,6 +122,7 @@ public class Table {
         return tableMap;
     }
 
+    //TODO: This method should find the column boundaries on a per line basis. Overall searching does not give the expected results
     //this method tries to find the X2 of each column using local variables.
     private void checkMapForX2Columns() {
         ArrayList<String> col = new ArrayList<String>();
@@ -178,18 +183,19 @@ public class Table {
         this.columns = columns;
     }
 
+    //TODO: Chose a better way to store the tables (create a different name), to avoid overwriting.
     /**
      * This method writes the results to the results directory in the workspace. Output is in XML.
      * @param filecontent The results as being collected during the reconstruction of this table.
-     * @param location The path to the workspace as specified by the user.
-     * @param file The file which was used to reconstruct this table.
+     * @param location The path to the the XML file (output).
+     * @param file The file which was used to reconstruct this table. (used for provenance purpose)
      * @throws IOException
      */
     public void write(String filecontent, String location, File file) throws IOException{
         FileWriter fileWriter;
         filecontent = getProvenance(file)+ filecontent;
 
-        File newTextFile = new File(location+"/results/");
+        File newTextFile = new File(location);
         fileWriter = new FileWriter(newTextFile);
         fileWriter.write(filecontent);
         fileWriter.close();
@@ -208,4 +214,6 @@ public class Table {
                 "<rowDistanceConstant>"+distanceThreshold+"</rowDistanceConstant>\n"+
                 "</provenance>\n";
     }
+
+    //TODO: Create a validation method that merges all the values and score them.
 }

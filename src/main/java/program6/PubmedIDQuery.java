@@ -4,12 +4,14 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 //This class calls the NCBI API efetch to get pubmedID's.
 public class PubmedIDQuery {
 
+    public static Logger LOGGER = Logger.getLogger(PubmedIDQuery.class.getName());
     private String url;
     private String fileName;
     private String workspace;
@@ -18,9 +20,10 @@ public class PubmedIDQuery {
     public PubmedIDQuery(String query, String workspace, String maxPubmedIDs) throws IOException, InterruptedException {
         this.url = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term="+query+"&datetype=pdat&maxdate=2010&mindate=1990&retmax="+maxPubmedIDs;
         this.fileName  = query+".xml";
-        this.pubmedIDs = setPubmedIDs();
         this.workspace = workspace;
-
+        this.pubmedIDs = setPubmedIDs();
+        System.out.println(workspace);
+        LOGGER.info("Running the following query: " + url);
     }
     //~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
     //Set methods of this class:
@@ -61,6 +64,8 @@ public class PubmedIDQuery {
         FileInputStream fis = new FileInputStream(workspace+"/"+fileName);
         BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
         ArrayList<String> pubmedIDs = new ArrayList<String>();
+
+        //TODO: Create a proper XML implementation!
 
         String line = reader.readLine();
         while(line != null){

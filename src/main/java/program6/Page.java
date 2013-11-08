@@ -61,12 +61,34 @@ public class Page {
             }
         }
         if (foundATable) {
-            foundTable = new Table(tableSpans, workLocation, file);
+            foundTable = new Table(tableSpans, workLocation, file, findSpaceDistance());
         }
         if(!foundATable){
             LOGGER.info("There was no table found. ");
             System.out.println("No table found =(");
         }
         return foundTable;
+    }
+
+    /**
+     * This method tries to find the avarage space/distance of a character in a table. This can be used to determine
+     * the columns in a table.
+     * @return the avarage distance/space of a character.
+     */
+    public double findSpaceDistance(){
+        double totalCharLength = 0.0;
+        for(Element span : spans){
+            String pos = span.attr("title");
+            String[] positions = pos.split("\\s+");
+            String word = span.text();
+            int X1 = Integer.parseInt(positions[1]);
+            int X2 = Integer.parseInt(positions[3]);
+            int length = X2 -X1;
+            if(word.length() > 0){
+                double charLength = length/word.length();
+                totalCharLength = totalCharLength + charLength;
+            }
+        }
+        return totalCharLength/spans.size();
     }
 }

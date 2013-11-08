@@ -6,6 +6,8 @@ import org.apache.commons.cli.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -106,6 +108,7 @@ public class ArgumentProcessor {
         String workspace = "";
         if(line.hasOption("W")){
             workspace = line.getOptionValue("W");
+            LOGGER.info("workspace set to: " + workspace);
             return workspace;
         }
         else{
@@ -127,13 +130,14 @@ public class ArgumentProcessor {
      * @param line the commandline as made by the constructor
      * @return The query that was given after -QUE. Returns null when no query was given.
      */
-    private String setQuery(CommandLine line){
-        String Query = null;
+    private String setQuery(CommandLine line) throws UnsupportedEncodingException {
+        String query = null;
         if(line.hasOption("QUE")){
-            Query = line.getOptionValue("QUE");
-
+            query = line.getOptionValue("QUE");
         }
-        return Query;
+        query = URLEncoder.encode(query, "UTF-8");
+        LOGGER.info("Used query: " +query);
+        return query;
     }
 
     /**

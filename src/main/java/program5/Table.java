@@ -80,7 +80,7 @@ public class Table {
             content = content + data;
             content = content + "</results>\n";
             System.out.println("Writing to file: ");
-            write(content, workLocation+"/" +name+".xml", file);
+            write(content, workLocation+"/results/" +name+".xml", file);
     }
 
     private Map<Integer, ArrayList<String>> createTableMap(int endOfTable) {
@@ -181,7 +181,7 @@ public class Table {
         FileWriter fileWriter;
         filecontent = getProvenance(file)+ filecontent;
 
-        File newTextFile = new File(location+"/results/");
+        File newTextFile = new File(location);
         fileWriter = new FileWriter(newTextFile);
         fileWriter.write(filecontent);
         fileWriter.close();

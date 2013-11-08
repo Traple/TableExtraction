@@ -20,15 +20,15 @@ public class Scores {
      * The constructor sets the private variables for this class and calls some it's own methods.
      * @param spans the current HTML words of this table.
      */
-    public Scores(Elements spans){
+    public Scores(Elements spans, double spaceDistance){
         this.spans = spans;
         this.CM = new CommonMethods();
         this.pottentialEndOFTables = new ArrayList<Integer>();
         this.pottentialBeginOFTables = new ArrayList<Integer>();
         this.distanceConstant = 4;
 
-        System.out.println("AVG CharLength: " + findSpaceDistance());
-        this.spaceDistance = findSpaceDistance();
+        System.out.println("AVG CharLength: " + spaceDistance);
+        this.spaceDistance = spaceDistance;
         System.out.println("AVGDistance Treshold: " + findAVGDistanceTreshold());
         this.avgWordDistance = scoreAvarageWordDistance();
     }
@@ -66,6 +66,7 @@ public class Scores {
         return avgWordDistance;
     }
 
+    //TODO: Use the information from the non semantic table content finder to detect the end of the table.
     /**
      * This method will use the distance between words to find the end of a table.
      * WARNING: This method is one of the key reasons we get false negatives when it comes to extracting the whole table.
@@ -121,27 +122,6 @@ public class Scores {
         return (spaceDistance*distanceConstant);
     }
 
-    /**
-     * This method tries to find the avarage space/distance of a character in a table. This can be used to determine
-     * the columns in a table.
-     * @return the avarage distance/space of a character.
-     */
-    public double findSpaceDistance(){
-        double totalCharLength = 0.0;
-        for(Element span : spans){
-            String pos = span.attr("title");
-            String[] positions = pos.split("\\s+");
-            String word = span.text();
-            int X1 = Integer.parseInt(positions[1]);
-            int X2 = Integer.parseInt(positions[3]);
-            int length = X2 -X1;
-            if(word.length() > 0){
-                double charLength = length/word.length();
-                totalCharLength = totalCharLength + charLength;
-            }
-        }
-        return totalCharLength/spans.size();
-    }
     public double getDistanceConstant(){
         return distanceConstant;
     }

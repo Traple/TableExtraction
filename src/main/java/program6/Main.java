@@ -45,9 +45,10 @@ public class Main {
         LOGGER.info("Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm. But if you want, you can call me Bob.");
         System.out.println("Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm. But if you want, you can call me Bob.");
 
-        //
+        //processing of the arguments:
         ArgumentProcessor arguments = new ArgumentProcessor(args);
         String workLocation = arguments.getWorkspace();
+        System.out.println("The worklocation is: " + workLocation);
         ArrayList<String> pubmedIDs = arguments.getPubmedIDs();
 
         //prepare the workspace so we have a separate place to store our output files.
@@ -79,15 +80,18 @@ public class Main {
                     InputStream stream = rex.getPDFStream();
                     OutputStream  outStream = new BufferedOutputStream(new FileOutputStream(new File(workLocation+"/"+ID+".pdf")));
                     IOUtils.copy(stream, outStream);
-                }
+
                     System.out.println("Path to Magic: " + pathToImageMagic);
                     System.out.println("ID: " + ID);
                     System.out.println("Worklocation: " + workLocation);
                     System.out.println("Resolution: " + resolution);
+                    LOGGER.info("");
                     secondMain(pathToImageMagic, workLocation, ID, resolution,pathToTesseract, pathToTesseractConfig);
+                }
             }
         }
         if(arguments.getContainsPDFFiles()){
+            LOGGER.info("Entering PDF mode");
             ArrayList<String> PDFFiles = ImageMagick.findPDFs(workLocation);
             for(String ID : PDFFiles){
                 System.out.println("Path to Magic: " + pathToImageMagic);
@@ -99,10 +103,11 @@ public class Main {
             }
         }
         if(arguments.getQuery()!=null){
+            LOGGER.info("Entering Query mode");
             String numberOfArticles = "1000";
             System.out.println("Im gonna extract " + numberOfArticles+".");
             LOGGER.info("I'm going to extract " + numberOfArticles + " articles.");
-            PubmedIDQuery pubmedIDQuery = new PubmedIDQuery(arguments.getQuery(), workLocation, numberOfArticles);
+            PubmedIDQuery pubmedIDQuery = new PubmedIDQuery(arguments.getQuery(), arguments.getWorkspace(), numberOfArticles);
             ArrayList<String> pubmedIDsFromQuery = pubmedIDQuery.getPubmedIDs();
             System.out.println("Extracted " +pubmedIDsFromQuery.size() + " articles");
             LOGGER.info("Extracted " +pubmedIDsFromQuery.size() + " articles");
@@ -133,10 +138,14 @@ public class Main {
                     start = System.currentTimeMillis();
                     outStream.close();
                     inputStream.close();
+
+                    secondMain(pathToImageMagic, workLocation,ID, resolution, pathToTesseract, pathToTesseractConfig);
+                    }
+                    else{
+                    LOGGER.info("There was no PDF Stream.");
                 }
-                secondMain(pathToImageMagic, workLocation,ID, resolution, pathToTesseract, pathToTesseractConfig);
                 }
-                catch(SocketTimeoutException e){
+                    catch(SocketTimeoutException e){
                     System.out.println(e);
                 }
                 catch (HttpStatusException e){
