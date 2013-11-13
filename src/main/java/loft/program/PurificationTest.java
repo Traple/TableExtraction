@@ -1,4 +1,4 @@
-package program;
+package loft.program;
 
 /**
  * Created for project: TableExtraction
@@ -7,12 +7,14 @@ package program;
  * User: Sander van Boom
  * Date: 9-10-13
  * Time: 15:04
- */
+
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.junit.Before;
 import org.junit.Test;
+import program.HeaderMethods;
+import program.Purification;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -50,3 +52,4 @@ public class PurificationTest {
     }
 
 }
+*/

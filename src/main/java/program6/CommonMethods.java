@@ -32,10 +32,35 @@ public class CommonMethods {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public static boolean isNumber(String string) {
+    public static boolean containsNumber(String string) {
         Pattern pattern = Pattern.compile("^(\\d+.*|-\\d+.*)");
         Matcher matcher = pattern.matcher(string);
         return matcher.matches();
+    }
+
+    //TODO: Create more rules for this: A lot of times a cell is seen as a string (26-4)
+    //for example: if convert to 1 () creates an int, convert to 1 and call it an int.
+    public static boolean isNumber(String string){
+        int numbers = 0;
+        int strings = 0;
+        boolean isNumber = false;
+        char[] characters = string.toCharArray();
+        for(char character : characters){
+            try{
+                if(String.valueOf(character) == "i"){
+                    character = "1".charAt(0);
+                }
+                Integer.parseInt(String.valueOf(character));
+                numbers += 1;
+            }
+            catch(NumberFormatException e){
+                strings += 1;
+            }
+        }
+        if(numbers> strings){
+            isNumber = true;
+        }
+        return isNumber;
     }
 
     @SuppressWarnings("UnusedDeclaration")

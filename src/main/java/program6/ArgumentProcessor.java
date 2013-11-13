@@ -134,9 +134,9 @@ public class ArgumentProcessor {
         String query = null;
         if(line.hasOption("QUE")){
             query = line.getOptionValue("QUE");
+            query = URLEncoder.encode(query, "UTF-8");
+            LOGGER.info("Used query: " +query);
         }
-        query = URLEncoder.encode(query, "UTF-8");
-        LOGGER.info("Used query: " +query);
         return query;
     }
 

@@ -62,7 +62,7 @@ public class Main {
         System.out.println("Which uses the following configuration file: " + pathToTesseractConfig);
         String resolution = "600";
         long start = System.currentTimeMillis();
-
+        /*
         if(pubmedIDs == null){
             System.out.println("Pubmed File option disabled.");
         }
@@ -89,7 +89,7 @@ public class Main {
                     secondMain(pathToImageMagic, workLocation, ID, resolution,pathToTesseract, pathToTesseractConfig);
                 }
             }
-        }
+        }      */
         if(arguments.getContainsPDFFiles()){
             LOGGER.info("Entering PDF mode");
             ArrayList<String> PDFFiles = ImageMagick.findPDFs(workLocation);
@@ -101,7 +101,7 @@ public class Main {
                 LOGGER.info("Currently Processing: " + ID);
                 secondMain(pathToImageMagic, workLocation, ID, resolution, pathToTesseract, pathToTesseractConfig);
             }
-        }
+        }   /*
         if(arguments.getQuery()!=null){
             LOGGER.info("Entering Query mode");
             String numberOfArticles = "1000";
@@ -155,7 +155,7 @@ public class Main {
                     System.out.println(e);
                 }
             }
-        }
+        }  */
         LOGGER.info("T.E.A. is now entering sleep mode...");
     }
 
@@ -190,6 +190,7 @@ public class Main {
             LOGGER.info("Searching for tables in: " + file.getName());
             System.out.println("Searching for tables in: " + file.getName());
             Page page = new Page(file, workLocation);
+            System.out.println("The found average length of a character is: " + page.getSpaceDistance());
             page.createTables();
             LOGGER.info("------------------------------------------------------------------------------");
             System.out.println("------------------------------------------------------------------------------");

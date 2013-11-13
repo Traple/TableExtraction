@@ -1,9 +1,14 @@
-package program;
+/*
+package loftTest.program;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.junit.Before;
 import org.junit.Test;
+import program.HeaderMethods;
+import program.Kinetics;
+import program.Purification;
+import program.RelativeActivity;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,14 +21,6 @@ import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
 
-/**
- * Created for project: TableExtraction
- * In package: program
- * Created with IntelliJ IDEA.
- * User: Sander van Boom
- * Date: 9-10-13
- * Time: 15:57
- */
 public class HeaderMethodsTest {
     private Collection<Purification> Pheaders;
     private Collection<Kinetics> Kheaders;
@@ -107,3 +104,4 @@ public class HeaderMethodsTest {
     }
 
 }
+                                   */

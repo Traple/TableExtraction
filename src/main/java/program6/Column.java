@@ -195,5 +195,5 @@ public class Column {
     public double getHeightThreshold(){
         return heightThreshold;
     }
-
+    //TODO: Add a non semenatic content of table validation.
 }

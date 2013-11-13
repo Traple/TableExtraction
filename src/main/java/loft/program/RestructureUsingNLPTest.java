@@ -1,4 +1,4 @@
-package program;
+package loft.program;
 
 /**
  * Created for project: TableExtraction
@@ -7,7 +7,7 @@ package program;
  * User: Sander van Boom
  * Date: 9-10-13
  * Time: 15:04
- */
+
 
 import org.junit.Before;
 import org.junit.Test;
@@ -74,3 +74,4 @@ public void isNumber() {
 }
 
 }
+*/

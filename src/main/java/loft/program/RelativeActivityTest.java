@@ -1,9 +1,11 @@
-package program;
+package loft.program;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.junit.Before;
 import org.junit.Test;
+import program.HeaderMethods;
+import program.RelativeActivity;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -22,7 +24,7 @@ import static junit.framework.Assert.assertEquals;
  * User: Sander van Boom
  * Date: 9-10-13
  * Time: 14:12
- */
+
 public class RelativeActivityTest {
     private Collection<RelativeActivity> Aheaders;
     private List<String> names;
@@ -61,3 +63,4 @@ public class RelativeActivityTest {
         assertEquals("S", name);
     }
 }
+*/

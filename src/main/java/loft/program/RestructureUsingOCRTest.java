@@ -1,4 +1,4 @@
-package program;
+package loft.program;
 
 /**
  * Created for project: TableExtraction
@@ -7,12 +7,14 @@ package program;
  * User: Sander van Boom
  * Date: 9-10-13
  * Time: 15:04
- */
+
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.junit.Before;
 import org.junit.Test;
+import program.HeaderMethods;
+import program.Purification;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -93,5 +95,6 @@ public class RestructureUsingOCRTest {
         }
         assertEquals("[[header, header2, header3], [1, 5, 10], [6.3, 17.8, 4.2], [100, 60, 30]]", headerTypes.toString());
     }
-    */
+
 }
+*/

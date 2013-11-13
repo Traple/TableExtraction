@@ -7,6 +7,7 @@ import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 /*
@@ -19,6 +20,7 @@ public class Page {
     private Elements spans;
     private String workLocation;
     private File file;
+    private double spaceDistance;
     public static Logger LOGGER = Logger.getLogger(Page.class.getName());
 
     /**
@@ -33,49 +35,59 @@ public class Page {
         this.spans = doc.select("span.ocrx_word");
         this.workLocation = workLocation;
         this.file = file;
+        this.spaceDistance = findSpaceDistance();
+        LOGGER.info("The found average length of a character is: " + getSpaceDistance());
     }
 
-    //TODO: support multiple tables in the same page.
     /**
      * This method will find the tables in the content. It creates a table object for every table it finds.
-     * @return The Table object. This method returns null if no table was found.
+     * Do note that it creates a substring of the span(word) it finds. So if it finds <span>(table</span> it will not be detected.
+     * This has been done to reduce the amount of false positives (for referring to a table in the text).
+     * @return The Table object. This method returns an empty list if no table was found.
      * @throws IOException
      */
-    public Table createTables() throws IOException {
+    public ArrayList<Table2> createTables() throws IOException {
         String word;
         boolean foundATable = false;
         Elements tableSpans = new Elements();
-        Table foundTable = null;
+        ArrayList<Table2> foundTables = new ArrayList<Table2>();
         for (Element span : spans) {
             word = span.text();
             try {
-                if (word.substring(0, 5).equals("TABLE") || word.substring(0, 5).equals("table") || word.substring(0, 5).equals("Table")) {
+                if(word.substring(0, 5).equals("TABLE") || word.substring(0, 5).equals("table") || word.substring(0, 5).equals("Table")&&foundATable){
+                    foundTables.add(new Table2(tableSpans, spaceDistance)); //make a new table from the collected spans
+                    tableSpans = new Elements();                                                    //reset the spans for the new Table
+                    tableSpans.add(span);
+                }
+                else if (foundATable) {
+                    tableSpans.add(span);
+                }
+                if (word.substring(0, 5).equals("TABLE") || word.substring(0, 5).equals("table") || word.substring(0, 5).equals("Table")&&!foundATable) {
                     foundATable = true;
                     tableSpans.add(span);
                 }
             } catch (StringIndexOutOfBoundsException e) {
-                //do nothing
-            }
-            if (foundATable) {
-                tableSpans.add(span);
+                if (foundATable) {
+                    tableSpans.add(span);
+                }
             }
         }
         if (foundATable) {
-            foundTable = new Table(tableSpans, workLocation, file, findSpaceDistance());
+            foundTables.add(new Table2(tableSpans, spaceDistance));
         }
         if(!foundATable){
             LOGGER.info("There was no table found. ");
             System.out.println("No table found =(");
         }
-        return foundTable;
+        return foundTables;
     }
 
     /**
-     * This method tries to find the avarage space/distance of a character in a table. This can be used to determine
+     * This method tries to find the average space/distance of a character in a table. This can be used to determine
      * the columns in a table.
-     * @return the avarage distance/space of a character.
+     * @return the average distance/space of a character.
      */
-    public double findSpaceDistance(){
+    private double findSpaceDistance(){
         double totalCharLength = 0.0;
         for(Element span : spans){
             String pos = span.attr("title");
@@ -90,5 +102,9 @@ public class Page {
             }
         }
         return totalCharLength/spans.size();
+    }
+
+    public double getSpaceDistance(){
+        return spaceDistance;
     }
 }

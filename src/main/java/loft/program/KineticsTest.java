@@ -1,9 +1,11 @@
-package program;
+package loft.program;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.junit.Before;
 import org.junit.Test;
+import program.HeaderMethods;
+import program.Kinetics;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,7 +25,7 @@ import static junit.framework.Assert.assertEquals;
  * User: Sander van Boom
  * Date: 9-10-13
  * Time: 14:12
- */
+
 public class KineticsTest {
     private Collection<Kinetics> Kheaders;
     private List<String> names;
@@ -53,3 +55,4 @@ public class KineticsTest {
     }
 
 }
+*/
