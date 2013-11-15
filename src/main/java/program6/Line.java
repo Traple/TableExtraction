@@ -14,6 +14,7 @@ public class Line {
     private double thresholdModifier;
     private ArrayList<String> clusterTypes;
     private int Y1OfFirstWord;
+    private int Y1OfLastWord;
 
     public Line(Elements words, double lineThreshold){
         this.words = words;
@@ -26,6 +27,10 @@ public class Line {
         String pos = words.get(0).attr("title");
         positions = pos.split("\\s+");
         this.Y1OfFirstWord = Integer.parseInt(positions[2]);
+
+        pos = words.get(words.size()-1).attr("title");
+        positions = pos.split("\\s+");
+        this.Y1OfLastWord = Integer.parseInt(positions[2]);
 
         setLineTypes();
 
@@ -64,7 +69,7 @@ public class Line {
             }
             lastX2 = x2;
         }
-        if(clusters.size()>3){
+        if(clusters.size()>=1&&!clusters.get(0).equals(cluster)){
             clusters.add(cluster);                                   //TODO: Test this rule a bit more.
         }
     }
@@ -112,6 +117,42 @@ public class Line {
         return clusters;
     }
 
+    public static int getClusterX1(ArrayList<Element> cluster){
+            int clusterBoundaryX1 = Integer.MAX_VALUE;
+            String pos;
+            String[] positions;
+
+            Element firstWordInCell = cluster.get(0);
+
+            pos = firstWordInCell.attr("title");
+            positions = pos.split("\\s+");
+            int x1 = Integer.parseInt(positions[1]);
+            if(x1 < clusterBoundaryX1){
+                clusterBoundaryX1 = x1;
+            }
+        return clusterBoundaryX1;
+        }
+
+    public static int getClusterX2(ArrayList<Element> cluster){
+        int clusterBoundaryX2 = Integer.MIN_VALUE;
+        String pos;
+        String[] positions;
+
+        Element lastWordInCell = cluster.get(cluster.size()-1);
+
+        pos = lastWordInCell.attr("title");
+        positions = pos.split("\\s+");
+        int x2 = Integer.parseInt(positions[3]);
+        if(x2 > clusterBoundaryX2){
+            clusterBoundaryX2 = x2;
+        }
+        return clusterBoundaryX2;
+    }
+
+    public int getClusterSize(){
+        return clusters.size();
+    }
+
     public ArrayList<String> getClusterTypes(){
         return clusterTypes;
     }
@@ -124,5 +165,8 @@ public class Line {
     }
     public int getY1OfFirstWord(){
         return Y1OfFirstWord;
+    }
+    public int getY1OfLastWord(){
+        return Y1OfLastWord;
     }
 }

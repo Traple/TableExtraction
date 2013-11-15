@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public class Test {
     public static void main(String[] args) throws IOException {
-        File file = new File("./src/test/resources/program6/36-3.html.html");
+        File file = new File("./src/test/resources/program6/32-4.html.html");
         Page page = new Page(file, "\"C:\\Users\\Sander van Boom\\Documents\\School\\tables\\TEA0.6Test\\resources\"");
         page.createTables();
     }

@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 //This is a new draft of the Table class. We want to see if we can read/validate/reconstruct on a per line basis.
-//TODO: Finish this draft and make sure it works and improves TEA
 public class Table2 {
 
     private int maxY1;
@@ -19,6 +18,10 @@ public class Table2 {
     private ArrayList<Line> titleAndHeaders;
     private ArrayList<Line> data;
     private ArrayList<Line> headers;
+    private Map<Integer, ArrayList<ArrayList<Element>>> dataByColumn;
+    private ArrayList<Line> linesWithMissingData;
+    private ArrayList<Column2> dataInColumns;
+    private ArrayList<Line> rowSpanners;
 
     public Table2(Elements spans, double charLengthThreshold){
         this.maxY1 = 0;
@@ -27,30 +30,46 @@ public class Table2 {
         setMaxY1();
         this.table = new ArrayList<Line>();
         createLines(charLengthThreshold);
+        //TODO: Find column/rowspans that create lines with just 1 word before filtering
         separateDataByCluster();
         filterLinesThatAreAboveY1();
         //filterDataByType();
 
-        setColumns();
+        if(data.size()>0){
+            System.out.println("~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-");
+            System.out.println("RAWData in this table is: ");
+            for(Line line : data){
+                System.out.println(line.getLine());
+            }
+        }
+        findMissingData();
+        findColumns();
+        createColumns(charLengthThreshold);
+        addLinesWithMissingDataToColumns();
 
+        //TODO: Find out why the title sometimes raises an error: might have something to do with the font of the articles or the OCR.
         if(data.size() > 1){
             System.out.println("In Table: " + getName());
             System.out.println("~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-");
             System.out.println("Data in this table is: ");
-            for(Line line : data){
-                System.out.println(line.getLine());
+            for(Column2 column : dataInColumns){
+                System.out.println(column.getColumn());
             }
-            System.out.println("~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-");
-            if(headers != null){
-                System.out.println("I dont get headers yet. But it must be somewhere in here: ");
-                for(Line line : headers){
+            if(linesWithMissingData.size() > 0) {
+                System.out.println("The following lines were detected for having missing data: ");
+                for(Line line : linesWithMissingData){
                     System.out.println(line.getLine());
                 }
             }
-            else{
-                System.out.println("There were no headers or the headers alligned nicely with the data.");
+            System.out.println("~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-");
+            if(rowSpanners.size() > 0){
+                System.out.println("Correct me if im wrong but the following lines are rowspanners: ");
+                for(Line line : rowSpanners){
+                    System.out.println(line.getLine());
+                }
             }
         }
+
     }
 
     //assumption:
@@ -122,57 +141,130 @@ public class Table2 {
         ArrayList<Line> titleAndHeaders = new ArrayList<Line>();
         ArrayList<Line> data = new ArrayList<Line>();
         boolean foundData = false;
+        Line breakingLine = null;
+        ArrayList<Line> rowSpanners = new ArrayList<Line>();
         for(Line line : table){
             ArrayList<ArrayList<Element>> clusters = line.getClusters();
-            int size = clusters.size()+1;
-            if(size <2 && foundData){
+            int size = clusters.size();                                          //TODO: IS THIS VARIABLE STILL RELEVANT? TEST!
+            if(size <1 && foundData && breakingLine != null){
                 break;               //then we have reached the end of the table.
+            }
+            if(size <1 && foundData && breakingLine==null){
+                breakingLine = line;
             }
             else if(size < 2){
                 titleAndHeaders.add(line);
                 continue;           //we say continue here as it is unlikely that this is data.
             }
-            else{
+            else if(breakingLine == null){
                 data.add(line);     //Hooray, data!
                 foundData = true;
+            }
+            else{
+                rowSpanners.add(breakingLine);
+                breakingLine = null;
             }
 
         }
         this.titleAndHeaders = titleAndHeaders;
         this.data = data;
+        this.rowSpanners = rowSpanners;
     }
 
     //IMPORTANT: we take the first word of the line, not the entire line. This is because of a failure in the line reading.
     //We assume that line reading is validated elsewhere if any validation is there.
-    //IMPORTANT: So far we didn't have any detections with this method. Consider scrapping.
     private void filterLinesThatAreAboveY1(){
+        ArrayList<Line> removedLines = new ArrayList<Line>();
         for (Line line : data){
-            if(maxY1 > line.getY1OfFirstWord()){
+            if(maxY1 > line.getY1OfFirstWord()||maxY1 > line.getY1OfLastWord()){
                 System.out.println("Something is wrong, the data is above the title!");
                 System.out.println(maxY1 + " " + line.getY1OfFirstWord());
+                removedLines.add(line);
             }
+        }
+        for(Line line : removedLines){
+            data.remove(line);
         }
     }
 
-    private void setColumns(){
+    //This method removes the lines that have missing data and stores them in a separate variable.
+    //These lines might contain valuable information about the content or could be a mistake by the OCR or separator.
+    //They need special processing in order to be useful.
+    private void findMissingData(){
+        ArrayList<Line> dataWithoutMissingLines = new ArrayList<Line>();
+        ArrayList<Line> linesWithMissingData = new ArrayList<Line>();
+        int highestAmountOfClusters = 0;
+        for(Line line : data){
+            if(line.getClusterSize() > highestAmountOfClusters){
+                highestAmountOfClusters = line.getClusterSize();
+            }
+        }
+        for(Line line : data){
+            if(line.getClusterSize() < highestAmountOfClusters){
+                //Now we now this line got missing data
+                linesWithMissingData.add(line);
+            }
+            else{
+                dataWithoutMissingLines.add(line);
+            }
+        }
+        this.linesWithMissingData = linesWithMissingData;
+        this.data = dataWithoutMissingLines;
+    }
+
+    //TODO: This method works, but when there are more columns then cells in a line it shifts everything to the right.
+    private void findColumns(){
         int counterForColumns = 0;
-        Map<Integer, ArrayList<Element>> columnMap = new HashMap<Integer, ArrayList<Element>>();
+        Map<Integer, ArrayList<ArrayList<Element>>> columnMap = new HashMap<Integer, ArrayList<ArrayList<Element>>>();
 
         for(Line line : data){
             for(ArrayList<Element>cluster : line.getClusters()){
                 if(columnMap.containsKey(counterForColumns)){
-                    ArrayList<Element> fullClust = columnMap.get(counterForColumns);
-                    fullClust.addAll(cluster.subList(0,cluster.size()));
-                    columnMap.put(counterForColumns, fullClust);
+                    ArrayList<ArrayList<Element>> fullClusters = columnMap.get(counterForColumns);
+                    fullClusters.add(cluster);
+                    columnMap.put(counterForColumns, fullClusters);
+                    //System.out.println(counterForColumns +" "+ cluster);
+                    //System.out.println(columnMap.get(counterForColumns));
                 }
                 else{
-                    columnMap.put(counterForColumns, cluster);
+                    ArrayList<ArrayList<Element>> fullClusters = new ArrayList<ArrayList<Element>>();
+                    fullClusters.add(cluster);
+                    columnMap.put(counterForColumns, fullClusters);
                 }
-                System.out.println(columnMap);
                 counterForColumns++;
             }
             line.getClusters();
             counterForColumns = 0;
+        }
+        this.dataByColumn = columnMap;
+    }
+
+    private void createColumns(double AVGCharDistance){
+        ArrayList<Column2> dataInColumns = new ArrayList<Column2>();
+        System.out.println(dataByColumn.get(2));
+        for(int key : dataByColumn.keySet()){
+            //System.out.println(dataByColumn.get(key));
+            Column2 column = new Column2(dataByColumn.get(key), AVGCharDistance);
+            dataInColumns.add(column); 
+        }
+        this.dataInColumns = dataInColumns;
+    }
+
+    private void addLinesWithMissingDataToColumns(){
+        ArrayList<Column2> newDataInColumns = new ArrayList<Column2>();
+        for(Line line: linesWithMissingData){
+            ArrayList<ArrayList<Element>> clusters = line.getClusters();
+            for(ArrayList<Element> cluster : clusters){
+                for(Column2 column : dataInColumns){
+                    if(column.fitsInColumn(Line.getClusterX1(cluster), Line.getClusterX2(cluster)) ||
+                            column.columnFitsIn(Line.getClusterX1(cluster), Line.getClusterX2(cluster))){
+                        //then we need to add this cluster to that column:
+                        newDataInColumns.remove(column);
+                        column.addCell(cluster);
+                        newDataInColumns.add(column);
+                    }
+                }
+            }
         }
     }
 
