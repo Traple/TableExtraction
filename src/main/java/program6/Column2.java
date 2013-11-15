@@ -25,7 +25,6 @@ public class Column2 {
         //System.out.println("I know where my boundaries are: " + columnBoundaryX1 + " and " + columnBoundaryX2);
     }
 
-    //TODO: Finish this method, there are some mistakes in it (look at the first element). For the rest it works!
     //IMPORTANT: We make the assumption that the row reading works correctly. This method doesn't contains checks for this!
     public int getRowDistanceScore(){
         int rowDistanceScore = 0;

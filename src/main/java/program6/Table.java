@@ -122,7 +122,6 @@ public class Table {
         return tableMap;
     }
 
-    //TODO: This method should find the column boundaries on a per line basis. Overall searching does not give the expected results
     //this method tries to find the X2 of each column using local variables.
     private void checkMapForX2Columns() {
         ArrayList<String> col = new ArrayList<String>();
@@ -214,6 +213,4 @@ public class Table {
                 "<rowDistanceConstant>"+distanceThreshold+"</rowDistanceConstant>\n"+
                 "</provenance>\n";
     }
-
-    //TODO: Create a validation method that merges all the values and score them.
 }

@@ -15,6 +15,7 @@ public class Line {
     private ArrayList<String> clusterTypes;
     private int Y1OfFirstWord;
     private int Y1OfLastWord;
+    private ArrayList<Integer> distances;
 
     public Line(Elements words, double lineThreshold){
         this.words = words;
@@ -50,6 +51,7 @@ public class Line {
         positions = pos.split("\\s+");
         int lastX2 = Integer.parseInt(positions[3]);
         ArrayList<Element> cluster = new ArrayList<Element>();
+        ArrayList<Integer> distances = new ArrayList<Integer>();
         clusters = new ArrayList<ArrayList<Element>>();
 
         for(Element word : words){
@@ -57,9 +59,10 @@ public class Line {
             positions = pos.split("\\s+");
             int x1 = Integer.parseInt(positions[1]);
             int x2 = Integer.parseInt(positions[3]);
-            int distance = lastX2 - x1;
+            int distance = -(lastX2 - x1);
 
-            if(-(distance) >lineThreshold*thresholdModifier){
+            if((distance) >lineThreshold*thresholdModifier){
+                distances.add(distance);
                 clusters.add(cluster);
                 cluster = new ArrayList<Element>();
                 cluster.add(word);
@@ -72,10 +75,10 @@ public class Line {
         if(clusters.size()>=1&&!clusters.get(0).equals(cluster)){
             clusters.add(cluster);                                   //TODO: Test this rule a bit more.
         }
+        this.distances = distances;
     }
 
 
-    //TODO: Finish the rest of the test.
     private void setLineTypes(){
         ArrayList<String> clusterTypes = new ArrayList<String>();
         int strings = 0;
@@ -156,7 +159,10 @@ public class Line {
     public ArrayList<String> getClusterTypes(){
         return clusterTypes;
     }
-    public String getLine(){
+
+    //TODO: The toString method requires very good documentation as describbed in Effective Java P75.
+    //Also create more getters that relate to toString as described on the next page.
+    public String toString(){
         String line = "";
         for(Element word : words){
             line = line + word.text() + " ";
@@ -168,5 +174,13 @@ public class Line {
     }
     public int getY1OfLastWord(){
         return Y1OfLastWord;
+    }
+
+    //mainly used for the Validation object that has been made in the Table class.
+    public ArrayList<Integer> getDistances(){
+        return distances;
+    }
+    public double getDistanceThreshold(){
+        return thresholdModifier * lineThreshold;
     }
 }

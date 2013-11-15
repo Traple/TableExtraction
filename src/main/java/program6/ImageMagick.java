@@ -71,9 +71,9 @@ public class ImageMagick {
      * This method will find all the pdf files that correspond with an ID of the PDF.
      * @param workingDirectory the workingDirectory is the directory that is being screened for pdf files.
      * @param ID the ID of the pdf file.
-     * @return A list of pdf files that correpsond with this ID (in other words, the pages)
+     * @return A list of pdf files that correspond with this ID (in other words, the pages)
      */
-    public ArrayList<File> findPNGFilesInWorkingDirectory(String workingDirectory, String ID){
+    public static ArrayList<File> findPNGFilesInWorkingDirectory(String workingDirectory, String ID){
         ArrayList<File> pngFiles = new ArrayList<File>();
         File dir = new File(workingDirectory);
         File[] files = dir.listFiles(new FilenameFilter() {

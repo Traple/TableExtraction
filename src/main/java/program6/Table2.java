@@ -6,6 +6,7 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 //This is a new draft of the Table class. We want to see if we can read/validate/reconstruct on a per line basis.
 public class Table2 {
@@ -22,15 +23,18 @@ public class Table2 {
     private ArrayList<Line> linesWithMissingData;
     private ArrayList<Column2> dataInColumns;
     private ArrayList<Line> rowSpanners;
+    private Validation validation;
 
     public Table2(Elements spans, double charLengthThreshold){
         this.maxY1 = 0;
         this.spans = spans;
         this.name = "";
+
+        this.validation = new Validation();
+
         setMaxY1();
         this.table = new ArrayList<Line>();
         createLines(charLengthThreshold);
-        //TODO: Find column/rowspans that create lines with just 1 word before filtering
         separateDataByCluster();
         filterLinesThatAreAboveY1();
         //filterDataByType();
@@ -39,9 +43,11 @@ public class Table2 {
             System.out.println("~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-");
             System.out.println("RAWData in this table is: ");
             for(Line line : data){
-                System.out.println(line.getLine());
+                validation.setClusterCertainty(line.getDistances(), line.getDistanceThreshold());   //TODO: WRONG, we need to check the actual parsed data.
+                System.out.println(line);
             }
         }
+
         findMissingData();
         findColumns();
         createColumns(charLengthThreshold);
@@ -58,16 +64,17 @@ public class Table2 {
             if(linesWithMissingData.size() > 0) {
                 System.out.println("The following lines were detected for having missing data: ");
                 for(Line line : linesWithMissingData){
-                    System.out.println(line.getLine());
+                    System.out.println(line);
                 }
             }
             System.out.println("~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-");
             if(rowSpanners.size() > 0){
                 System.out.println("Correct me if im wrong but the following lines are rowspanners: ");
                 for(Line line : rowSpanners){
-                    System.out.println(line.getLine());
+                    System.out.println(line);
                 }
             }
+            System.out.println("Validation:\n" + validation);
         }
 
     }
@@ -212,7 +219,6 @@ public class Table2 {
         this.data = dataWithoutMissingLines;
     }
 
-    //TODO: This method works, but when there are more columns then cells in a line it shifts everything to the right.
     private void findColumns(){
         int counterForColumns = 0;
         Map<Integer, ArrayList<ArrayList<Element>>> columnMap = new HashMap<Integer, ArrayList<ArrayList<Element>>>();
@@ -279,9 +285,6 @@ public class Table2 {
         boolean firstDetection = true;        //We need this boolean, because if we detect a pattern for the first time we want to add the first line as well.
         for(Line line : data){
             currentLine = line.getClusterTypes();
-            System.out.println(currentLine);
-            System.out.println(line.getLine());
-            System.out.println(line.getClusters());
             if(currentLine.equals(lastLine)){
                 if(firstDetection){
                     filteredData.add(lastLineObject);
@@ -308,5 +311,9 @@ public class Table2 {
 
     public String getName(){
         return name;
+    }
+
+    public Validation getValidation(){
+        return validation;
     }
 }
