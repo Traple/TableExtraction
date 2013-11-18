@@ -89,7 +89,7 @@ public class Column2 {
     }
 
     public void addCell(ArrayList<Element> newCell){
-        System.out.println("Adding: "+ newCell.get(0).text());
+        //System.out.println("Adding: "+ newCell.get(0).text());
         ArrayList<ArrayList<Element>> newCells = new ArrayList<ArrayList<Element>>();
         String pos;
         String[] positions;
@@ -119,7 +119,7 @@ public class Column2 {
         }
 
         findColumnBoundaries();
-        System.out.println(newCells);
+        //System.out.println(newCells);
 
         this.cells = newCells;
     }

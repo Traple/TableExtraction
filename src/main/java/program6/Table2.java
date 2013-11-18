@@ -31,10 +31,17 @@ public class Table2 {
         this.name = "";
 
         this.validation = new Validation();
+        System.out.println("Got:");
+        for(Element span: spans){
+            //System.out.println(span.text());
+        }
 
         setMaxY1();
         this.table = new ArrayList<Line>();
         createLines(charLengthThreshold);
+        for(Line line : table){
+            //System.out.println(line);
+        }
         separateDataByCluster();
         filterLinesThatAreAboveY1();
         //filterDataByType();
@@ -46,7 +53,15 @@ public class Table2 {
                 validation.setClusterCertainty(line.getDistances(), line.getDistanceThreshold());   //TODO: WRONG, we need to check the actual parsed data.
                 System.out.println(line);
             }
+            System.out.println("With initial clusters: ");
+            for(Line line : table){
+                System.out.println(line.getClusters());
+            }
         }
+        System.out.println(titleAndHeaders);
+/*        for(Line line : table){
+            System.out.println(line);
+        }*/
 
         findMissingData();
         findColumns();
@@ -83,13 +98,15 @@ public class Table2 {
     //In order for words to be on the same row:
     //X1 of word should be > X2 of last word.
     private void setMaxY1(){
-        try{
+        Element lastSpan = null;
+
         String[] positions;
         String pos = spans.get(0).attr("title");
         positions = pos.split("\\s+");
         int lastX2 = 0;
 
         for(Element span : spans){
+            try{
             pos = span.attr("title");
             positions = pos.split("\\s+");
             int x1 = Integer.parseInt(positions[1]);
@@ -104,12 +121,16 @@ public class Table2 {
                 this.maxY1 = y1;
             }
             lastX2 = x2;
-            }
+            lastSpan = span;
         }
+
+
         catch (IndexOutOfBoundsException e){
             System.out.println("This table got a weird name it raised the following error: ");
+            System.out.println(lastSpan.text());
             System.out.println(e);
         }
+    }
     }
 
     //TODO: Method crashes when encountering the end of the page.
@@ -124,8 +145,6 @@ public class Table2 {
             positions = pos.split("\\s+");
             int x1 = Integer.parseInt(positions[1]);
             int x2 = Integer.parseInt(positions[3]);
-            int y1 = Integer.parseInt(positions[2]);
-            int y2 = Integer.parseInt(positions[4]);
 
             if(!(x1>=lastX2)){
                 Line line = new Line(currentLine, charLengthThreshold);
@@ -169,6 +188,7 @@ public class Table2 {
             }
             else{
                 rowSpanners.add(breakingLine);
+                data.add(line);
                 breakingLine = null;
             }
 
@@ -247,7 +267,7 @@ public class Table2 {
 
     private void createColumns(double AVGCharDistance){
         ArrayList<Column2> dataInColumns = new ArrayList<Column2>();
-        System.out.println(dataByColumn.get(2));
+        //System.out.println(dataByColumn.get(2));
         for(int key : dataByColumn.keySet()){
             //System.out.println(dataByColumn.get(key));
             Column2 column = new Column2(dataByColumn.get(key), AVGCharDistance);

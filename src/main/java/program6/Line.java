@@ -21,7 +21,7 @@ public class Line {
         this.words = words;
         this.lineThreshold = lineThreshold;
         this.wordTypes = new ArrayList<ArrayList<String>>();
-        this.thresholdModifier = 4;
+        this.thresholdModifier = 2;
         ClusterColumns();
 
         String[] positions;
@@ -33,16 +33,8 @@ public class Line {
         positions = pos.split("\\s+");
         this.Y1OfLastWord = Integer.parseInt(positions[2]);
 
-        setLineTypes();
+        //setLineTypes();
 
-        /**
-        System.out.println("I found " + (clusters.size()+1)+ " clusters.");
-
-        for(String word : wordTypes){
-            System.out.print(word + " ");
-        }
-        System.out.println();
-         */
     }
 
     private void ClusterColumns(){

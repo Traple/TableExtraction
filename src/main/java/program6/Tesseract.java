@@ -25,7 +25,7 @@ public class Tesseract {
      */
     public Tesseract(String pathToTesseract, String workspace, String ID, String page, String pathToConfig){
         String input = workspace + "/" + ID + "-" + page + ".png";
-        String output = workspace + "/" + ID + "-" + page + ".html";
+        String output = workspace + "/" + ID + "-" + page;
         this.command = new String[] {pathToTesseract, input, output,"hocr",pathToConfig};
     }
 
