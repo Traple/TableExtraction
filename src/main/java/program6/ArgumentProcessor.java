@@ -78,7 +78,7 @@ public class ArgumentProcessor {
      * @throws IOException
      */
     private ArrayList<String> setPubmedIDs(CommandLine line) throws IOException {
-        String pubmedFile = "";
+        String pubmedFile;
         if (line.hasOption("PUB")){
             pubmedFile = line.getOptionValue("PUB");
         }
@@ -105,7 +105,7 @@ public class ArgumentProcessor {
      * @return A string containing the full path to the workspace.
      */
     private String setWorkspace(CommandLine line){
-        String workspace = "";
+        String workspace;
         if(line.hasOption("W")){
             workspace = line.getOptionValue("W");
             LOGGER.info("workspace set to: " + workspace);

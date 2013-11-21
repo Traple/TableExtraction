@@ -9,9 +9,10 @@ import java.util.logging.Logger;
  */
 public class Validation {
     //This variable holds the information of how certain the program is about each column being a column.
-    private ArrayList<Double> clusterCertainty = new ArrayList<Double>();
-
     public static Logger LOGGER = Logger.getLogger(Validation.class.getName());
+    private ArrayList<Double> clusterCertainty = new ArrayList<Double>();
+    private int mostFrequentNumberOfClusters;
+    private double lineThreshold;
 
     public Validation(){
 
@@ -27,11 +28,16 @@ public class Validation {
      */
     public String toString(){
         String content = new String();
-        content = content + "Column Confidence: " + clusterCertainty;
+        content = content + "Column Confidence: " + clusterCertainty + "\n";
+        content = content + "Most Frequently found number of clusters in table: " + mostFrequentNumberOfClusters+"\n";
+        content = content + "Which was calculated using the following clusterThreshold: " + lineThreshold+"\n";
         LOGGER.info(content);
         return content;
     }
 
+    public void setMostFrequentNumberOfClusters(int mostFrequentNumberOfClusters){
+        this.mostFrequentNumberOfClusters = mostFrequentNumberOfClusters;
+    }
     public void setClusterCertainty(ArrayList<Integer> clusterDistances, double AVGCharacterDistanceThreshold){
         double certainty;
         ArrayList<Double> clusterCertainties = new ArrayList<Double>();
@@ -41,8 +47,27 @@ public class Validation {
         }
         this.clusterCertainty = clusterCertainties;
     }
+    public void setLineThreshold(double lineThreshold){
+        this.lineThreshold = lineThreshold;
+    }
     public ArrayList<Double> getClusterCertainty(){
         return clusterCertainty;
     }
 
+    public int getMostFrequentNumberOfClusters(){
+        return mostFrequentNumberOfClusters;
+    }
+
+    public double getLineThreshold(){
+        return lineThreshold;
+    }
+    public String toXML(){
+        String content = new String();
+        content = content + "    <validation>\n";
+        content = content + "        <columnConfidence>" + clusterCertainty + "</columnConfidence>\n";
+        content = content + "        <MostFrequentlyNumberOfClusters>" + mostFrequentNumberOfClusters+"</MostFrequentlyNumberOfClusters>\n";
+        content = content + "        <clusterThreshold>" + lineThreshold+"</clusterThreshold>\n";
+        content = content + "    </validation>\n";
+        return content;
+    }
 }

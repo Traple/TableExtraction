@@ -1,5 +1,8 @@
 package program6;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -85,5 +88,52 @@ public class CommonMethods {
             lowestNumber = number1;
         }
         return lowestNumber;
+    }
+
+    public static Integer mostCommonElement(List<Integer> list) {
+
+        Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+
+        for(int i=0; i< list.size(); i++) {
+
+            Integer frequency = map.get(list.get(i));
+            if(frequency == null) {
+                map.put(list.get(i), 1);
+            } else {
+                map.put(list.get(i), frequency+1);
+            }
+        }
+
+        Integer mostCommonKey = null;
+        int maxValue = -1;
+        for(Map.Entry<Integer, Integer> entry: map.entrySet()) {
+
+            if(entry.getValue() > maxValue) {
+                mostCommonKey = entry.getKey();
+                maxValue = entry.getValue();
+            }
+        }
+
+        return mostCommonKey;
+    }
+
+
+    public static String changeIllegalXMLCharacters(String input){
+        if(input.contains("<")){
+            input = input.replace("<", "&lt;");
+        }
+        if(input.contains(">")){
+            input = input.replace(">", "&gt;");
+        }
+        if(input.contains("&")){
+            input = input.replace("&","&amp;");
+        }
+        if(input.contains("'")){
+            input = input.replace("'", "&apos;");
+        }
+        if(input.contains("\"")){
+            input = input.replace("\"", "&quot;");
+        }
+        return input;
     }
 }

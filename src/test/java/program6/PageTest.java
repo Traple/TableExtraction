@@ -79,7 +79,7 @@ public class PageTest {
 
             try {
                 if(word.substring(0, 5).equals("TABLE") || word.substring(0, 5).equals("table") || word.substring(0, 5).equals("Table")&&foundATable){
-                    foundTables.add(new Table2(tableSpans, 35.874534161490686)); //make a new table from the collected spans
+                    //foundTables.add(new Table2(tableSpans, 35.874534161490686)); //make a new table from the collected spans
                     tableSpans = new Elements();        //reset the spans for the new Table
                     tableSpans.add(span);
                 }
@@ -97,7 +97,7 @@ public class PageTest {
             }
         }
         if (foundATable) {
-            foundTables.add(new Table2(tableSpans, 35.874534161490686));
+            //foundTables.add(new Table2(tableSpans, 35.874534161490686));
         }
         if(!foundATable){
             //LOGGER.info("There was no table found. ");

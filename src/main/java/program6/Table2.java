@@ -3,14 +3,21 @@ package program6;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-//This is a new draft of the Table class. We want to see if we can read/validate/reconstruct on a per line basis.
+/**
+ * this class is called Table2 because it rewritten from scratch using only some of the methods used in the Table class
+ * of TEA 0.5. The developer apologizes for any inconvenience.
+ */
 public class Table2 {
 
+    public static Logger LOGGER = Logger.getLogger(Table2.class.getName());
     private int maxY1;
     private Elements spans;
     private String name;
@@ -25,51 +32,58 @@ public class Table2 {
     private ArrayList<Line> rowSpanners;
     private Validation validation;
 
-    public Table2(Elements spans, double charLengthThreshold){
+    public Table2(Elements spans, double charLengthThreshold, File file, String workspace, int tableID) throws IOException {
         this.maxY1 = 0;
         this.spans = spans;
         this.name = "";
 
         this.validation = new Validation();
         System.out.println("Got:");
-        for(Element span: spans){
-            //System.out.println(span.text());
-        }
-
+        if(spans.size() > 0){
         setMaxY1();
         this.table = new ArrayList<Line>();
         createLines(charLengthThreshold);
-        for(Line line : table){
-            //System.out.println(line);
-        }
+
         separateDataByCluster();
         filterLinesThatAreAboveY1();
         //filterDataByType();
 
-        if(data.size()>0){
+        //System.out.println("Muh size: "+data.size());
+
+        if(data.size()>1){
             System.out.println("~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-");
             System.out.println("RAWData in this table is: ");
             for(Line line : data){
                 validation.setClusterCertainty(line.getDistances(), line.getDistanceThreshold());   //TODO: WRONG, we need to check the actual parsed data.
+                validation.setLineThreshold(line.getDistanceThreshold());
                 System.out.println(line);
             }
+            filterEmptyLines();
             System.out.println("With initial clusters: ");
             for(Line line : table){
                 System.out.println(line.getClusters());
             }
+            findMissingData();
+            System.out.println("Missing Data:");
+            System.out.println(linesWithMissingData);
+            System.out.println("Data: ");
+            System.out.println(data);
+            findColumns();
+            createColumns(charLengthThreshold);
+            addLinesWithMissingDataToColumns();
         }
-        System.out.println(titleAndHeaders);
+        else {
+            LOGGER.info("The word Table was detected but no clusters were found.\n" +
+                    "It was found at position: " + maxY1);
+        }
+        //System.out.println(titleAndHeaders);
 /*        for(Line line : table){
             System.out.println(line);
         }*/
 
-        findMissingData();
-        findColumns();
-        createColumns(charLengthThreshold);
-        addLinesWithMissingDataToColumns();
-
         //TODO: Find out why the title sometimes raises an error: might have something to do with the font of the articles or the OCR.
         if(data.size() > 1){
+            LOGGER.info("Table: " + getName());
             System.out.println("In Table: " + getName());
             System.out.println("~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-");
             System.out.println("Data in this table is: ");
@@ -77,7 +91,7 @@ public class Table2 {
                 System.out.println(column.getColumn());
             }
             if(linesWithMissingData.size() > 0) {
-                System.out.println("The following lines were detected for having missing data: ");
+                System.out.println("The following lines were detected for having missing data or it was a line that had more clusters then the rest of the table.: ");
                 for(Line line : linesWithMissingData){
                     System.out.println(line);
                 }
@@ -90,8 +104,22 @@ public class Table2 {
                 }
             }
             System.out.println("Validation:\n" + validation);
+            write(getXMLContent(file, tableID), (workspace+"/results") ,file, tableID);
         }
+        }
+        else{
 
+        }
+    }
+
+    private void filterEmptyLines() {
+        ArrayList<Line> newTable = new ArrayList<Line>();
+        for(Line line : table){
+            if(!(line.getClusterSize() < 1)){
+                newTable.add(line);
+            }
+        }
+        this.table = newTable;
     }
 
     //assumption:
@@ -104,7 +132,6 @@ public class Table2 {
         String pos = spans.get(0).attr("title");
         positions = pos.split("\\s+");
         int lastX2 = 0;
-
         for(Element span : spans){
             try{
             pos = span.attr("title");
@@ -133,7 +160,6 @@ public class Table2 {
     }
     }
 
-    //TODO: Method crashes when encountering the end of the page.
     public void createLines(double charLengthThreshold){
         String pos;
         String[] positions;
@@ -171,7 +197,7 @@ public class Table2 {
         ArrayList<Line> rowSpanners = new ArrayList<Line>();
         for(Line line : table){
             ArrayList<ArrayList<Element>> clusters = line.getClusters();
-            int size = clusters.size();                                          //TODO: IS THIS VARIABLE STILL RELEVANT? TEST!
+            int size = clusters.size();
             if(size <1 && foundData && breakingLine != null){
                 break;               //then we have reached the end of the table.
             }
@@ -183,6 +209,7 @@ public class Table2 {
                 continue;           //we say continue here as it is unlikely that this is data.
             }
             else if(breakingLine == null){
+                //System.out.println(line);
                 data.add(line);     //Hooray, data!
                 foundData = true;
             }
@@ -217,26 +244,33 @@ public class Table2 {
     //This method removes the lines that have missing data and stores them in a separate variable.
     //These lines might contain valuable information about the content or could be a mistake by the OCR or separator.
     //They need special processing in order to be useful.
+
     private void findMissingData(){
         ArrayList<Line> dataWithoutMissingLines = new ArrayList<Line>();
         ArrayList<Line> linesWithMissingData = new ArrayList<Line>();
-        int highestAmountOfClusters = 0;
+        ArrayList<Integer> numberOfClusters = new ArrayList<Integer>();
+
         for(Line line : data){
-            if(line.getClusterSize() > highestAmountOfClusters){
-                highestAmountOfClusters = line.getClusterSize();
-            }
+            numberOfClusters.add(line.getClusterSize());
         }
-        for(Line line : data){
-            if(line.getClusterSize() < highestAmountOfClusters){
-                //Now we now this line got missing data
-                linesWithMissingData.add(line);
+        if(numberOfClusters.size()>0){
+            int mostFrequentAmountOfClusters = CommonMethods.mostCommonElement(numberOfClusters);
+            validation.setMostFrequentNumberOfClusters(mostFrequentAmountOfClusters);
+            for(Line line : data){
+                if(line.getClusterSize() < mostFrequentAmountOfClusters){
+                    //Now we now this line got missing data
+                    linesWithMissingData.add(line);
+                }
+                else{
+                    dataWithoutMissingLines.add(line);
+                }
             }
-            else{
-                dataWithoutMissingLines.add(line);
-            }
+            this.linesWithMissingData = linesWithMissingData;
+            this.data = dataWithoutMissingLines;
         }
-        this.linesWithMissingData = linesWithMissingData;
-        this.data = dataWithoutMissingLines;
+        else{
+
+        }
     }
 
     private void findColumns(){
@@ -293,6 +327,17 @@ public class Table2 {
             }
         }
     }
+    //this method removes the columns that have only 1 line.
+    private void filterSmallColumn(){
+        ArrayList<Column2> newDataInColumns = new ArrayList<Column2>();
+        for(Column2 column: dataInColumns){
+            if(column.getNumberOfCells()<2){                                            //TODO: CHECK IF THIS RULE IS NOT CAUSING ANY TROUBLE.
+                newDataInColumns.add(column);
+            }
+        }
+
+        this.dataInColumns = newDataInColumns;
+    }
 
     //Now we need to check the types, found in the data. This works as an extra filter.
     private void filterDataByType(){
@@ -327,6 +372,59 @@ public class Table2 {
         catch(IndexOutOfBoundsException e){
             //then there was an empty line. We filter those out as well :)
         }
+    }
+    private String getXMLContent(File file, int tableID){
+        String fileContent = "<TEAFile>\n"+ getProvenance(file , tableID);
+        fileContent = fileContent + "    <results>\n";
+        fileContent = fileContent + "        <title>" + CommonMethods.changeIllegalXMLCharacters(name) + "</title>\n" ;
+        fileContent = fileContent + "        <title>" + CommonMethods.changeIllegalXMLCharacters(titleAndHeaders.toString()) + "</title>\n" ;
+        fileContent = fileContent + "        <columns>\n";
+        for(Column2 column : dataInColumns){
+            fileContent = fileContent + "            <column>"+ CommonMethods.changeIllegalXMLCharacters(column.getColumn())+"</column>\n";
+        }
+        fileContent = fileContent + "        </columns>\n";
+        if(rowSpanners.size() > 0){
+            fileContent = fileContent +"        <rowSpanners>\n";
+            for(Line line : rowSpanners){
+                fileContent = fileContent +"            <rowSpanner>" +CommonMethods.changeIllegalXMLCharacters(line.toString()) + "</rowSpanner>\n";
+            }
+            fileContent = fileContent + "        </rowSpanners>\n";
+        }
+        fileContent = fileContent + "    </results>\n";
+        fileContent = fileContent + validation.toXML();
+        fileContent = fileContent + "</TEAFile>";
+
+        return fileContent;
+    }
+
+    /**
+     * This method writes the results to the results directory in the workspace. Output is in XML.
+     * @param filecontent The results as being collected during the reconstruction of this table.
+     * @param location The path to the the XML file (output).
+     * @param file The file which was used to reconstruct this table. (used for provenance purpose)
+     * @throws java.io.IOException
+     */
+    private void write(String filecontent, String location, File file, int tableID) throws IOException {
+        FileWriter fileWriter;
+//        filecontent = getProvenance(file)+ filecontent;
+        location = location + "\\" + tableID + "-" +file.getName() + ".xml";
+        File newTextFile = new File(location);
+        fileWriter = new FileWriter(newTextFile);
+        fileWriter.write(filecontent);
+        fileWriter.close();
+    }
+
+    /**
+     * This method creates the provenance that is being used for writing the output.
+     * @param file The file which was used to create this table.
+     * @return A string containing the provenance in XML format.
+     */
+    private String getProvenance(File file, int tableID){
+        return "    <provenane>\n"+
+                "        <fromFile>" + file.getName()+"</fromFile>\n" +
+                "        <user>Sander</user>\n"+
+                "        <detectionID>" + tableID +"</detectionID>\n"+
+                "    </provenance>\n";
     }
 
     public String getName(){

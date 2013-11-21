@@ -51,11 +51,12 @@ public class Page {
         boolean foundATable = false;
         Elements tableSpans = new Elements();
         ArrayList<Table2> foundTables = new ArrayList<Table2>();
+        int tableID = 0;
         for (Element span : spans) {
             word = span.text();
             try {
                 if(word.substring(0, 5).equals("TABLE") || word.substring(0, 5).equals("table") || word.substring(0, 5).equals("Table")&&foundATable){
-                    foundTables.add(new Table2(tableSpans, spaceDistance)); //make a new table from the collected spans
+                    foundTables.add(new Table2(tableSpans, spaceDistance, file, workLocation, tableID)); //make a new table from the collected spans
                     tableSpans = new Elements();                                                    //reset the spans for the new Table
                     tableSpans.add(span);
                 }
@@ -71,9 +72,10 @@ public class Page {
                     tableSpans.add(span);
                 }
             }
+            tableID++;
         }
         if (foundATable) {
-            foundTables.add(new Table2(tableSpans, spaceDistance));
+            foundTables.add(new Table2(tableSpans, spaceDistance, file, workLocation, tableID));
         }
         if(!foundATable){
             LOGGER.info("There was no table found. ");

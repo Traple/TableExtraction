@@ -117,11 +117,8 @@ public class Column2 {
                 newCells.add(cell);
             }
         }
-
-        findColumnBoundaries();
-        //System.out.println(newCells);
-
         this.cells = newCells;
+        findColumnBoundaries();
     }
 
     public int getColumnBoundaryX1(){
@@ -142,7 +139,16 @@ public class Column2 {
             for(Element word : cell){
                 line = line + word.text() + " ";
             }
+            line = line.substring(0, line.length()-1);
+            line = line + ", ";
         }
+
+            line = line.substring(0, line.length()-2);
+
+
         return line;
+    }
+    public int getNumberOfCells(){
+        return cells.size();
     }
 }

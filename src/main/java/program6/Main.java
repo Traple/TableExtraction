@@ -171,7 +171,7 @@ public class Main {
      * @throws IOException
      */
     private static void secondMain(String pathToImageMagic, String workLocation, String ID, String resolution, String pathToTesseract, String pathToTesseractConfig) throws IOException {
-        ImageMagick imagemagick = new ImageMagick(pathToImageMagic,workLocation, ID ,resolution);
+        /*ImageMagick imagemagick = new ImageMagick(pathToImageMagic,workLocation, ID ,resolution);
         imagemagick.createPNGFiles();
 
         ArrayList<File> pngs = imagemagick.findPNGFilesInWorkingDirectory(workLocation, ID);
@@ -182,8 +182,9 @@ public class Main {
             Tesseract Tesseract = new program6.Tesseract(pathToTesseract, workLocation, ID, Integer.toString(x),pathToTesseractConfig);
             Tesseract.runTesseract();
             x++;
-        }
+        }*/
 
+        int x = 0;
         Tesseract tesseract = new Tesseract(pathToTesseract, workLocation, ID, Integer.toString(x),pathToTesseractConfig);
         ArrayList<File> HTMLFiles = tesseract.findHTMLFilesInWorkingDirectory(workLocation, ID);
         for(File file : HTMLFiles){
@@ -212,4 +213,5 @@ public class Main {
             System.out.println("No directory was created.");
         }
     }
+
 }

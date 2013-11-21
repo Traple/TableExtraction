@@ -152,7 +152,7 @@ public class Line {
         return clusterTypes;
     }
 
-    //TODO: The toString method requires very good documentation as describbed in Effective Java P75.
+    //TODO: The toString method requires very good documentation as described in Effective Java P75.
     //Also create more getters that relate to toString as described on the next page.
     public String toString(){
         String line = "";
