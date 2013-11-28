@@ -156,7 +156,7 @@ public class RestructureUsingOCR {
         LevenshteinDistance LD = new LevenshteinDistance();
         String[] positions;
         for(Element span : spans){
-            int LDword = LD.computeLevenshteinDistance(span.text(), "Table");
+            int LDword = LD.computeLevenshteinDistance(span.text(), "Table2");
             int LDword2 = LD.computeLevenshteinDistance(span.text(), "TABLE");
 
             if(lowestNumber(LDword, LDword2) < LDDistance){

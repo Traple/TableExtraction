@@ -62,10 +62,9 @@ public class Column2 {
 
     //This method finds the X1 and X2 of the column.
     private void findColumnBoundaries(){
+        int columnBoundaryX1 = Integer.MAX_VALUE;
+        int columnBoundaryX2 = Integer.MIN_VALUE;
         for(ArrayList<Element> cell : cells){
-            //System.out.println(cell.get(0).text());
-            this.columnBoundaryX1 = Integer.MAX_VALUE;
-            this.columnBoundaryX2 = Integer.MIN_VALUE;
             String pos;
             String[] positions;
 
@@ -76,6 +75,7 @@ public class Column2 {
             positions = pos.split("\\s+");
             int x1 = Integer.parseInt(positions[1]);
             if(x1 < columnBoundaryX1){
+                columnBoundaryX1 = x1;
                 this.columnBoundaryX1 = x1;
             }
 
@@ -83,6 +83,7 @@ public class Column2 {
             positions = pos.split("\\s+");
             int x2 = Integer.parseInt(positions[3]);
             if(x2 > columnBoundaryX2){
+                columnBoundaryX2 = x2;
                 this.columnBoundaryX2 = x2;
             }
         }
@@ -129,11 +130,15 @@ public class Column2 {
     }
     public boolean fitsInColumn(int x1, int x2){
         return x1 > columnBoundaryX1-(AVGCharDistance/2)&&x2<columnBoundaryX2+(AVGCharDistance/2);
-    }
+    }                                                                                                             //TODO: These two rules can be a bit more loose. Right now a touching column doesnt trigger. TEST!
     public boolean columnFitsIn(int x1, int x2){
         return x1 < columnBoundaryX1+(AVGCharDistance/2)&&x2>columnBoundaryX2-(AVGCharDistance/2);
     }
-    public String getColumn(){
+    public boolean touchesColumn(int x1, int x2){
+        return (x1 < columnBoundaryX1 && x2 >columnBoundaryX1) || (x1 > columnBoundaryX1 && x2 < columnBoundaryX2);
+    }
+
+    public String toString(){
         String line = "";
         for(ArrayList<Element>cell : cells){
             for(Element word : cell){
@@ -150,5 +155,19 @@ public class Column2 {
     }
     public int getNumberOfCells(){
         return cells.size();
+    }
+    public int getMinY1(){
+        String[] positions;
+        int y1;
+        int minY1 = Integer.MAX_VALUE;
+        for(ArrayList<Element> cell : cells){
+            String pos = cell.get(0).attr("title");
+            positions = pos.split("\\s+");
+            y1 = Integer.parseInt(positions[2]);
+            if(minY1 > y1){
+                minY1 = y1;
+            }
+        }
+        return minY1;
     }
 }

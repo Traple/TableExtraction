@@ -10,12 +10,15 @@ import java.util.logging.Logger;
 public class Validation {
     //This variable holds the information of how certain the program is about each column being a column.
     public static Logger LOGGER = Logger.getLogger(Validation.class.getName());
-    private ArrayList<Double> clusterCertainty = new ArrayList<Double>();
+    private ArrayList<Double> clusterCertainty;
     private int mostFrequentNumberOfClusters;
     private double lineThreshold;
+    private double averageDistanceBetweenRows;
+    private ArrayList<Double> titleConfidence;
 
     public Validation(){
-
+        this.titleConfidence = new ArrayList<Double>();
+        this.clusterCertainty = new ArrayList<Double>();
     }
 
     /**
@@ -31,6 +34,10 @@ public class Validation {
         content = content + "Column Confidence: " + clusterCertainty + "\n";
         content = content + "Most Frequently found number of clusters in table: " + mostFrequentNumberOfClusters+"\n";
         content = content + "Which was calculated using the following clusterThreshold: " + lineThreshold+"\n";
+        content = content + "The title was calculated using the average distance between rows, which was: " + averageDistanceBetweenRows + "\n";
+        if(titleConfidence.size() > 0){
+            content = content + "A piece of the title was added as header. This was done with the following confidence: " + titleConfidence + "\n";
+        }
         LOGGER.info(content);
         return content;
     }
@@ -50,6 +57,17 @@ public class Validation {
     public void setLineThreshold(double lineThreshold){
         this.lineThreshold = lineThreshold;
     }
+    public void setAverageDistanceBetweenRows(double averageDistanceBetweenRows){
+        this.averageDistanceBetweenRows = averageDistanceBetweenRows;
+    }
+    public void calculateTitleConfidence(double averageDistanceBetweenRows, double distanceBetweenRow, double lineDistanceModifier){
+        double certainty = distanceBetweenRow/(averageDistanceBetweenRows * lineDistanceModifier);
+        this.titleConfidence.add(certainty);
+    }
+
+
+
+    //------------------------------------------------------------------------------------------------------------------
     public ArrayList<Double> getClusterCertainty(){
         return clusterCertainty;
     }
@@ -61,12 +79,19 @@ public class Validation {
     public double getLineThreshold(){
         return lineThreshold;
     }
+    public double getAverageDistanceBetweenRows(){
+        return averageDistanceBetweenRows;
+    }
     public String toXML(){
         String content = new String();
         content = content + "    <validation>\n";
         content = content + "        <columnConfidence>" + clusterCertainty + "</columnConfidence>\n";
-        content = content + "        <MostFrequentlyNumberOfClusters>" + mostFrequentNumberOfClusters+"</MostFrequentlyNumberOfClusters>\n";
+        content = content + "        <mostFrequentlyNumberOfClusters>" + mostFrequentNumberOfClusters+"</mostFrequentlyNumberOfClusters>\n";
         content = content + "        <clusterThreshold>" + lineThreshold+"</clusterThreshold>\n";
+        content = content + "        <averageDistanceBetweenRows>" + averageDistanceBetweenRows + "</averageDistanceBEtweenRows>\n";
+        if(titleConfidence.size() > 0){
+            content = content + "<titleConfidence>" + titleConfidence + "</titleConfidence>\n";
+        }
         content = content + "    </validation>\n";
         return content;
     }

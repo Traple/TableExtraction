@@ -64,13 +64,13 @@ public class Main {
             //System.out.println(lineNumber);
             //System.out.println(nextLine[0]);
             String currentline = nextLine[0].toString(); // nextLine[] is an array of values from the line
-            //A table is detected if the word Table or TABLE or table is found in the first cell.
+            //A table is detected if the word Table2 or TABLE or table is found in the first cell.
             //System.out.println(currentline);
             try{
                 String possibleTable = currentline.substring(0, 5);
                 //System.out.println(possibleTable);
                 //System.out.println(lineNumber);
-                if(possibleTable.contains("Table")||possibleTable.contains("TABLE")||possibleTable.contains("table")||tableCeption){
+                if(possibleTable.contains("Table2")||possibleTable.contains("TABLE")||possibleTable.contains("table")||tableCeption){
                     LOGGER.info("Found a possible table because of: " + currentline + " in the first cell.");
                     //table:
                     //System.out.println("table: " + currentline);
@@ -164,7 +164,7 @@ public class Main {
                                             System.out.println("no table over here.");
                                         }
                                         System.out.println(falseLinePossibleTable);
-                                        if(falseLinePossibleTable.contains("table")||falseLinePossibleTable.contains("Table")||falseLinePossibleTable.contains("TABLE")){
+                                        if(falseLinePossibleTable.contains("table")||falseLinePossibleTable.contains("Table2")||falseLinePossibleTable.contains("TABLE")){
                                             System.out.println("tableCeption!");
                                             tableCeption = true;
                                         }

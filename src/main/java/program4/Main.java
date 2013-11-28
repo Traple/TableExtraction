@@ -38,7 +38,7 @@ public class Main {
         logMan.addLogger(LOGGER);
 
         LOGGER.info("Starting T.E.A. 0.4");
-        LOGGER.info("Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm. But if you want, you can call me Bob.");
+        LOGGER.info("Greetings user! My name is T.E.A., which stands for Table2 Extraction Algorithm. But if you want, you can call me Bob.");
 
         CommandLineParser parser = new PosixParser();
         Options options = new Options();

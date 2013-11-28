@@ -1,4 +1,4 @@
-package program6;
+package program7;
 
 
 import org.jsoup.nodes.Element;
@@ -10,19 +10,24 @@ public class Line {
     private Elements words;
     private double lineThreshold;
     private ArrayList<ArrayList<Element>> clusters;
-    private ArrayList<ArrayList<String>> wordTypes;
     private double thresholdModifier;
-    private ArrayList<String> clusterTypes;
     private int Y1OfFirstWord;
     private int Y1OfLastWord;
     private ArrayList<Integer> distances;
     private double averageY1;
     private double averageY2;
 
+    //TODO: Move the hardcoded ThresholdModifier to the parameter file.
+    /**
+     * This is the constructor of the Line class.
+     * It sets three internal variables (words, LineThreshold and the ThresholdModifier)
+     * The ThresholdModifier is hardcoded to 2.
+     * @param words words are the words that are in this line. It is a list of HTML Elements derived from the OCR
+     * @param lineThreshold the threhsold that was calculated in the average distance of words in the page class.
+     */
     public Line(Elements words, double lineThreshold){
         this.words = words;
         this.lineThreshold = lineThreshold;
-        this.wordTypes = new ArrayList<ArrayList<String>>();
         this.thresholdModifier = 2;
         ClusterColumns();
 
@@ -35,11 +40,14 @@ public class Line {
         positions = pos.split("\\s+");
         this.Y1OfLastWord = Integer.parseInt(positions[2]);
         setAverageY1andY2();
-
-        //setLineTypes();
-
     }
 
+    /**
+     * This method creates partitions (clusters) in the line by checking if the distances between words in the line is
+     * bigger then the average distance of a character * thresholdModifier (default : 2). If so the words are saved in
+     * a new partition and and the results are stored in the private clusters variable.
+     * The collected distances are also saved in a private variable for validation purposes.
+     */
     private void ClusterColumns(){
         String pos = words.get(0).attr("title");
         String[] positions;
@@ -73,33 +81,11 @@ public class Line {
         this.distances = distances;
     }
 
-
-    private void setLineTypes(){
-        ArrayList<String> clusterTypes = new ArrayList<String>();
-        int strings = 0;
-        int ints = 0;
-
-        for(ArrayList<Element> cluster : clusters){
-            for(Element word : cluster){
-                String textOfWord = word.text();
-                String typeOfWord = getTypeOfWord(textOfWord);
-                if(typeOfWord.equals("N")){
-                    ints+=1;
-                }
-                else{
-                    strings+=1;
-                }
-            }
-        if(ints>strings){
-            clusterTypes.add("N");
-        }
-        else{
-            clusterTypes.add("S");
-        }
-        }
-        this.clusterTypes = clusterTypes;
-    }
-
+    /**
+     * This method sets the average Y coordinates (top and bottom positions) of the line.
+     * This can be used to give a more accurate vertical position of the line.
+     * It stores the results in the local variables averageY1 and averageY2.
+     */
     private void setAverageY1andY2(){
         String pos;
         String[] positions;
@@ -116,22 +102,15 @@ public class Line {
         this.averageY1 = totalY1/words.size();
         this.averageY2 = totalY2/words.size();
     }
+    //~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+    //Getters:
 
-    private String getTypeOfWord(String word){
-        String type;
-        if(CommonMethods.containsNumber(word)){
-            type = "N";
-        }
-        else{
-            type = "S";
-        }
-        return type;
-    }
-
-    public ArrayList<ArrayList<Element>> getClusters(){
-        return clusters;
-    }
-
+    /**
+     * This method returns the left boundary of the line. (the start of the line)
+     * It is public because it needs to be called by the Table2 class when replacing lines with missing partitions.
+     * @param cluster A partition in the line.
+     * @return the left position of the given partition.
+     */
     public static int getClusterX1(ArrayList<Element> cluster){
             int clusterBoundaryX1 = Integer.MAX_VALUE;
             String pos;
@@ -148,6 +127,11 @@ public class Line {
         return clusterBoundaryX1;
         }
 
+    /**
+     * Similar of getClusterX1, this method returns the right position (boundary) of the given partition.
+     * @param cluster A list containing the words of this partition.
+     * @return the right position of the given partition.
+     */
     public static int getClusterX2(ArrayList<Element> cluster){
         int clusterBoundaryX2 = Integer.MIN_VALUE;
         String pos;
@@ -164,22 +148,11 @@ public class Line {
         return clusterBoundaryX2;
     }
 
+    public ArrayList<ArrayList<Element>> getClusters(){
+        return clusters;
+    }
     public int getClusterSize(){
         return clusters.size();
-    }
-
-    public ArrayList<String> getClusterTypes(){
-        return clusterTypes;
-    }
-
-    //TODO: The toString method requires very good documentation as described in Effective Java P75.
-    //Also create more getters that relate to toString as described on the next page.
-    public String toString(){
-        String line = "";
-        for(Element word : words){
-            line = line + word.text() + " ";
-        }
-        return line;
     }
     public int getY1OfFirstWord(){
         return Y1OfFirstWord;
@@ -193,12 +166,23 @@ public class Line {
     public double getAverageY2(){
         return averageY2;
     }
-
-    //mainly used for the Validation object that has been made in the Table2 class.
     public ArrayList<Integer> getDistances(){
         return distances;
     }
     public double getDistanceThreshold(){
         return thresholdModifier * lineThreshold;
+    }
+
+    /**
+     * This is the toString method for the Line class.
+     * The method returns the content of the line by looping trough each word(.text()) and adding that to the content.
+     * @return the method returns the content of the line.
+     */
+    public String toString(){
+        String line = "";
+        for(Element word : words){
+            line = line + word.text() + " ";
+        }
+        return line;
     }
 }

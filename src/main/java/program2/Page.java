@@ -28,7 +28,7 @@ import java.util.Set;
  */
 /*
  * The Page class is simply the page as it is being read by the main class. As soon as it detects a table it
- * will create a Table class. It will parse the Table class it's own attributes to make sure the table can search in it's
+ * will create a Table2 class. It will parse the Table2 class it's own attributes to make sure the table can search in it's
  * Location etc.
  */
 public class Page {
@@ -86,7 +86,7 @@ public class Page {
         for(Element span : spans){
             word = span.text();
             try{
-            if(word.substring(0, 5).equals("TABLE")||word.substring(0, 5).equals("table")||word.substring(0, 5).equals("Table")){
+            if(word.substring(0, 5).equals("TABLE")||word.substring(0, 5).equals("table")||word.substring(0, 5).equals("Table2")){
                 foundATable = true;
                 tableSpans.add(span);
             }

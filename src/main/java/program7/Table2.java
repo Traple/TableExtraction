@@ -1,4 +1,4 @@
-package program6;
+package program7;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -23,7 +23,6 @@ public class Table2 {
     private String name;
     private ArrayList<Line> table;
     private double averageLineDistance;
-
     private ArrayList<Line> titleAndHeaders;
     private ArrayList<Line> data;
     private Map<Integer, ArrayList<ArrayList<Element>>> dataByColumn;
@@ -33,11 +32,22 @@ public class Table2 {
     private Validation validation;
     private double lineDistanceModifier;
 
+    /**
+     * This is the constructor of the table class. It takes it's parameters and sets them as local variables.
+     * It also puts the default values for the rest of the table and then starts calling the other methods in this class.
+     * to extract the table according to the rules of TEA.
+     * @param spans These are the words below the table detection from the Page class.
+     * @param charLengthThreshold This is the character length threshold as calculated in the Page class.
+     * @param file This is the File that was used to extract the table from. It is only used for the creation of provenance.
+     * @param workspace This is the workspace as specified by the user.
+     * @param tableID This is the ID of the detected table. It is mainly used for the creation of the output file and for provenance.
+     * @throws IOException
+     */
     public Table2(Elements spans, double charLengthThreshold, File file, String workspace, int tableID) throws IOException {
         this.maxY1 = 0;
         this.spans = spans;
         this.name = "";
-        this.lineDistanceModifier = 1.0;          //TODO: Validate this threshold.
+        this.lineDistanceModifier = 1.0;
 
         this.validation = new Validation();
         if(spans.size() > 0){
@@ -47,7 +57,6 @@ public class Table2 {
 
         separateDataByCluster();
         filterLinesThatAreAboveY1();
-        //filterDataByType();
 
         if(data.size()>1){
             System.out.println(data.size());
@@ -55,16 +64,12 @@ public class Table2 {
             System.out.println("~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-");
             System.out.println("RAWData in this table is: ");
             for(Line line : data){
-                validation.setClusterCertainty(line.getDistances(), line.getDistanceThreshold());   //TODO: WRONG, we need to check the actual parsed data.
+                validation.setClusterCertainty(line.getDistances(), line.getDistanceThreshold());
                 validation.setLineThreshold(line.getDistanceThreshold());
                 System.out.println(line);
             }
             filterEmptyLines();
             findMissingData();
-//            System.out.println("Missing Data:");
-//            System.out.println(linesWithMissingData);
-//            System.out.println("Data: ");
-//            System.out.println(data);
             findColumns();
             createColumns(charLengthThreshold);
             addLinesWithMissingDataToColumns();
@@ -102,12 +107,15 @@ public class Table2 {
                     System.out.println(line);
                 }
             }
-            System.out.println("Validation:\n" + validation);
-//            write(getXMLContent(file, tableID), (workspace+"/results") ,file, tableID);
+           System.out.println("Validation:\n" + validation);
+           write(getXMLContent(file, tableID), (workspace+"/results") ,file, tableID);
         }
         }
     }
 
+    /**
+     * This method filters the lines that contains less the 1 cluster but ended up in the table anyway.
+     */
     private void filterEmptyLines() {
         ArrayList<Line> newTable = new ArrayList<Line>();
         for(Line line : table){
@@ -118,9 +126,9 @@ public class Table2 {
         this.table = newTable;
     }
 
-    //assumption:
-    //In order for words to be on the same row:
-    //X1 of word should be > X2 of last word.
+    /**
+     * This method sets the Y1 position of the table. This is the highest pixel in the table (with the lowest Y1 score).
+     */
     private void setMaxY1(){
         Element lastSpan = null;
 
@@ -149,12 +157,19 @@ public class Table2 {
 
         catch (IndexOutOfBoundsException e){
             System.out.println("This table got a weird name it raised the following error: ");
-            System.out.println(lastSpan.text());
+            if (lastSpan != null) {
+                System.out.println(lastSpan.text());
+            }
             System.out.println(e);
         }
     }
     }
 
+    //TODO: USE THE Y values to calculate the rows as well as their X positions.
+    /**
+     * This method creates the lines by reading trough the file.
+     * @param charLengthThreshold This is the average characterLength as calculated in the Page class.
+     */
     public void createLines(double charLengthThreshold){
         String pos;
         String[] positions;
@@ -182,11 +197,10 @@ public class Table2 {
     }
 
     /**
-     * Does the types of data match?
-     * Does the positions of the data overlap?
-     * Can we find a cutoff point, define and maintain the pattern.
-     *
-     * Columns need: Data.
+     * This method separates the data based on the amount of partitions (clusters) in each line.
+     * The lines before we can find any lines with partitions are stored in the private titleAndHeaders variable
+     * The lines that contain partitions are stored in the private data variable
+     * The lines that were inside the data lines and contained just one partition are stored in the private rowspanner variable.
      */
     private void separateDataByCluster(){
         ArrayList<Line> titleAndHeaders = new ArrayList<Line>();
@@ -208,7 +222,6 @@ public class Table2 {
                 continue;           //we say continue here as it is unlikely that this is data.
             }
             else if(breakingLine == null){
-                //System.out.println(line);
                 data.add(line);     //Hooray, data!
                 foundData = true;
             }
@@ -224,14 +237,16 @@ public class Table2 {
         this.rowSpanners = rowSpanners;
     }
 
-    //IMPORTANT: we take the first word of the line, not the entire line. This is because of a failure in the line reading.
-    //We assume that line reading is validated elsewhere if any validation is there.
+    /**
+     * This method finds lines that are above the line that was detected in the title and deletes those lines after giving
+     * an error message.
+     */
     private void filterLinesThatAreAboveY1(){
         ArrayList<Line> removedLines = new ArrayList<Line>();
         for (Line line : data){
             if(maxY1 > line.getY1OfFirstWord()||maxY1 > line.getY1OfLastWord()){
-                System.out.println("Something is wrong, the data is above the title!");
-                System.out.println(maxY1 + " " + line.getY1OfFirstWord());
+                LOGGER.info("Something is wrong, I detected the following line, which was above the title!");
+                LOGGER.info(maxY1 + " " + line.getY1OfFirstWord());
                 removedLines.add(line);
             }
         }
@@ -239,30 +254,11 @@ public class Table2 {
             data.remove(line);
         }
     }
-    private void findAverageLineHeightDistance(){
-        double y1;
-        double lastY2 = -999;
-        double totalDistance = 0.0;
-        double averageDistance;
 
-        for(Line line : data){
-            if(lastY2 == -999){
-                lastY2 = line.getAverageY2();
-                continue;
-            }
-            y1 = line.getAverageY1();
-            totalDistance = totalDistance + (y1 - lastY2);
-            lastY2 = line.getAverageY2();
-        }
-        averageDistance = totalDistance/data.size();
-        this.averageLineDistance = averageDistance;
-        this.validation.setAverageDistanceBetweenRows(averageDistance);
-    }
-
+    //TODO: Add the highest amount of clusters as well.
     //This method removes the lines that have missing data and stores them in a separate variable.
     //These lines might contain valuable information about the content or could be a mistake by the OCR or separator.
     //They need special processing in order to be useful.
-
     private void findMissingData(){
         ArrayList<Line> dataWithoutMissingLines = new ArrayList<Line>();
         ArrayList<Line> linesWithMissingData = new ArrayList<Line>();
@@ -288,6 +284,10 @@ public class Table2 {
         }
     }
 
+    /**
+     * This method finds columns by taking the lines in the data variable and storing them in a map based on their partition
+     * positions.
+     */
     private void findColumns(){
         int counterForColumns = 0;
         Map<Integer, ArrayList<ArrayList<Element>>> columnMap = new HashMap<Integer, ArrayList<ArrayList<Element>>>();
@@ -298,8 +298,6 @@ public class Table2 {
                     ArrayList<ArrayList<Element>> fullClusters = columnMap.get(counterForColumns);
                     fullClusters.add(cluster);
                     columnMap.put(counterForColumns, fullClusters);
-                    //System.out.println(counterForColumns +" "+ cluster);
-                    //System.out.println(columnMap.get(counterForColumns));
                 }
                 else{
                     ArrayList<ArrayList<Element>> fullClusters = new ArrayList<ArrayList<Element>>();
@@ -314,39 +312,38 @@ public class Table2 {
         this.dataByColumn = columnMap;
     }
 
+    /**
+     * This method uses the map that was created in the findColumns method to create the Column objects
+     * @param AVGCharDistance The Average character Distance as calculated in the Page class.
+     */
     private void createColumns(double AVGCharDistance){
         ArrayList<Column2> dataInColumns = new ArrayList<Column2>();
-        //System.out.println(dataByColumn.get(2));
         for(int key : dataByColumn.keySet()){
-            //System.out.println(dataByColumn.get(key));
             Column2 column = new Column2(dataByColumn.get(key), AVGCharDistance);
-            dataInColumns.add(column); 
+            dataInColumns.add(column);
         }
         this.dataInColumns = dataInColumns;
     }
 
+    /**
+     * This method adds lines with missing partitions to the current columns.
+     * It loops trough lines that were flagged for containing missing data and then adds the ones to columns that they
+     * fit in (or to columns that fit in the partition). If this fails it will also try to check if the partition merely
+     * touches a column, although this will return a lower validation score if successful.
+     */
     private void addLinesWithMissingDataToColumns(){
         ArrayList<Column2> newDataInColumns = new ArrayList<Column2>();
         for(Line line: linesWithMissingData){
-//            System.out.println("miss the data: " + line);
             ArrayList<ArrayList<Element>> clusters = line.getClusters();
             for(ArrayList<Element> cluster : clusters){
                 for(Column2 column : dataInColumns){
                     if(column.fitsInColumn(Line.getClusterX1(cluster), Line.getClusterX2(cluster)) ||
                             column.columnFitsIn(Line.getClusterX1(cluster), Line.getClusterX2(cluster))){
                         //then we need to add this cluster to that column:
-
-//                        System.out.println("Column is: " + column);
-//                        System.out.println(column.getColumnBoundaryX1() +" "+ column.getColumnBoundaryX2());
-//                        System.out.println("I want to add: " + cluster);
-//                        System.out.println("I fit in the column: " + column.fitsInColumn(Line.getClusterX1(cluster), Line.getClusterX2(cluster)) + " " +
-//                                "\nColumn fits in me: " +column.columnFitsIn(Line.getClusterX1(cluster), Line.getClusterX2(cluster)));
                         newDataInColumns.remove(column);
                         column.addCell(cluster);
                         newDataInColumns.add(column);
-
                     }
-
                     //TODO: NEEDS VALIDATION SCORE. USE THE 1,2,3 System!
                     else if(column.touchesColumn(Line.getClusterX1(cluster), Line.getClusterX2(cluster))){
                         System.out.println("CLUSTER: " + cluster + " touches: " + column);
@@ -358,10 +355,16 @@ public class Table2 {
             }
         }
     }
-    //TODO: Set up validation for this method (WHY is this a rowspanner?)
-    //This method checks if the last sentence of the title should be in the headers.
+
+    /**
+     * This method checks if the last sentence of the title should be in the headers.
+     * The method does this by looking at the last line of the title and checking if there is more space between this line
+     * and the data and this line and the rest of the title. If there is more space between the last line of the title and
+     * the rest of the title the method assumes that this is in fact a single header (with no partitions).
+     * The validation is called to show how much distance was between the title and the data.
+     */
     private void checkTheTitle(){
-        findAverageLineHeightDistance();
+        findAverageLineDistance();
         if(!(titleAndHeaders.size() < 3)){
         Line lastCellInTitle = titleAndHeaders.get(titleAndHeaders.size()-1);
 
@@ -372,50 +375,44 @@ public class Table2 {
                 minY1Column = column.getMinY1();
             }
         }
-
         if((averageLineDistance * lineDistanceModifier) < distanceBetweenTitle){
             rowSpanners.add(titleAndHeaders.get(titleAndHeaders.size()-1));
             titleAndHeaders.remove(titleAndHeaders.size()-1);
             this.validation.calculateTitleConfidence(averageLineDistance, distanceBetweenTitle,lineDistanceModifier);
-//            checkTheTitle();
             }
         }
     }
 
-    //Now we need to check the types, found in the data. This works as an extra filter.
-    //TODO: Use this method as a starting point for the OCR correction
-    private void filterDataByType(){
-        ArrayList<String> lastLine = new ArrayList<String>();
-        ArrayList<String> currentLine;
-        ArrayList<Line> filteredData = new ArrayList<Line>();
-        ArrayList<Line> possibleHeaders = new ArrayList<Line>();
-        Line lastLineObject = null;
-        boolean foundData = false;                    //if we havent found any data, but there is a cluster, that might be the headers.
-        boolean firstDetection = true;        //We need this boolean, because if we detect a pattern for the first time we want to add the first line as well.
+    /**
+     * This method finds the average distance between rows and stores this in the private averageLineDistance variable.
+     * It is also send to the validation class for validation purposes.
+     */
+    private void findAverageLineDistance(){
+        double y1;
+        double lastY2 = -999;
+        double totalDistance = 0.0;
+        double averageDistance;
+
         for(Line line : data){
-            currentLine = line.getClusterTypes();
-            if(currentLine.equals(lastLine)){
-                if(firstDetection){
-                    filteredData.add(lastLineObject);
-                }
-                filteredData.add(line);
-                firstDetection = false;
-                foundData = true;
+            if(lastY2 == -999){
+                lastY2 = line.getAverageY2();
+                continue;
             }
-            else if(!foundData){
-                possibleHeaders.add(line);
-            }
-            lastLineObject = line;
-            lastLine = currentLine;
+            y1 = line.getAverageY1();
+            totalDistance = totalDistance + (y1 - lastY2);
+            lastY2 = line.getAverageY2();
         }
-        this.data = filteredData;
-        try{
-            possibleHeaders.remove(possibleHeaders.size()-1);          //you need to remove the last one cause size is not the index.
-        }
-        catch(IndexOutOfBoundsException e){
-            //then there was an empty line. We filter those out as well :)
-        }
+        averageDistance = totalDistance/data.size();
+        this.averageLineDistance = averageDistance;
+        this.validation.setAverageDistanceBetweenRows(averageDistance);
     }
+
+    /**
+     * This method returns the results of the extraction of the table and puts them in a XML format.
+     * @param file This is the File which was used for the extraction of the Table
+     * @param tableID This is the ID of the table that was extracted
+     * @return This method returns a String containing the results of the Table extraction in valid XML.
+     */
     private String getXMLContent(File file, int tableID){
         String fileContent = "<TEAFile>\n"+ getProvenance(file , tableID);
         fileContent = fileContent + "    <results>\n";
@@ -450,7 +447,6 @@ public class Table2 {
     private void write(String filecontent, String location, File file, int tableID) throws IOException {
         LOGGER.info("Writing to file: " + location + " " + file.getName() + " " + tableID);
         FileWriter fileWriter;
-//        filecontent = getProvenance(file)+ filecontent;
         location = location + "\\" + file.getName() + "-" + tableID+ ".xml";
         File newTextFile = new File(location);
         fileWriter = new FileWriter(newTextFile);
@@ -458,6 +454,7 @@ public class Table2 {
         fileWriter.close();
     }
 
+    //TODO: Add the used parameters in the provenance!
     /**
      * This method creates the provenance that is being used for writing the output.
      * @param file The file which was used to create this table.

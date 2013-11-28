@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 /*
  * The table class contains methods and properties of the table.
- * You can call getters and setters to access the various properties of a Table.
+ * You can call getters and setters to access the various properties of a Table2.
  * It also contains methods calling it's subclass Column to change it's attributes.
  */
 public class Table {
@@ -32,7 +32,7 @@ public class Table {
 
     /**
      * The constructor of this class consists of two parts: the first part sets some of the local variables that are required
-     * for the initial reconstruction of the Table. The second part calls methods
+     * for the initial reconstruction of the Table2. The second part calls methods
      * @param spans the spans that are below the span table, which was picked up in the pages class.
      * @param workLocation The worklocation as specified by the user.
      * @param file The file which was used to extract the table from.
@@ -40,7 +40,7 @@ public class Table {
      */
     public Table(Elements spans, String workLocation, File file, double spaceDistance) throws IOException {
         //first part of the constructor:
-        System.out.println("Table Created.");
+        System.out.println("Table2 Created.");
         try{
             String name = spans.get(0).text() + " " + spans.get(2).text() + " " + spans.get(3).text() + " " + spans.get(4).text() + " " + spans.get(5).text();
         }
@@ -48,7 +48,7 @@ public class Table {
             System.out.println("To little spans!");
             String name = "I only have " +spans.size() + " words.";
         }
-        LOGGER.info("New Table. The title roughly starts with: "+ name);
+        LOGGER.info("New Table2. The title roughly starts with: "+ name);
         LOGGER.info("I was found in: " + file.getName());
         System.out.println("My name is: " + name);
 
@@ -57,7 +57,7 @@ public class Table {
         this.name = name;
         //~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
         //Second part of the constructor:
-        System.out.println("Table reconstruction time:");
+        System.out.println("Table2 reconstruction time:");
 
         Scores score = new Scores(spans, spaceDistance);
         this.endOfTable = score.findEndOfTable();

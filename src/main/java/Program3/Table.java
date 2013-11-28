@@ -8,7 +8,7 @@ import java.util.*;
 
 /*
  * The table class contains methods and properties of the table.
- * You can call getters and setters to acces the various properties of a Table.
+ * You can call getters and setters to acces the various properties of a Table2.
  * It also contains methods calling it's subclass Column to change it's attributes.
  */
 public class Table {
@@ -22,7 +22,7 @@ public class Table {
     private ArrayList<ArrayList<Element>> columns;
 
     public Table(Elements spans) throws IOException {
-        System.out.println("Table Created.");
+        System.out.println("Table2 Created.");
         String name = spans.get(0).text() + " " + spans.get(2).text() + " " + spans.get(3).text() + " " + spans.get(4).text() + " " + spans.get(5).text();
         System.out.println("My name is: " + name);
 

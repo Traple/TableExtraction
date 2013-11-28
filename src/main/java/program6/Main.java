@@ -42,8 +42,8 @@ public class Main {
         logMan.addLogger(LOGGER);
 
         LOGGER.info("Starting T.E.A. 0.6");
-        LOGGER.info("Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm. But if you want, you can call me Bob.");
-        System.out.println("Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm. But if you want, you can call me Bob.");
+        LOGGER.info("Greetings user! My name is T.E.A., which stands for Table2 Extraction Algorithm. But if you want, you can call me Bob.");
+        System.out.println("Greetings user! My name is T.E.A., which stands for Table2 Extraction Algorithm. But if you want, you can call me Bob.");
 
         //processing of the arguments:
         ArgumentProcessor arguments = new ArgumentProcessor(args);
@@ -174,7 +174,7 @@ public class Main {
         /*ImageMagick imagemagick = new ImageMagick(pathToImageMagic,workLocation, ID ,resolution);
         imagemagick.createPNGFiles();
 
-        ArrayList<File> pngs = imagemagick.findPNGFilesInWorkingDirectory(workLocation, ID);
+        ArrayList<File> pngs = ImageMagick.findPNGFilesInWorkingDirectory(workLocation, ID);
 
         int x =0;
         for(File file : pngs){
@@ -213,5 +213,4 @@ public class Main {
             System.out.println("No directory was created.");
         }
     }
-
 }

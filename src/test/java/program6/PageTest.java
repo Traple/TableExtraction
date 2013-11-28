@@ -33,15 +33,15 @@ public class PageTest {
         for (Element span : spans) {
             word = span.text();
             try {
-                if(word.substring(0, 5).equals("TABLE") || word.substring(0, 5).equals("table") || word.substring(0, 5).equals("Table")&&foundATable){
+                if(word.substring(0, 5).equals("TABLE") || word.substring(0, 5).equals("table") || word.substring(0, 5).equals("Table2")&&foundATable){
                     foundTables.add(tableSpans.get(0)); //make a new table from the collected spans
-                    tableSpans = new Elements();        //reset the spans for the new Table
+                    tableSpans = new Elements();        //reset the spans for the new Table2
                     tableSpans.add(span);
                 }
                 else if (foundATable) {
                     tableSpans.add(span);
                 }
-                if (word.substring(0, 5).equals("TABLE") || word.substring(0, 5).equals("table") || word.substring(0, 5).equals("Table")&&!foundATable) {
+                if (word.substring(0, 5).equals("TABLE") || word.substring(0, 5).equals("table") || word.substring(0, 5).equals("Table2")&&!foundATable) {
                     foundATable = true;
                     tableSpans.add(span);
                 }
@@ -58,8 +58,8 @@ public class PageTest {
             //LOGGER.info("There was no table found. ");
             System.out.println("No table found =(");
         }
-        assertEquals("[<span class=\"ocrx_word\" id=\"word_6\" title=\"bbox 1041 612 1201 658\"><strong>Table</strong></span>, <span class=\"ocrx_word\" id=\"word_541\" title=\"bbox 2575 3207 2762 3265\">Table</span>]", foundTables.toString());
-        System.out.println("Table creation matches.");
+        assertEquals("[<span class=\"ocrx_word\" id=\"word_6\" title=\"bbox 1041 612 1201 658\"><strong>Table2</strong></span>, <span class=\"ocrx_word\" id=\"word_541\" title=\"bbox 2575 3207 2762 3265\">Table2</span>]", foundTables.toString());
+        System.out.println("Table2 creation matches.");
     }
 
 
@@ -78,15 +78,15 @@ public class PageTest {
             word = span.text();
 
             try {
-                if(word.substring(0, 5).equals("TABLE") || word.substring(0, 5).equals("table") || word.substring(0, 5).equals("Table")&&foundATable){
+                if(word.substring(0, 5).equals("TABLE") || word.substring(0, 5).equals("table") || word.substring(0, 5).equals("Table2")&&foundATable){
                     //foundTables.add(new Table2(tableSpans, 35.874534161490686)); //make a new table from the collected spans
-                    tableSpans = new Elements();        //reset the spans for the new Table
+                    tableSpans = new Elements();        //reset the spans for the new Table2
                     tableSpans.add(span);
                 }
                 else if (foundATable) {
                     tableSpans.add(span);
                 }
-                if (word.substring(0, 5).equals("TABLE") || word.substring(0, 5).equals("table") || word.substring(0, 5).equals("Table")&&!foundATable) {
+                if (word.substring(0, 5).equals("TABLE") || word.substring(0, 5).equals("table") || word.substring(0, 5).equals("Table2")&&!foundATable) {
                     foundATable = true;
                     tableSpans.add(span);
                 }
@@ -103,8 +103,8 @@ public class PageTest {
             //LOGGER.info("There was no table found. ");
             System.out.println("No table found =(");
         }
-        assertEquals("Table 1. Subcellular Localization of Alcohol Dehydrogenase Activity in Pseudomonas putida S-5 Cells ", foundTables.get(0).getName());
-        assertEquals("Table 2. Each of the two complete ORFS had a putative ", foundTables.get(1).getName());
+        assertEquals("Table2 1. Subcellular Localization of Alcohol Dehydrogenase Activity in Pseudomonas putida S-5 Cells ", foundTables.get(0).getName());
+        assertEquals("Table2 2. Each of the two complete ORFS had a putative ", foundTables.get(1).getName());
         System.out.println("Names match.");
     }
 

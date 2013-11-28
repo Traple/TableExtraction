@@ -41,7 +41,7 @@ public class OCRMethods {
             if(span.text().contains("TABLE")){
                 String pos = span.attr("title");
                 positions = pos.split("\\s+");
-                System.out.println("Height of the beginning of Table: " + positions[2]);
+                System.out.println("Height of the beginning of Table2: " + positions[2]);
                  }
             String word = span.text();
             for(String header:purificationHeaders){

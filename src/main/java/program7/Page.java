@@ -1,4 +1,4 @@
-package program6;
+package program7;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -27,7 +27,7 @@ public class Page {
      * The constructor of this class sets the local variables for this class and creates a Jsoup document.
      * @param file The HTML file created by the OCR.
      * @param workLocation The work location as specified by the user.
-     * @throws IOException
+     * @throws java.io.IOException
      */
     public Page(File file, String workLocation) throws IOException {
         Document doc = Jsoup.parse(file, "UTF-8", "http://example.com/");
@@ -44,7 +44,7 @@ public class Page {
      * Do note that it creates a substring of the span(word) it finds. So if it finds <span>(table</span> it will not be detected.
      * This has been done to reduce the amount of false positives (for referring to a table in the text).
      * @return The Table2 object. This method returns an empty list if no table was found.
-     * @throws IOException
+     * @throws java.io.IOException
      */
     public ArrayList<Table2> createTables() throws IOException {
         String word;
@@ -79,7 +79,6 @@ public class Page {
         }
         if(!foundATable){
             LOGGER.info("There was no table found. ");
-            System.out.println("No table found =(");
         }
         return foundTables;
     }
