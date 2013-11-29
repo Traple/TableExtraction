@@ -18,6 +18,8 @@ import java.util.logging.Logger;
 public class Table2 {
 
     public static Logger LOGGER = Logger.getLogger(Table2.class.getName());
+    private final double verticalThresholdModifier;
+    private final double horizontalThresholdModifier;
     private int maxY1;
     private Elements spans;
     private String name;
@@ -30,7 +32,6 @@ public class Table2 {
     private ArrayList<Column2> dataInColumns;
     private ArrayList<Line> rowSpanners;
     private Validation validation;
-    private double lineDistanceModifier;
 
     /**
      * This is the constructor of the table class. It takes it's parameters and sets them as local variables.
@@ -43,11 +44,12 @@ public class Table2 {
      * @param tableID This is the ID of the detected table. It is mainly used for the creation of the output file and for provenance.
      * @throws IOException
      */
-    public Table2(Elements spans, double charLengthThreshold, File file, String workspace, int tableID) throws IOException {
+    public Table2(Elements spans, double charLengthThreshold, File file, String workspace, int tableID, double verticalThresholdModifier, double horizontalThresholdModifier) throws IOException {
         this.maxY1 = 0;
         this.spans = spans;
         this.name = "";
-        this.lineDistanceModifier = 1.0;
+        this.horizontalThresholdModifier = horizontalThresholdModifier;
+        this.verticalThresholdModifier = verticalThresholdModifier;
 
         this.validation = new Validation();
         if(spans.size() > 0){
@@ -108,7 +110,7 @@ public class Table2 {
                 }
             }
            System.out.println("Validation:\n" + validation);
-           write(getXMLContent(file, tableID), (workspace+"/results") ,file, tableID);
+           write(getXMLContent(file, tableID), (workspace) ,file, tableID);
         }
         }
     }
@@ -183,7 +185,7 @@ public class Table2 {
             int x2 = Integer.parseInt(positions[3]);
 
             if(!(x1>=lastX2)){
-                Line line = new Line(currentLine, charLengthThreshold);
+                Line line = new Line(currentLine, charLengthThreshold, horizontalThresholdModifier);
                 table.add(line);
                 currentLine = new Elements();
             }
@@ -191,7 +193,7 @@ public class Table2 {
             currentLine.add(span);
         }
         if(currentLine.size() > 4){                 //For in case the last line is part of the table
-            Line line = new Line(currentLine, charLengthThreshold);                 //TODO: CHECK FOR FALSE POSITIVES!
+            Line line = new Line(currentLine, charLengthThreshold, horizontalThresholdModifier);
             table.add(line);
         }
     }
@@ -255,7 +257,6 @@ public class Table2 {
         }
     }
 
-    //TODO: Add the highest amount of clusters as well.
     //This method removes the lines that have missing data and stores them in a separate variable.
     //These lines might contain valuable information about the content or could be a mistake by the OCR or separator.
     //They need special processing in order to be useful.
@@ -263,13 +264,39 @@ public class Table2 {
         ArrayList<Line> dataWithoutMissingLines = new ArrayList<Line>();
         ArrayList<Line> linesWithMissingData = new ArrayList<Line>();
         ArrayList<Integer> numberOfClusters = new ArrayList<Integer>();
+        int highestAmountOfClusters = 0;
 
         for(Line line : data){
             numberOfClusters.add(line.getClusterSize());
+            if(line.getClusterSize() > highestAmountOfClusters){
+                highestAmountOfClusters = line.getClusterSize();
+            }
         }
-        if(numberOfClusters.size()>0){
+        int highestAmountOfClustersOccurrences =0;
+        while(numberOfClusters.contains(highestAmountOfClusters)){
+            highestAmountOfClustersOccurrences++;
+            numberOfClusters.remove(numberOfClusters.indexOf(highestAmountOfClusters));
+        }
+        validation.setHighestAmountOfClustersOccurrences(highestAmountOfClustersOccurrences);
+        if(highestAmountOfClustersOccurrences > 4){
             int mostFrequentAmountOfClusters = CommonMethods.mostCommonElement(numberOfClusters);
             validation.setMostFrequentNumberOfClusters(mostFrequentAmountOfClusters);
+            validation.setHighestAmountOfClusters(highestAmountOfClusters);
+            for(Line line:data){
+                if(line.getClusterSize() < highestAmountOfClustersOccurrences){
+                    linesWithMissingData.add(line);
+                }
+                else{
+                    dataWithoutMissingLines.add(line);
+                }
+            }
+            this.linesWithMissingData = linesWithMissingData;
+            this.data = dataWithoutMissingLines;
+        }
+        else if(numberOfClusters.size()>0){
+            int mostFrequentAmountOfClusters = CommonMethods.mostCommonElement(numberOfClusters);
+            validation.setMostFrequentNumberOfClusters(mostFrequentAmountOfClusters);
+            validation.setHighestAmountOfClusters(highestAmountOfClusters);
             for(Line line : data){
                 if(line.getClusterSize() < mostFrequentAmountOfClusters){
                     //Now we now this line got missing data
@@ -332,28 +359,43 @@ public class Table2 {
      * touches a column, although this will return a lower validation score if successful.
      */
     private void addLinesWithMissingDataToColumns(){
+        ArrayList<Cell> cellsWithMissingDataAdded = new ArrayList<Cell>();
         ArrayList<Column2> newDataInColumns = new ArrayList<Column2>();
         for(Line line: linesWithMissingData){
             ArrayList<ArrayList<Element>> clusters = line.getClusters();
             for(ArrayList<Element> cluster : clusters){
                 for(Column2 column : dataInColumns){
-                    if(column.fitsInColumn(Line.getClusterX1(cluster), Line.getClusterX2(cluster)) ||
+                    if(column.fitsInColumn(Line.getClusterX1(cluster), Line.getClusterX2(cluster)) &&
                             column.columnFitsIn(Line.getClusterX1(cluster), Line.getClusterX2(cluster))){
                         //then we need to add this cluster to that column:
                         newDataInColumns.remove(column);
                         column.addCell(cluster);
                         newDataInColumns.add(column);
+                        Cell cell = new Cell(cluster, 3);
+                        cellsWithMissingDataAdded.add(cell);
                     }
-                    //TODO: NEEDS VALIDATION SCORE. USE THE 1,2,3 System!
+                    else if(column.fitsInColumn(Line.getClusterX1(cluster), Line.getClusterX2(cluster)) ||
+                            column.columnFitsIn(Line.getClusterX1(cluster), Line.getClusterX2(cluster))){
+                        //then we need to add this cluster to that column:
+                        newDataInColumns.remove(column);
+                        column.addCell(cluster);
+                        newDataInColumns.add(column);
+                        Cell cell = new Cell(cluster, 2);
+                        cellsWithMissingDataAdded.add(cell);
+                    }
                     else if(column.touchesColumn(Line.getClusterX1(cluster), Line.getClusterX2(cluster))){
                         System.out.println("CLUSTER: " + cluster + " touches: " + column);
                         newDataInColumns.remove(column);
                         column.addCell(cluster);
                         newDataInColumns.add(column);
+                        Cell cell = new Cell(cluster, 1);
+                        cellsWithMissingDataAdded.add(cell);
                     }
                 }
             }
         }
+        validation.setCellsWithMissingDataAdded(cellsWithMissingDataAdded.size());
+        validation.setCellsWithMissingDataAddedScores(cellsWithMissingDataAdded);
     }
 
     /**
@@ -375,10 +417,10 @@ public class Table2 {
                 minY1Column = column.getMinY1();
             }
         }
-        if((averageLineDistance * lineDistanceModifier) < distanceBetweenTitle){
+        if((averageLineDistance * verticalThresholdModifier) < distanceBetweenTitle){
             rowSpanners.add(titleAndHeaders.get(titleAndHeaders.size()-1));
             titleAndHeaders.remove(titleAndHeaders.size()-1);
-            this.validation.calculateTitleConfidence(averageLineDistance, distanceBetweenTitle,lineDistanceModifier);
+            this.validation.calculateTitleConfidence(averageLineDistance, distanceBetweenTitle, verticalThresholdModifier);
             }
         }
     }
@@ -436,7 +478,8 @@ public class Table2 {
 
         return fileContent;
     }
-
+    //TODO: Design/add the semantic framework to the output file.
+    //TODO: also add validation scores for this semantic framework
     /**
      * This method writes the results to the results directory in the workspace. Output is in XML.
      * @param filecontent The results as being collected during the reconstruction of this table.
@@ -445,16 +488,16 @@ public class Table2 {
      * @throws java.io.IOException
      */
     private void write(String filecontent, String location, File file, int tableID) throws IOException {
-        LOGGER.info("Writing to file: " + location + " " + file.getName() + " " + tableID);
+        LOGGER.info("Writing to file: " + location + "\\" + file.getName().substring(0, file.getName().length()-10) + "-" + tableID + ".xml");
         FileWriter fileWriter;
-        location = location + "\\" + file.getName() + "-" + tableID+ ".xml";
-        File newTextFile = new File(location);
+        String writeLocation = location + "\\results\\" + file.getName().substring(0, file.getName().length()-10) + "-" + tableID+ ".xml";
+        File newTextFile = new File(writeLocation);
         fileWriter = new FileWriter(newTextFile);
         fileWriter.write(filecontent);
         fileWriter.close();
     }
 
-    //TODO: Add the used parameters in the provenance!
+    //TODO: Add the other parameters to the provenance as well, possibly with a provenance object.
     /**
      * This method creates the provenance that is being used for writing the output.
      * @param file The file which was used to create this table.
@@ -465,6 +508,8 @@ public class Table2 {
                 "        <fromFile>" + file.getName()+"</fromFile>\n" +
                 "        <user>Sander</user>\n"+
                 "        <detectionID>" + tableID +"</detectionID>\n"+
+                "        <usedHorizontalThresholdModifier>"+horizontalThresholdModifier+"</usedHorizontalThresholdModifier>\n"+
+                "        <usedVerticalThresholdModifier>"+verticalThresholdModifier+"</usedVerticalThresholdModifier>\n"+
                 "    </provenance>\n";
     }
 

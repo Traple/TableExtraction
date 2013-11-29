@@ -57,6 +57,8 @@ public class Main {
         String pathToTesseractConfig = arguments.getPathToTesseractConfigFile();
         System.out.println("Which uses the following configuration file: " + pathToTesseractConfig);
         String resolution = "600";
+        double horizontalThresholdModifier = arguments.getHorizontalThresholdModifier();
+        double verticalThresholdModifier = arguments.getVerticalThresholdModifier();
         long start = System.currentTimeMillis();
         /*
         if(pubmedIDs == null){
@@ -95,7 +97,7 @@ public class Main {
                 System.out.println("Worklocation: " + workLocation);
                 System.out.println("Resolution: " + resolution);
                 LOGGER.info("Currently Processing: " + ID);
-                secondMain(pathToImageMagic, workLocation, ID, resolution, pathToTesseract, pathToTesseractConfig);
+                secondMain(pathToImageMagic, workLocation, ID, resolution, pathToTesseract, pathToTesseractConfig, verticalThresholdModifier, horizontalThresholdModifier);
             }
         }   /*
         if(arguments.getQuery()!=null){
@@ -166,7 +168,8 @@ public class Main {
      * @param pathToTesseractConfig The path to the configuration file to be used by Tesseract.
      * @throws java.io.IOException
      */
-    private static void secondMain(String pathToImageMagic, String workLocation, String ID, String resolution, String pathToTesseract, String pathToTesseractConfig) throws IOException {
+    private static void secondMain(String pathToImageMagic, String workLocation, String ID, String resolution, String pathToTesseract, String pathToTesseractConfig, double verticalThresholdModifier, double horizontalThresholdModifier) throws IOException {
+       /*
         ImageMagick imagemagick = new ImageMagick(pathToImageMagic,workLocation, ID ,resolution);
         imagemagick.createPNGFiles();
 
@@ -179,15 +182,14 @@ public class Main {
             Tesseract.runTesseract();
             x++;
         }
-
-        Tesseract tesseract = new Tesseract(pathToTesseract, workLocation, ID, Integer.toString(x),pathToTesseractConfig);
-        ArrayList<File> HTMLFiles = tesseract.findHTMLFilesInWorkingDirectory(workLocation, ID);
+         */
+        ArrayList<File> HTMLFiles = Tesseract.findHTMLFilesInWorkingDirectory(workLocation, ID);
         for(File file : HTMLFiles){
             LOGGER.info("Searching for tables in: " + file.getName());
             System.out.println("Searching for tables in: " + file.getName());
             Page page = new Page(file, workLocation);
             System.out.println("The found average length of a character is: " + page.getSpaceDistance());
-            page.createTables();
+            page.createTables(horizontalThresholdModifier, verticalThresholdModifier);
             LOGGER.info("------------------------------------------------------------------------------");
             System.out.println("------------------------------------------------------------------------------");
         }

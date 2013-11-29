@@ -24,6 +24,8 @@ public class ArgumentProcessor {
     private String pathToImageMagick;
     private String pathToTesseract;
     private String pathToTesseractConfigFile;
+    private double verticalThresholdModifier;
+    private double horizontalThresholdModifier;
 
     /**
      * The constructor of this class creates a commandline with the correct options (as was given by the user) and sets
@@ -154,6 +156,8 @@ public class ArgumentProcessor {
             pathToImageMagick = config.getPathToImageMagick();
             pathToTesseract = config.getPathToTesseract();
             pathToTesseractConfigFile = config.getPathToTesseractConfigFile();
+            verticalThresholdModifier = config.getVerticalThresholdModifier();
+            horizontalThresholdModifier = config.getHorizontalThresholdModifier();
         }
         else{
             LOGGER.warning("No configuration file detected! Working with default installation locations!");
@@ -161,6 +165,8 @@ public class ArgumentProcessor {
             pathToImageMagick = "/usr/bin/convert";
             pathToTesseract = "/usr/bin/tesseract";
             pathToTesseractConfigFile = "/usr/bin/config.txt";
+            verticalThresholdModifier = 1.0;
+            horizontalThresholdModifier = 2.0;
         }
     }
 
@@ -197,5 +203,11 @@ public class ArgumentProcessor {
     }
     public String getPathToTesseractConfigFile(){
         return pathToTesseractConfigFile;
+    }
+    public double getVerticalThresholdModifier(){
+        return verticalThresholdModifier;
+    }
+    public double getHorizontalThresholdModifier(){
+        return horizontalThresholdModifier;
     }
 }

@@ -46,7 +46,7 @@ public class Page {
      * @return The Table2 object. This method returns an empty list if no table was found.
      * @throws java.io.IOException
      */
-    public ArrayList<Table2> createTables() throws IOException {
+    public ArrayList<Table2> createTables(double horizontalThresholdModifier, double verticalThresholdModifier) throws IOException {
         String word;
         boolean foundATable = false;
         Elements tableSpans = new Elements();
@@ -55,15 +55,15 @@ public class Page {
         for (Element span : spans) {
             word = span.text();
             try {
-                if(word.substring(0, 5).equals("TABLE") || word.substring(0, 5).equals("table") || word.substring(0, 5).equals("Table2")&&foundATable){
-                    foundTables.add(new Table2(tableSpans, spaceDistance, file, workLocation, tableID)); //make a new table from the collected spans
+                if(word.substring(0, 5).equals("TABLE") || word.substring(0, 5).equals("table") || word.substring(0, 5).equals("Table")&&foundATable){
+                    foundTables.add(new Table2(tableSpans, spaceDistance, file, workLocation, tableID, verticalThresholdModifier, horizontalThresholdModifier)); //make a new table from the collected spans
                     tableSpans = new Elements();                                                    //reset the spans for the new Table2
                     tableSpans.add(span);
                 }
                 else if (foundATable) {
                     tableSpans.add(span);
                 }
-                if (word.substring(0, 5).equals("TABLE") || word.substring(0, 5).equals("table") || word.substring(0, 5).equals("Table2")&&!foundATable) {
+                if (word.substring(0, 5).equals("TABLE") || word.substring(0, 5).equals("table") || word.substring(0, 5).equals("Table")&&!foundATable) {
                     foundATable = true;
                     tableSpans.add(span);
                 }
@@ -75,7 +75,7 @@ public class Page {
             tableID++;
         }
         if (foundATable) {
-            foundTables.add(new Table2(tableSpans, spaceDistance, file, workLocation, tableID));
+            foundTables.add(new Table2(tableSpans, spaceDistance, file, workLocation, tableID, verticalThresholdModifier, horizontalThresholdModifier));
         }
         if(!foundATable){
             LOGGER.info("There was no table found. ");

@@ -17,18 +17,17 @@ public class Line {
     private double averageY1;
     private double averageY2;
 
-    //TODO: Move the hardcoded ThresholdModifier to the parameter file.
     /**
      * This is the constructor of the Line class.
      * It sets three internal variables (words, LineThreshold and the ThresholdModifier)
      * The ThresholdModifier is hardcoded to 2.
      * @param words words are the words that are in this line. It is a list of HTML Elements derived from the OCR
-     * @param lineThreshold the threhsold that was calculated in the average distance of words in the page class.
+     * @param lineThreshold the threshold that was calculated in the average distance of words in the page class.
      */
-    public Line(Elements words, double lineThreshold){
+    public Line(Elements words, double lineThreshold, double lineThresholdModifier){
         this.words = words;
         this.lineThreshold = lineThreshold;
-        this.thresholdModifier = 2;
+        this.thresholdModifier = lineThresholdModifier;
         ClusterColumns();
 
         String[] positions;
@@ -172,6 +171,14 @@ public class Line {
     public double getDistanceThreshold(){
         return thresholdModifier * lineThreshold;
     }
+/*    public ArrayList<Cell> getCellObjects(){
+        ArrayList<Cell> cellObjects = new ArrayList<Cell>();
+        for(ArrayList<Element> cluster : clusters){
+            Cell cell = new Cell(cluster);
+            cellObjects.add(cell);
+        }
+        return cellObjects;
+    }*/
 
     /**
      * This is the toString method for the Line class.

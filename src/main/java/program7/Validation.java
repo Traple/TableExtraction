@@ -16,6 +16,10 @@ public class Validation {
     private double lineThreshold;
     private double averageDistanceBetweenRows;
     private ArrayList<Double> titleConfidence;
+    private int highestAmountOfClusters;
+    private int highestAmountOfClustersOccurrences;
+    private int cellsWithMissingDataAdded;
+    private ArrayList<Cell> cellsWithMissingDataAddedObjects;
 
     /**
      * This is the constructor for the Validation class. It sets the private variables of this object.
@@ -36,6 +40,9 @@ public class Validation {
         }
         this.clusterCertainty = clusterCertainties;
     }
+    public void setCellsWithMissingDataAddedScores(ArrayList<Cell> cells){
+        this.cellsWithMissingDataAddedObjects = cells;
+    }
     public void calculateTitleConfidence(double averageDistanceBetweenRows, double distanceBetweenRow, double lineDistanceModifier){
         double certainty = distanceBetweenRow/(averageDistanceBetweenRows * lineDistanceModifier);
         this.titleConfidence.add(certainty);
@@ -43,11 +50,20 @@ public class Validation {
     public void setMostFrequentNumberOfClusters(int mostFrequentNumberOfClusters){
         this.mostFrequentNumberOfClusters = mostFrequentNumberOfClusters;
     }
+    public void setHighestAmountOfClusters(int highestAmountOfClusters){
+        this.highestAmountOfClusters = highestAmountOfClusters;
+    }
+    public void setHighestAmountOfClustersOccurrences(int highestAmountOfClustersOccurrences){
+        this.highestAmountOfClustersOccurrences = highestAmountOfClustersOccurrences;
+    }
     public void setLineThreshold(double lineThreshold){
         this.lineThreshold = lineThreshold;
     }
     public void setAverageDistanceBetweenRows(double averageDistanceBetweenRows){
         this.averageDistanceBetweenRows = averageDistanceBetweenRows;
+    }
+    public void setCellsWithMissingDataAdded(int cellsWithMissingDataAdded){
+        this.cellsWithMissingDataAdded = cellsWithMissingDataAdded;
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -83,7 +99,13 @@ public class Validation {
         String content = "";
         content = content + "Column Confidence: " + clusterCertainty + "\n";
         content = content + "Most Frequently found number of clusters in table: " + mostFrequentNumberOfClusters+"\n";
+        content = content + "Highest amount of clusters found in the table: " + highestAmountOfClusters + "\n";
+        content = content + "Which occurred: " + highestAmountOfClustersOccurrences + " times\n";
         content = content + "Which was calculated using the following clusterThreshold: " + lineThreshold+"\n";
+        content = content + "Cells with missing data added: " + cellsWithMissingDataAdded + "\n";
+        if(cellsWithMissingDataAdded >0){
+            content = content + "Which was done on the following scores: " + cellsWithMissingDataAddedObjects + "\n";
+        }
         content = content + "The title was calculated using the average distance between rows, which was: " + averageDistanceBetweenRows + "\n";
         if(titleConfidence.size() > 0){
             content = content + "A piece of the title was added as header. This was done with the following confidence: " + titleConfidence + "\n";
@@ -100,7 +122,13 @@ public class Validation {
         content = content + "    <validation>\n";
         content = content + "        <columnConfidence>" + clusterCertainty + "</columnConfidence>\n";
         content = content + "        <mostFrequentlyNumberOfClusters>" + mostFrequentNumberOfClusters+"</mostFrequentlyNumberOfClusters>\n";
+        content = content + "        <highestAmountOfClusters>" + highestAmountOfClusters + "</highestAmountOfClusters>\n";
+        content = content + "        <highestAmountOfClustersOccurrences>" + highestAmountOfClustersOccurrences + "</highestAmountOfClustersOccurrences>\n";
         content = content + "        <clusterThreshold>" + lineThreshold+"</clusterThreshold>\n";
+        content = content + "        <cellsWithMissingDataAdded>" + cellsWithMissingDataAdded +"</cellsWithMissingDataAdded>\n";
+        if(cellsWithMissingDataAdded > 0){
+            content = content + "        <cellsWithMissingDataAddedScores>" +cellsWithMissingDataAddedObjects + "</cellsWithMissingDataAddedScores>\n";
+        }
         content = content + "        <averageDistanceBetweenRows>" + averageDistanceBetweenRows + "</averageDistanceBEtweenRows>\n";
         if(titleConfidence.size() > 0){
             content = content + "<titleConfidence>" + titleConfidence + "</titleConfidence>\n";

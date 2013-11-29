@@ -59,7 +59,7 @@ public class Tesseract {
      * @param ID the current file being analysed
      * @return a list with the html files.
      */
-    public ArrayList<File> findHTMLFilesInWorkingDirectory(String workingDirectory, String ID){
+    public static ArrayList<File> findHTMLFilesInWorkingDirectory(String workingDirectory, String ID){
         ArrayList<File> HTMLFiles = new ArrayList<File>();
         File dir = new File(workingDirectory);
         File[] files = dir.listFiles(new FilenameFilter() {
