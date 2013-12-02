@@ -1,5 +1,6 @@
 package program7;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +14,7 @@ import java.util.regex.Pattern;
 public class CommonMethods {
 
     @SuppressWarnings("UnusedDeclaration")
-    public double calcDistance(double x1, double x2){
+    public static double calcDistance(double x1, double x2){
         double distance = 0.0;
         if(x1 > x2){
             distance = x1 - x2;
@@ -32,6 +33,15 @@ public class CommonMethods {
             distance = x2 - x1;
         }
         return distance;
+    }
+
+    public static double average(ArrayList<Integer> list)
+    {
+        double total = 0.0;
+        for (int i = 0; i < list.size(); i++)  {
+            total += list.get(i);
+        }
+        return total/list.size();
     }
 
     @SuppressWarnings("UnusedDeclaration")

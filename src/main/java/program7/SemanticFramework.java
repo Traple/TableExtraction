@@ -26,6 +26,7 @@ public class SemanticFramework {
     private double verticalHeightThreshold;
     private ArrayList<Line> rowSpanners;
     private double horizontalLengthThreshold;
+    private ArrayList<Double> listOfBaseX1;
 
     public SemanticFramework(ArrayList<Column2> table, double verticalHeightThreshold, ArrayList<Line> rowSpanners, double horizontalLengthThreshold){
         System.out.println("Starting table semantics:");
@@ -33,54 +34,61 @@ public class SemanticFramework {
         this.verticalHeightThreshold = verticalHeightThreshold;
         this.horizontalLengthThreshold = horizontalLengthThreshold;
         this.rowSpanners = rowSpanners;         //Are note validated yet.
-//        findMostFrequentAlignment();
+        findMostFrequentAlignment();
 
-//        validateRowSpaners();
+        validateRowSpaners();
 
 //We dont find the headers for now, first we need the rowspans/identifiers
 //        findHeaders();
     }
+
+    //TODO: Warning: The following is a bit creative......
     private void findMostFrequentAlignment(){
         System.out.println(horizontalLengthThreshold);
+        ArrayList<Double> listOfBaseX1 = new ArrayList<Double>();
+
         for(Column2 column : table){
             HashMap<Integer, Integer> boundaryMap = column.getBoundaryMap();
-
             String stringStep = Collections.max(boundaryMap.values()).toString();  // This will return max value in the Hashmap
+
+            ArrayList<Integer> baseX1 = new ArrayList<Integer>();
             int maxValue = Integer.parseInt(stringStep);
             int maxValues=0;
-            System.out.println(maxValue);
+            int keyOfMaxValue = 0;
+            for(int key : boundaryMap.keySet()){
+                if(boundaryMap.get(key).equals(maxValue)){
+                    keyOfMaxValue = key;
+                }
+            }
             for(int key : boundaryMap.keySet()){
                 if(maxValues >1){
                     System.out.println("error!");
-                    System.out.println(boundaryMap);
                 }
                 if(!(boundaryMap.get(key) == maxValue)){
-                    if(CommonMethods.calcDistance(boundaryMap.get(key), maxValue)<(horizontalLengthThreshold/10)){
-
-                    }
-                    else{
-                        System.out.println("Aligned????" + key + " "+boundaryMap.get(key) +"|||||"+ column);
+                    if(CommonMethods.calcDistance(key, keyOfMaxValue)<(horizontalLengthThreshold/10)){
+                        System.out.println("belongs: " +key + " with: "+keyOfMaxValue+"??");
+                        baseX1.add(key);
                     }
                 }
                 else{
                     maxValues++;
                 }
             }
+            baseX1.add(keyOfMaxValue);
+            listOfBaseX1.add(CommonMethods.average(baseX1));
         }
+        this.listOfBaseX1 = listOfBaseX1;
     }
 
     private void validateRowSpaners(){
         for(Line line : rowSpanners){
-            System.out.println(line.toString());
-            System.out.println(line.getCellObject().getX1());
             int x1OfRowspan = line.getCellObject().getX1();
-            for(Column2 column :  table){
-                if(x1OfRowspan == column.getColumnBoundaryX1()){
-
+            for(double baseX1 :  listOfBaseX1){
+                if(CommonMethods.calcDistance(x1OfRowspan, baseX1)>(horizontalLengthThreshold/10)){
+                    System.out.println("je suis aligned? Hon Hon Hon!" + line.getCellObject());
+                    break;
                 }
-                System.out.println(column);
             }
-//            System.out.println();
         }
     }
 
