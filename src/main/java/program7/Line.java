@@ -171,6 +171,14 @@ public class Line {
     public double getDistanceThreshold(){
         return thresholdModifier * lineThreshold;
     }
+    public Cell getCellObject(){
+        ArrayList<Element> wordsAsList = new ArrayList<Element>();
+        for(Element word : words){
+            wordsAsList.add(word);
+        }
+        return new Cell(wordsAsList);
+    }
+
 /*    public ArrayList<Cell> getCellObjects(){
         ArrayList<Cell> cellObjects = new ArrayList<Cell>();
         for(ArrayList<Element> cluster : clusters){

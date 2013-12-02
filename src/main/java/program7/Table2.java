@@ -53,12 +53,12 @@ public class Table2 {
 
         this.validation = new Validation();
         if(spans.size() > 0){
-        setMaxY1();
-        this.table = new ArrayList<Line>();
-        createLines(charLengthThreshold);
+            setMaxY1();
+            this.table = new ArrayList<Line>();
 
-        separateDataByCluster();
-        filterLinesThatAreAboveY1();
+            createLines(charLengthThreshold);
+            separateDataByCluster();
+            filterLinesThatAreAboveY1();
 
         if(data.size()>1){
             System.out.println(data.size());
@@ -71,14 +71,18 @@ public class Table2 {
                 System.out.println(line);
             }
             filterEmptyLines();
-            findMissingData();
+            System.out.println("size: " + data.size());
+            findMissingData();//MISTAKE!
+
             findColumns();
             createColumns(charLengthThreshold);
-            addLinesWithMissingDataToColumns();
+            if(linesWithMissingData!=null){
+                addLinesWithMissingDataToColumns();
+            }
             checkTheTitle();
         }
         else {
-            LOGGER.info("The word Table2 was detected but no clusters were found.\n" +
+            LOGGER.info("The word Table was detected but no clusters were found.\n" +
                     "It was found at position: " + maxY1);
         }
 
@@ -95,14 +99,14 @@ public class Table2 {
             for(Column2 column : dataInColumns){
                 System.out.println(column);
             }
-            if(linesWithMissingData.size() > 0) {
+            if(linesWithMissingData != null && linesWithMissingData.size() > 0) {
                 System.out.println("~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-");
                 System.out.println("The following lines were detected for having missing data or it was a line that had more clusters then the rest of the table.: ");
                 for(Line line : linesWithMissingData){
                     System.out.println(line);
                 }
             }
-            System.out.println("~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-");
+           System.out.println("~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-");
             if(rowSpanners.size() > 0){
                 System.out.println("Correct me if im wrong but the following lines are rowspanners: ");
                 for(Line line : rowSpanners){
@@ -110,7 +114,11 @@ public class Table2 {
                 }
             }
            System.out.println("Validation:\n" + validation);
+            SemanticFramework semanticFramework = new SemanticFramework(dataInColumns, (averageLineDistance * verticalThresholdModifier), rowSpanners, charLengthThreshold * horizontalThresholdModifier);
            write(getXMLContent(file, tableID), (workspace) ,file, tableID);
+        }
+            else{
+            LOGGER.info("All the found data was filtered out!");
         }
         }
     }
@@ -234,6 +242,7 @@ public class Table2 {
             }
 
         }
+        System.out.println("breaking line: " + breakingLine);
         this.titleAndHeaders = titleAndHeaders;
         this.data = data;
         this.rowSpanners = rowSpanners;
@@ -273,17 +282,19 @@ public class Table2 {
             }
         }
         int highestAmountOfClustersOccurrences =0;
+        ArrayList<Integer> numberOfClustersSave = new ArrayList<Integer>(numberOfClusters);
         while(numberOfClusters.contains(highestAmountOfClusters)){
             highestAmountOfClustersOccurrences++;
             numberOfClusters.remove(numberOfClusters.indexOf(highestAmountOfClusters));
         }
+        numberOfClusters = new ArrayList<Integer>(numberOfClustersSave);
         validation.setHighestAmountOfClustersOccurrences(highestAmountOfClustersOccurrences);
         if(highestAmountOfClustersOccurrences > 4){
             int mostFrequentAmountOfClusters = CommonMethods.mostCommonElement(numberOfClusters);
             validation.setMostFrequentNumberOfClusters(mostFrequentAmountOfClusters);
             validation.setHighestAmountOfClusters(highestAmountOfClusters);
             for(Line line:data){
-                if(line.getClusterSize() < highestAmountOfClustersOccurrences){
+                if(line.getClusterSize() < highestAmountOfClusters){
                     linesWithMissingData.add(line);
                 }
                 else{
@@ -497,7 +508,6 @@ public class Table2 {
         fileWriter.close();
     }
 
-    //TODO: Add the other parameters to the provenance as well, possibly with a provenance object.
     /**
      * This method creates the provenance that is being used for writing the output.
      * @param file The file which was used to create this table.

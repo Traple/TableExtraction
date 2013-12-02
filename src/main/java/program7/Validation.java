@@ -127,7 +127,7 @@ public class Validation {
         content = content + "        <clusterThreshold>" + lineThreshold+"</clusterThreshold>\n";
         content = content + "        <cellsWithMissingDataAdded>" + cellsWithMissingDataAdded +"</cellsWithMissingDataAdded>\n";
         if(cellsWithMissingDataAdded > 0){
-            content = content + "        <cellsWithMissingDataAddedScores>" +cellsWithMissingDataAddedObjects + "</cellsWithMissingDataAddedScores>\n";
+            content = content + "        <cellsWithMissingDataAddedScores>" +CommonMethods.changeIllegalXMLCharacters(cellsWithMissingDataAddedObjects.toString()) + "</cellsWithMissingDataAddedScores>\n";
         }
         content = content + "        <averageDistanceBetweenRows>" + averageDistanceBetweenRows + "</averageDistanceBEtweenRows>\n";
         if(titleConfidence.size() > 0){

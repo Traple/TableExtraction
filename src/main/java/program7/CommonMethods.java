@@ -23,7 +23,7 @@ public class CommonMethods {
         }
         return distance;
     }
-    public int calcDistance(int x1, int x2){
+    public static int calcDistance(int x1, int x2){
         int distance = 0;
         if(x1 > x2){
             distance = x1 - x2;

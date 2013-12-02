@@ -3,6 +3,8 @@ package program7;
 import org.jsoup.nodes.Element;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The column class contains methods that can be used to find headers and gain information on a column basis.
@@ -14,6 +16,8 @@ public class Column2 {
     private int columnBoundaryX1;
     private int columnBoundaryX2;
     private double AVGCharDistance;
+    private HashMap<Integer, Integer> boundaryMap;
+    private int mostFrequentX1;
 
     /**
      * This is the constructor of the Column class. It will set up two private variables and after that calculate the
@@ -26,6 +30,7 @@ public class Column2 {
         this.AVGCharDistance = AVGCharDistance;
 
         findColumnBoundaries();
+        findMostFrequentX1Boundary();
     }
 
     /**
@@ -59,6 +64,27 @@ public class Column2 {
                 this.columnBoundaryX2 = x2;
             }
         }
+    }
+
+    private void findMostFrequentX1Boundary(){
+        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+        for(ArrayList<Element> cell : cells){
+            String pos;
+            String[] positions;
+            Element firstWordInCell = cell.get(0);
+
+            pos = firstWordInCell.attr("title");
+            positions = pos.split("\\s+");
+            int x1 = Integer.parseInt(positions[1]);
+
+            if(map.containsKey(x1)){
+                map.put(x1, (map.get(x1).intValue()+1));
+            }
+            else{
+                map.put(x1, 1);
+            }
+        }
+        this.boundaryMap = map;
     }
 
     /**
@@ -152,6 +178,18 @@ public class Column2 {
      */
     public boolean touchesColumn(int x1, int x2){
         return (x1 < columnBoundaryX1 && x2 >columnBoundaryX1) || (x1 > columnBoundaryX1 && x2 < columnBoundaryX2);
+    }
+
+    public ArrayList<Cell> getCellObjects(){
+        ArrayList<Cell> cellObjects = new ArrayList<Cell>();
+        for(ArrayList<Element> cell : cells){
+            Cell currentCell = new Cell(cell);
+            cellObjects.add(currentCell);
+        }
+        return cellObjects;
+    }
+    public HashMap<Integer, Integer> getBoundaryMap(){
+        return boundaryMap;
     }
 
     @SuppressWarnings("UnusedDeclaration")              //We want to offer these methods for future use.
