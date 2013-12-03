@@ -180,6 +180,10 @@ public class Column2 {
         return (x1 < columnBoundaryX1 && x2 >columnBoundaryX1) || (x1 > columnBoundaryX1 && x2 < columnBoundaryX2);
     }
 
+    public boolean spansColumn(double x1, double x2){
+        return (x1 > columnBoundaryX1&&x1<columnBoundaryX2&&x2>columnBoundaryX2);
+    }
+
     public ArrayList<Cell> getCellObjects(){
         ArrayList<Cell> cellObjects = new ArrayList<Cell>();
         for(ArrayList<Element> cell : cells){

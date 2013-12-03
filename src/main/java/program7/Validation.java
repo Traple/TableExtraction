@@ -84,6 +84,9 @@ public class Validation {
     public double getAverageDistanceBetweenRows(){
         return averageDistanceBetweenRows;
     }
+    public ArrayList<Double> getTitleConfidence(){
+        return titleConfidence;
+    }
 
     //TODO: Use the validation scores to filter the columns that got trough!
 
@@ -131,7 +134,7 @@ public class Validation {
         }
         content = content + "        <averageDistanceBetweenRows>" + averageDistanceBetweenRows + "</averageDistanceBEtweenRows>\n";
         if(titleConfidence.size() > 0){
-            content = content + "<titleConfidence>" + titleConfidence + "</titleConfidence>\n";
+            content = content + "        <titleConfidence>" + titleConfidence + "</titleConfidence>\n";
         }
         content = content + "    </validation>\n";
         return content;

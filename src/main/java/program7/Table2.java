@@ -85,8 +85,6 @@ public class Table2 {
             LOGGER.info("The word Table was detected but no clusters were found.\n" +
                     "It was found at position: " + maxY1);
         }
-
-        //TODO: Find out why the title sometimes raises an error: might have something to do with the font of the articles or the OCR.
         if(data.size() > 1){
             for(Line line : data){
                 validation.setClusterCertainty(line.getDistances(), line.getDistanceThreshold());
@@ -113,9 +111,9 @@ public class Table2 {
                     System.out.println(line);
                 }
             }
-           System.out.println("Validation:\n" + validation);
-            SemanticFramework semanticFramework = new SemanticFramework(dataInColumns, (averageLineDistance * verticalThresholdModifier), rowSpanners, charLengthThreshold * horizontalThresholdModifier);
-           write(getXMLContent(file, tableID), (workspace) ,file, tableID);
+            System.out.println("Validation:\n" + validation);
+            SemanticFramework semanticFramework = new SemanticFramework(dataInColumns, (averageLineDistance * verticalThresholdModifier), rowSpanners, charLengthThreshold * horizontalThresholdModifier, table, validation, titleAndHeaders);
+            write(getXMLContent(file, tableID, semanticFramework.getXML()), (workspace) ,file, tableID);
         }
             else{
             LOGGER.info("All the found data was filtered out!");
@@ -362,7 +360,6 @@ public class Table2 {
         }
         this.dataInColumns = dataInColumns;
     }
-
     /**
      * This method adds lines with missing partitions to the current columns.
      * It loops trough lines that were flagged for containing missing data and then adds the ones to columns that they
@@ -418,7 +415,7 @@ public class Table2 {
      */
     private void checkTheTitle(){
         findAverageLineDistance();
-        if(!(titleAndHeaders.size() < 3)){
+        if(!(titleAndHeaders.size() < 2)){
         Line lastCellInTitle = titleAndHeaders.get(titleAndHeaders.size()-1);
 
         double distanceBetweenTitle = lastCellInTitle.getAverageY1()- titleAndHeaders.get(titleAndHeaders.size()-2).getAverageY2();
@@ -429,7 +426,7 @@ public class Table2 {
             }
         }
         if((averageLineDistance * verticalThresholdModifier) < distanceBetweenTitle){
-            rowSpanners.add(titleAndHeaders.get(titleAndHeaders.size()-1));
+            rowSpanners.add(0, titleAndHeaders.get(titleAndHeaders.size()-1));
             titleAndHeaders.remove(titleAndHeaders.size()-1);
             this.validation.calculateTitleConfidence(averageLineDistance, distanceBetweenTitle, verticalThresholdModifier);
             }
@@ -466,7 +463,7 @@ public class Table2 {
      * @param tableID This is the ID of the table that was extracted
      * @return This method returns a String containing the results of the Table extraction in valid XML.
      */
-    private String getXMLContent(File file, int tableID){
+    private String getXMLContent(File file, int tableID, String semanticXML){
         String fileContent = "<TEAFile>\n"+ getProvenance(file , tableID);
         fileContent = fileContent + "    <results>\n";
         fileContent = fileContent + "        <title>" + CommonMethods.changeIllegalXMLCharacters(name) + "</title>\n" ;
@@ -484,6 +481,7 @@ public class Table2 {
             fileContent = fileContent + "        </rowSpanners>\n";
         }
         fileContent = fileContent + "    </results>\n";
+        fileContent = fileContent + semanticXML;
         fileContent = fileContent + validation.toXML();
         fileContent = fileContent + "</TEAFile>";
 
