@@ -88,8 +88,6 @@ public class Validation {
         return titleConfidence;
     }
 
-    //TODO: Use the validation scores to filter the columns that got trough!
-
     /**
      * The toString method creates a summary of all the validation that has been done trough-out the program.
      * It specifies different aspects of the final table. For every variable in the validation it returns a new line in the
@@ -116,6 +114,9 @@ public class Validation {
         LOGGER.info(content);
         return content;
     }
+
+    //TODO: Improve column confidence, make it take to little columns into account (which happens quite often on low quality tables).
+    //TODO: Possible create a fix for the first column having incomplete lines (with fix being incomplete validation).
     /**
      * This method creates valid XML from the validation scores.
      * @return A string containing the different validation scores.
@@ -132,7 +133,7 @@ public class Validation {
         if(cellsWithMissingDataAdded > 0){
             content = content + "        <cellsWithMissingDataAddedScores>" +CommonMethods.changeIllegalXMLCharacters(cellsWithMissingDataAddedObjects.toString()) + "</cellsWithMissingDataAddedScores>\n";
         }
-        content = content + "        <averageDistanceBetweenRows>" + averageDistanceBetweenRows + "</averageDistanceBEtweenRows>\n";
+        content = content + "        <averageDistanceBetweenRows>" + averageDistanceBetweenRows + "</averageDistanceBetweenRows>\n";
         if(titleConfidence.size() > 0){
             content = content + "        <titleConfidence>" + titleConfidence + "</titleConfidence>\n";
         }

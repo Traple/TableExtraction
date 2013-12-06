@@ -8,8 +8,8 @@ import java.io.InputStreamReader;
 
 //The configuration class provides methods that process the configuration file.
 public class Configuration {
-    private final int horizontalThresholdModifier;
-    private final int verticalThresholdModifier;
+    private final double horizontalThresholdModifier;
+    private final double verticalThresholdModifier;
     private String pathToImageMagick;
     private String pathToTesseract;
     private String pathToTesseractConfigFile;
@@ -27,8 +27,8 @@ public class Configuration {
         this.pathToImageMagick = reader.readLine();
         this.pathToTesseract = reader.readLine();
         this.pathToTesseractConfigFile = reader.readLine();
-        this.horizontalThresholdModifier = Integer.parseInt(reader.readLine());
-        this.verticalThresholdModifier = Integer.parseInt(reader.readLine());
+        this.horizontalThresholdModifier = Double.parseDouble(reader.readLine());
+        this.verticalThresholdModifier = Double.parseDouble(reader.readLine());
         reader.close();
         fis.close();
     }
@@ -45,10 +45,10 @@ public class Configuration {
     public String getPathToTesseractConfigFile(){
         return pathToTesseractConfigFile;
     }
-    public int getHorizontalThresholdModifier(){
+    public double getHorizontalThresholdModifier(){
         return horizontalThresholdModifier;
     }
-    public int getVerticalThresholdModifier(){
+    public double getVerticalThresholdModifier(){
         return verticalThresholdModifier;
     }
 }

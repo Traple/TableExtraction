@@ -30,7 +30,7 @@ public class Main {
     public static Logger LOGGER = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, TransformerException, ParseException, InterruptedException {
-        System.out.println("Starting T.E.A. 0.6");
+        System.out.println("Starting T.E.A. 0.7");
 
         System.setProperty("java.util.logging.config.file", "/program6/log.properties");
         LogManager logMan=LogManager.getLogManager();
@@ -169,7 +169,7 @@ public class Main {
      * @throws java.io.IOException
      */
     private static void secondMain(String pathToImageMagic, String workLocation, String ID, String resolution, String pathToTesseract, String pathToTesseractConfig, double verticalThresholdModifier, double horizontalThresholdModifier) throws IOException {
-       /*
+
         ImageMagick imagemagick = new ImageMagick(pathToImageMagic,workLocation, ID ,resolution);
         imagemagick.createPNGFiles();
 
@@ -182,7 +182,8 @@ public class Main {
             Tesseract.runTesseract();
             x++;
         }
-         */
+
+        System.out.println("find HTML files: ");
         ArrayList<File> HTMLFiles = Tesseract.findHTMLFilesInWorkingDirectory(workLocation, ID);
         for(File file : HTMLFiles){
             LOGGER.info("Searching for tables in: " + file.getName());

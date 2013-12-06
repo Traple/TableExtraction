@@ -42,6 +42,23 @@ public class Line {
     }
 
     /**
+     * In this case you dont want to create clusters.
+     * @param words
+     */
+    public Line(Elements words){
+        this.words = words;
+        String[] positions;
+        String pos = words.get(0).attr("title");
+        positions = pos.split("\\s+");
+        this.Y1OfFirstWord = Integer.parseInt(positions[2]);
+
+        pos = words.get(words.size()-1).attr("title");
+        positions = pos.split("\\s+");
+        this.Y1OfLastWord = Integer.parseInt(positions[2]);
+        setAverageY1andY2();
+    }
+
+    /**
      * This method creates partitions (clusters) in the line by checking if the distances between words in the line is
      * bigger then the average distance of a character * thresholdModifier (default : 2). If so the words are saved in
      * a new partition and and the results are stored in the private clusters variable.

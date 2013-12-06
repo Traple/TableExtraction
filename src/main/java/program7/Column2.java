@@ -184,6 +184,23 @@ public class Column2 {
         return (x1 > columnBoundaryX1&&x1<columnBoundaryX2&&x2>columnBoundaryX2);
     }
 
+    public int getAverageX1(){
+        ArrayList<Cell> cells = getCellObjects();
+        int allX1 = 0;
+        for(Cell cell : cells){
+            allX1 += cell.getX1();
+        }
+        return allX1/cells.size();
+    }
+    public int getAverageX2(){
+        ArrayList<Cell> cells = getCellObjects();
+        int allX2 = 0;
+        for(Cell cell : cells){
+            allX2 += cell.getX2();
+        }
+        return allX2/cells.size();
+    }
+
     public ArrayList<Cell> getCellObjects(){
         ArrayList<Cell> cellObjects = new ArrayList<Cell>();
         for(ArrayList<Element> cell : cells){

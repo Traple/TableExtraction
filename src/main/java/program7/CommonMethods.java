@@ -38,8 +38,8 @@ public class CommonMethods {
     public static double average(ArrayList<Integer> list)
     {
         double total = 0.0;
-        for (int i = 0; i < list.size(); i++)  {
-            total += list.get(i);
+        for (Integer aList : list) {
+            total += aList;
         }
         return total/list.size();
     }
@@ -50,8 +50,6 @@ public class CommonMethods {
         Matcher matcher = pattern.matcher(string);
         return matcher.matches();
     }
-
-    //TODO: Create more rules for this: A lot of times a cell is seen as a string (26-4)
     //for example: if convert to 1 () creates an int, convert to 1 and call it an int.
     public static boolean isNumber(String string){
         int numbers = 0;
@@ -86,6 +84,22 @@ public class CommonMethods {
             lowestNumber = number1;
         }
         return lowestNumber;
+    }
+
+    public static ArrayList<Double> makeListPositive(ArrayList<Double> negativeList){
+        ArrayList<Double> positiveList = new ArrayList<Double>();
+        for(double currentNumber : negativeList){
+            positiveList.add(Math.abs(currentNumber));
+        }
+        return positiveList;
+    }
+
+    public static ArrayList<Double> addNumberToList(ArrayList<Double> list, double number){
+        ArrayList<Double> newList = new ArrayList<Double>();
+        for(Double currentNumber : list){
+            newList.add(currentNumber + number);
+        }
+        return newList;
     }
 
     @SuppressWarnings("UnusedDeclaration")

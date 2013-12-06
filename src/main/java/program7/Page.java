@@ -21,6 +21,7 @@ public class Page {
     private String workLocation;
     private File file;
     private double spaceDistance;
+    private double lineDistance;
     public static Logger LOGGER = Logger.getLogger(Page.class.getName());
 
     /**
@@ -36,7 +37,9 @@ public class Page {
         this.workLocation = workLocation;
         this.file = file;
         this.spaceDistance = findSpaceDistance();
+        setLineDistance();
         LOGGER.info("The found average length of a character is: " + getSpaceDistance());
+        LOGGER.info("The found average distance between lines is: " +getLineDistance());
     }
 
     /**
@@ -56,7 +59,7 @@ public class Page {
             word = span.text();
             try {
                 if(word.substring(0, 5).equals("TABLE") || word.substring(0, 5).equals("table") || word.substring(0, 5).equals("Table")&&foundATable){
-                    foundTables.add(new Table2(tableSpans, spaceDistance, file, workLocation, tableID, verticalThresholdModifier, horizontalThresholdModifier)); //make a new table from the collected spans
+                    foundTables.add(new Table2(tableSpans, spaceDistance, file, workLocation, tableID, verticalThresholdModifier, horizontalThresholdModifier, lineDistance)); //make a new table from the collected spans
                     tableSpans = new Elements();                                                    //reset the spans for the new Table2
                     tableSpans.add(span);
                 }
@@ -75,7 +78,7 @@ public class Page {
             tableID++;
         }
         if (foundATable) {
-            foundTables.add(new Table2(tableSpans, spaceDistance, file, workLocation, tableID, verticalThresholdModifier, horizontalThresholdModifier));
+            foundTables.add(new Table2(tableSpans, spaceDistance, file, workLocation, tableID, verticalThresholdModifier, horizontalThresholdModifier, lineDistance));
         }
         if(!foundATable){
             LOGGER.info("There was no table found. ");
@@ -104,8 +107,47 @@ public class Page {
         }
         return totalCharLength/spans.size();
     }
+    private void setLineDistance(){
+        double lineDistance = 0.0;
+        String pos;
+        String[] positions;
+        int lastX2 = 0;
+        Elements currentLine = new Elements();
+        ArrayList<Line> lines = new ArrayList<Line>();
+
+        for(Element span : spans){
+            pos = span.attr("title");
+            positions = pos.split("\\s+");
+            int x1 = Integer.parseInt(positions[1]);
+            int x2 = Integer.parseInt(positions[3]);
+
+            if(!(x1>=lastX2)){
+                Line line = new Line(currentLine);
+                lines.add(line);
+                currentLine = new Elements();
+            }
+            lastX2 = x2;
+            currentLine.add(span);
+        }
+        double lastY2 = 0.0;
+        double totalDistance = 0.0;
+        for(Line line : lines){
+            if(lines.indexOf(line) == 0){
+                lastY2 = line.getAverageY2();
+                continue;
+            }
+            double distance = CommonMethods.calcDistance(lastY2 , line.getAverageY1());
+            totalDistance += distance;
+            lastY2 = line.getAverageY2();
+        }
+        lineDistance = totalDistance/lines.size();
+        this.lineDistance = lineDistance;
+    }
 
     public double getSpaceDistance(){
         return spaceDistance;
+    }
+    public double getLineDistance(){
+        return lineDistance;
     }
 }
