@@ -43,7 +43,7 @@ public class Line {
 
     /**
      * In this case you dont want to create clusters.
-     * @param words
+     * @param words These are the words in the line.
      */
     public Line(Elements words){
         this.words = words;

@@ -65,8 +65,6 @@ public class PubmedIDQuery {
         BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
         ArrayList<String> pubmedIDs = new ArrayList<String>();
 
-        //TODO: Create a proper XML implementation!
-
         String line = reader.readLine();
         while(line != null){
             if (line.substring(0, 4).equals("<Id>")) {

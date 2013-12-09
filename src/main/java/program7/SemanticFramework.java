@@ -1,6 +1,7 @@
 package program7;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * This class will provide a semantic framework for the table. This consists of the following points:
@@ -11,8 +12,8 @@ import java.util.*;
  * - Possible Columnspans
  *
  * Steps:
- * - Find identation (to the left or to the right?)
- * - Link identation with rowspans
+ * - Find indentation (to the left or to the right?)
+ * - Link indentation with rowspans
  * - Find distance between lines and link it to rowspans
  * - Find if rowspans span multiple columns and if they start at the first column
  * - Find headers
@@ -22,15 +23,14 @@ import java.util.*;
  */
 public class SemanticFramework {
 
+    public static Logger LOGGER = Logger.getLogger(SemanticFramework.class.getName());
     private ArrayList<Column2> table = new ArrayList<Column2>();
     private ArrayList<Line> rawTable;
     private double verticalHeightThreshold;
     private ArrayList<Line> rowSpanners;
     private double horizontalLengthThreshold;
     private ArrayList<Double> listOfBaseX1;
-    private ArrayList<String> identifiersFromAlignment;
     private ArrayList<Double> identifiersConfidenceAlignment;
-    private ArrayList<String> identifiersFromColumnSpans;
     private ArrayList<Integer> identifiersConfidenceColumnsSpanned;
     private ArrayList<Double> identifiersConfidenceLineDistance;
     private ArrayList<Line> title;
@@ -42,8 +42,19 @@ public class SemanticFramework {
     private ArrayList<Integer> rowSpannersConfidenceColumnsSpanned;
     private ArrayList<Double> rowSpannersConfidenceLineDistance;
 
+    /**
+     * This is the constructor of the SemanticFramework class.
+     * It sets the local variables from the parameters and calls the methods for calculating the semantic parts.
+     * @param table A list containing the column objects of the table.
+     * @param verticalHeightThreshold The threshold used for checking if two lines have a whitespace in between them
+     * @param rowSpanners The potential subheaders/rowspanners, these need to be validated
+     * @param horizontalLengthThreshold The threshold for calculating the distance between two cells
+     * @param rawTable A lis containing the table in Line objects.
+     * @param validation The validation object as calculated in the table class.
+     * @param title The potential title of the table.
+     */
     public SemanticFramework(ArrayList<Column2> table, double verticalHeightThreshold, ArrayList<Line> rowSpanners, double horizontalLengthThreshold, ArrayList<Line> rawTable, Validation validation, ArrayList<Line> title){
-        System.out.println("Starting table semantics:");
+        LOGGER.info("Starting table semantics");
         this.table = table;
         this.rawTable = rawTable;
         this.validatedRowSpanners = new ArrayList<Line>();
@@ -54,9 +65,7 @@ public class SemanticFramework {
         this.verticalHeightThreshold = verticalHeightThreshold;
         this.horizontalLengthThreshold = horizontalLengthThreshold;
         this.rowSpanners = rowSpanners;
-        this.identifiersFromAlignment = new ArrayList<String>();
         this.identifiersConfidenceAlignment = new ArrayList<Double>();
-        this.identifiersFromColumnSpans = new ArrayList<String>();
         this.identifiersConfidenceColumnsSpanned = new ArrayList<Integer>();
         this.title = title;
         this.titleConfidence = 1;
@@ -67,6 +76,12 @@ public class SemanticFramework {
         findHeaders();
         distinguishSubHeadersFromRowSpanners();
     }
+
+    /**
+     * This method finds the most occuring alignment of a column. This will be used as a base for the column in calculating
+     * if a single partition line is aligned with a column or not. The base is not exact as we want to take cells that differ
+     * by just a couple of pixels to include the base as well.
+     */
     private void findMostFrequentAlignment(){
         ArrayList<Double> listOfBaseX1 = new ArrayList<Double>();
         for(Column2 column : table){
@@ -92,6 +107,11 @@ public class SemanticFramework {
         }
         this.listOfBaseX1 = listOfBaseX1;
     }
+
+    /**
+     * This method validates rowspanners/subheaders by looking at the distance between the base of the column the cell
+     * touches/aligns with and checking the distance from this base in pixels.
+     */
     private void validateRowSpaners(){
         for(Line line : rowSpanners){
             int x1OfRowspan = line.getCellObject().getX1();
@@ -101,18 +121,24 @@ public class SemanticFramework {
                         table.get(listOfBaseX1.indexOf(baseX1)).touchesColumn(x1OfRowspan, x2OfRowspan))||
                         table.get(listOfBaseX1.indexOf(baseX1)).fitsInColumn(x1OfRowspan, x2OfRowspan)){
                     if(x1OfRowspan > baseX1){
-                        this.identifiersFromAlignment.add(line.toString());
                         this.identifiersConfidenceAlignment.add((-CommonMethods.calcDistance(x1OfRowspan, baseX1)) / (horizontalLengthThreshold / 10));
                     }
                     else{
-                        this.identifiersFromAlignment.add(line.toString());
                         this.identifiersConfidenceAlignment.add(CommonMethods.calcDistance(x1OfRowspan, baseX1)/(horizontalLengthThreshold/10));
                     }
                     break;
                 }
+                if(listOfBaseX1.indexOf(baseX1) == listOfBaseX1.size()-1){
+                    this.identifiersConfidenceAlignment.add(-100000.0);
+                }
             }
         }
     }
+
+    /**
+     * This method checks if the identifiers spans multiple columns. This can be an important aspect for a line being a subheader
+     * or a rowspan.
+     */
     private void identifierSpansMultipleColumns(){
         ArrayList<Line> wrongRowSpanners = new ArrayList<Line>();
         for(Line line : rowSpanners){
@@ -131,7 +157,6 @@ public class SemanticFramework {
                 wrongRowSpanners.add(line);
             }
             else{
-                this.identifiersFromColumnSpans.add(line.toString());
                 this.identifiersConfidenceColumnsSpanned.add(columnSpanned);
             }
         }
@@ -139,6 +164,12 @@ public class SemanticFramework {
             rowSpanners.remove(line);
         }
     }
+
+    /**
+     * If there is a small amount of whitespace between a two lines that this might be an indication that this line is
+     * a subheader. This method/validation checks the potential subheaders for this aspect.
+     * @param validation The validation object as created in the Table class.
+     */
     private void validateIdentifiersOnLineDistance(Validation validation){
         double lastY2 = 0.0;
         ArrayList<Double> identifiersConfidenceLineDistance = new ArrayList<Double>();
@@ -168,6 +199,11 @@ public class SemanticFramework {
         this.identifiersConfidenceLineDistance = identifiersConfidenceLineDistance;
     }
 
+    /**
+     * This method will try to find the headers in the table. It does so by assuming that every line in the data is a header
+     * until the vertical height threshold is smaller then the distance between the current line and the next line.
+     * Validation of this method is also based on the number of lines in the headers.
+     */
     private void findHeaders(){
         ArrayList<Line> headers = new ArrayList<Line>();
         ArrayList<Double> headerConfidence = new ArrayList<Double>();
@@ -176,9 +212,6 @@ public class SemanticFramework {
             double currentY2 = line.getAverageY2();
             double currentY1 = line.getAverageY1();
             double distance = currentY1 - lastY2;
-            System.out.println(line);
-            System.out.println(distance+ " vs " + verticalHeightThreshold );
-            System.out.println(headers.size());
             if(lastY2 != 0.0 && distance > verticalHeightThreshold/headers.size()){
                 headerConfidence.add(distance/(verticalHeightThreshold/headers.size()));
                 break;
@@ -193,9 +226,12 @@ public class SemanticFramework {
         this.headerConfidence = headerConfidence;
     }
 
-    //TODO: Fix the distinguish method as adding and removing files gives errors or mistakes.
+    /**
+     * This method uses the validation scores to determine if single partition lines are rowspanners or subheaders.
+     */
     private void distinguishSubHeadersFromRowSpanners(){
         ArrayList<Integer> indexToBeRemoved = new ArrayList<Integer>();
+
         for(int x = 0; x<rowSpanners.size();x++){
             if(identifiersConfidenceAlignment.get(x)<0
                     &&identifiersConfidenceColumnsSpanned.get(x)<3
@@ -208,18 +244,22 @@ public class SemanticFramework {
         int index = 0;
         for(int x : indexToBeRemoved){
             this.validatedRowSpanners.add(rowSpanners.get(x-index));
-            this.rowSpannersConfidenceAlignment.add(identifiersConfidenceAlignment.get(x-index));
+            this.rowSpannersConfidenceAlignment.add(identifiersConfidenceAlignment.get(x - index));
             this.rowSpannersConfidenceColumnsSpanned.add(identifiersConfidenceColumnsSpanned.get(x-index));
-            this.rowSpannersConfidenceLineDistance.add(identifiersConfidenceLineDistance.get(x-index));
+            this.rowSpannersConfidenceLineDistance.add(identifiersConfidenceLineDistance.get(x - index));
             rowSpanners.remove(x-index);
             identifiersConfidenceAlignment.remove(x-index);
-            identifiersFromColumnSpans.remove(x-index);
-            identifiersConfidenceLineDistance.get(x-index);
+            identifiersConfidenceColumnsSpanned.remove(x - index);
+            identifiersConfidenceLineDistance.get(x - index);
             index +=1;
         }
     }
-    //TODO: Distinguish between subheaders and rowspanners.
 
+    /**
+     * This method returns the semantic parts that have been calculated in valid XML format. This can be used in the output
+     * of the program.
+     * @return A string containing the content of the class in valid XML.
+     */
     public String getXML(){
         String content = "";
         content = content + "    <tableSemantics>\n";
@@ -240,6 +280,34 @@ public class SemanticFramework {
         content = content + "        <headers>" + CommonMethods.changeIllegalXMLCharacters(headers.toString()) + "</headers>\n";
         content = content + "        <headerConfidence>" + headerConfidence + "</headerConfidence>\n";
         content = content + "    </tableSemantics>\n";
+        return content;
+    }
+
+    /**
+     * The toString method of the SemanticFramework class. It gives an overview of all the semantic table parts and their confidence.
+     * This method also logs to the given log file.
+     * If certain parts are not available (for example, because a table has no rowspans) then the method will not print or log them.
+     * @return The calculated table parts and their confidence.
+     */
+    public String toString(){
+        String content = "";
+        content = content + "Title of the table: "+ title + "\n";
+        content = content + "Title Confidence: " + titleConfidence + "\n";
+        if(!rowSpanners.isEmpty()){
+            content = content + "Subheaders: " + rowSpanners + "\n";
+            content = content + "Subheaders confidence based on alignment: " + identifiersConfidenceAlignment + "\n";
+            content = content + "Subheaders confidence number of columns spanned: " + identifiersConfidenceColumnsSpanned + "\n";
+            content = content + "Subheaders confidence distance between the line above: " + identifiersConfidenceLineDistance + "\n";
+        }
+        if(!validatedRowSpanners.isEmpty()){
+            content = content + "Rowspanners: " + validatedRowSpanners+"\n";
+            content = content + "Rowspanners confidence based on alignment" + rowSpannersConfidenceAlignment + "\n";
+            content = content + "Rowspanners confidence based on the number of columns spanned:" + rowSpannersConfidenceColumnsSpanned + "\n";
+            content = content + "Rowspanners confidence based on the distance with the line above: " + rowSpannersConfidenceLineDistance + "\n";
+        }
+        content = content + "Headers: " + headers + "\n";
+        content = content + "Header confidence: " + headerConfidence + "\n";
+        LOGGER.info(content);
         return content;
     }
 }

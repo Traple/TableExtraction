@@ -4,7 +4,6 @@ import org.jsoup.nodes.Element;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The column class contains methods that can be used to find headers and gain information on a column basis.
@@ -17,7 +16,6 @@ public class Column2 {
     private int columnBoundaryX2;
     private double AVGCharDistance;
     private HashMap<Integer, Integer> boundaryMap;
-    private int mostFrequentX1;
 
     /**
      * This is the constructor of the Column class. It will set up two private variables and after that calculate the
@@ -78,7 +76,7 @@ public class Column2 {
             int x1 = Integer.parseInt(positions[1]);
 
             if(map.containsKey(x1)){
-                map.put(x1, (map.get(x1).intValue()+1));
+                map.put(x1, (map.get(x1) +1));
             }
             else{
                 map.put(x1, 1);

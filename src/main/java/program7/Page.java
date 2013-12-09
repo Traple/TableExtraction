@@ -108,7 +108,7 @@ public class Page {
         return totalCharLength/spans.size();
     }
     private void setLineDistance(){
-        double lineDistance = 0.0;
+        double lineDistance;
         String pos;
         String[] positions;
         int lastX2 = 0;

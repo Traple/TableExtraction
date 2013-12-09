@@ -42,6 +42,9 @@ public class Table2 {
      * @param file This is the File that was used to extract the table from. It is only used for the creation of provenance.
      * @param workspace This is the workspace as specified by the user.
      * @param tableID This is the ID of the detected table. It is mainly used for the creation of the output file and for provenance.
+     * @param verticalThresholdModifier The modifier from the configuration file that should be used to indicate how much space there should be between lines
+     * @param horizontalThresholdModifier The modifier used for creating the threshold in horizontal partitioning.
+     * @param averageLineDistance The average (vertical) distance between lines as calculated in the Page class.
      * @throws IOException
      */
     public Table2(Elements spans, double charLengthThreshold, File file, String workspace, int tableID, double verticalThresholdModifier, double horizontalThresholdModifier, double averageLineDistance) throws IOException {
@@ -51,9 +54,9 @@ public class Table2 {
         this.name = "";
         this.horizontalThresholdModifier = horizontalThresholdModifier;
         this.verticalThresholdModifier = verticalThresholdModifier;
-
         this.validation = new Validation();
         this.validation.setAverageDistanceBetweenRows(averageLineDistance);
+
         if(spans.size() > 0){
             setMaxY1();
             this.table = new ArrayList<Line>();
@@ -63,17 +66,10 @@ public class Table2 {
             filterLinesThatAreAboveY1();
 
         if(data.size()>1){
-            System.out.println("~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-");
-            System.out.println("RAWData in this table is: ");
-            for(Line line : data){
-                validation.setClusterCertainty(line.getDistances(), line.getDistanceThreshold());
-                validation.setLineThreshold(line.getDistanceThreshold());
-                System.out.println(line);
-            }
+            System.out.println(getRawTable());
             filterEmptyLines();
             System.out.println("size: " + data.size());
-            findMissingData();//MISTAKE!
-
+            findMissingData();
             findColumns();
             createColumns(charLengthThreshold);
             if(linesWithMissingData!=null){
@@ -103,7 +99,9 @@ public class Table2 {
                     lastColumn = column;
                     continue;
                 }
-                distances.add(column.getAverageX1()-lastColumn.getAverageX2());
+                if (lastColumn != null) {
+                    distances.add(column.getAverageX1()-lastColumn.getAverageX2());
+                }
             }
             validation.setClusterCertainty(distances,averageLineDistance*horizontalThresholdModifier);
             if(linesWithMissingData != null && linesWithMissingData.size() > 0) {
@@ -122,9 +120,10 @@ public class Table2 {
             }
             System.out.println("Validation:\n" + validation);
             SemanticFramework semanticFramework = new SemanticFramework(dataInColumns, (averageLineDistance * verticalThresholdModifier), rowSpanners, charLengthThreshold * horizontalThresholdModifier, table, validation, titleAndHeaders);
+            System.out.println(semanticFramework);
             write(getXMLContent(file, tableID, semanticFramework.getXML()), (workspace) ,file, tableID);
         }
-            else{
+        else{
             LOGGER.info("All the found data was filtered out!");
         }
         }
@@ -148,38 +147,35 @@ public class Table2 {
      */
     private void setMaxY1(){
         Element lastSpan = null;
-
         String[] positions;
         String pos;
         int lastX2 = 0;
+
         for(Element span : spans){
             try{
-            pos = span.attr("title");
-            positions = pos.split("\\s+");
-            int x1 = Integer.parseInt(positions[1]);
-            int x2 = Integer.parseInt(positions[3]);
-            int y1 = Integer.parseInt(positions[2]);
-
-            if(!(x1>=lastX2)){
-                break;
+                pos = span.attr("title");
+                positions = pos.split("\\s+");
+                int x1 = Integer.parseInt(positions[1]);
+                int x2 = Integer.parseInt(positions[3]);
+                int y1 = Integer.parseInt(positions[2]);
+                if(!(x1>=lastX2)){
+                    break;
+                }
+                name = name + span.text() + " ";
+                if(y1>maxY1){
+                    this.maxY1 = y1;
+                }
+                lastX2 = x2;
+                lastSpan = span;
             }
-            name = name + span.text() + " ";
-            if(y1>maxY1){
-                this.maxY1 = y1;
+            catch (IndexOutOfBoundsException e){
+                System.out.println("This table got a weird name it raised the following error: ");
+                if (lastSpan != null) {
+                    System.out.println(lastSpan.text());
+                }
+                System.out.println(e);
             }
-            lastX2 = x2;
-            lastSpan = span;
         }
-
-
-        catch (IndexOutOfBoundsException e){
-            System.out.println("This table got a weird name it raised the following error: ");
-            if (lastSpan != null) {
-                System.out.println(lastSpan.text());
-            }
-            System.out.println(e);
-        }
-    }
     }
     /**
      * This method creates the lines by reading trough the file.
@@ -238,7 +234,6 @@ public class Table2 {
             }
             else if(size < 2){
                 titleAndHeaders.add(line);
-                continue;           //we say continue here as it is unlikely that this is data.
             }
             else if(breakingLine == null){
                 data.add(line);     //Hooray, data!
@@ -274,10 +269,11 @@ public class Table2 {
             data.remove(line);
         }
     }
-
-    //This method removes the lines that have missing data and stores them in a separate variable.
-    //These lines might contain valuable information about the content or could be a mistake by the OCR or separator.
-    //They need special processing in order to be useful.
+    /**
+    * This method removes the lines that have missing data and stores them in a separate variable.
+    * These lines might contain valuable information about the content or could be a mistake by the OCR or separator.
+    * They need special processing in order to be useful (as done in the addLinesWithMissingDataToColumns method).
+    */
     private void findMissingData(){
         ArrayList<Line> dataWithoutMissingLines = new ArrayList<Line>();
         ArrayList<Line> linesWithMissingData = new ArrayList<Line>();
@@ -427,7 +423,6 @@ public class Table2 {
      * The validation is called to show how much distance was between the title and the data.
      */
     private void checkTheTitle(){
-//        findAverageLineDistance();
         if(!(titleAndHeaders.size() < 2)){
             Line lastCellInTitle = titleAndHeaders.get(titleAndHeaders.size()-1);
             double distanceBetweenTitle = lastCellInTitle.getAverageY1()- titleAndHeaders.get(titleAndHeaders.size()-2).getAverageY2();
@@ -444,30 +439,7 @@ public class Table2 {
             }
         }
     }
-    /**
-     * This method finds the average distance between rows and stores this in the private averageLineDistance variable.
-     * It is also send to the validation class for validation purposes.
-     */     /*
-    private void findAverageLineDistance(){
-        double y1;
-        double lastY2 = -999;
-        double totalDistance = 0.0;
-        double averageDistance;
 
-        for(Line line : data){
-            if(lastY2 == -999){
-                lastY2 = line.getAverageY2();
-                continue;
-            }
-            y1 = line.getAverageY1();
-            totalDistance = totalDistance + (y1 - lastY2);
-            lastY2 = line.getAverageY2();
-        }
-        averageDistance = totalDistance/data.size();
-        this.averageLineDistance = averageDistance;
-        this.validation.setAverageDistanceBetweenRows(averageDistance);
-    }
-                 */
     /**
      * This method returns the results of the extraction of the table and puts them in a XML format.
      * @param file This is the File which was used for the extraction of the Table
@@ -527,6 +499,23 @@ public class Table2 {
                 "        <usedHorizontalThresholdModifier>"+horizontalThresholdModifier+"</usedHorizontalThresholdModifier>\n"+
                 "        <usedVerticalThresholdModifier>"+verticalThresholdModifier+"</usedVerticalThresholdModifier>\n"+
                 "    </provenance>\n";
+    }
+
+    /**
+     * This method returns the table right after it finished reading lines. No column indication has been made
+     * @return A String containing the initial lines of the table.
+     */
+    public String getRawTable(){
+        String rawTable = "";
+        System.out.println("~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-");
+        System.out.println("RAWData in this table is: ");
+        for(Line line : data){
+            validation.setClusterCertainty(line.getDistances(), line.getDistanceThreshold());
+            validation.setLineThreshold(line.getDistanceThreshold());
+            System.out.println(line);
+        }
+        LOGGER.info(rawTable);
+        return rawTable;
     }
 
     public String getName(){

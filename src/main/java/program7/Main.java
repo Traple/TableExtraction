@@ -59,8 +59,9 @@ public class Main {
         String resolution = "600";
         double horizontalThresholdModifier = arguments.getHorizontalThresholdModifier();
         double verticalThresholdModifier = arguments.getVerticalThresholdModifier();
-        long start = System.currentTimeMillis();
+
         /*
+        long start = System.currentTimeMillis();
         if(pubmedIDs == null){
             System.out.println("Pubmed File option disabled.");
         }

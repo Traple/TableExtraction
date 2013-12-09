@@ -117,6 +117,7 @@ public class Validation {
 
     //TODO: Improve column confidence, make it take to little columns into account (which happens quite often on low quality tables).
     //TODO: Possible create a fix for the first column having incomplete lines (with fix being incomplete validation).
+    //TODO: Add a method to check for the whitespaces in a column so we can increase column confidence
     /**
      * This method creates valid XML from the validation scores.
      * @return A string containing the different validation scores.
