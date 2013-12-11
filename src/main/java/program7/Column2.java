@@ -182,6 +182,10 @@ public class Column2 {
         return (x1 > columnBoundaryX1&&x1<columnBoundaryX2&&x2>columnBoundaryX2);
     }
 
+    /**
+     * This method finds the average X1 pixel of the line.
+     * @return An Integer containing the average X1 of the line.
+     */
     public int getAverageX1(){
         ArrayList<Cell> cells = getCellObjects();
         int allX1 = 0;
@@ -190,6 +194,11 @@ public class Column2 {
         }
         return allX1/cells.size();
     }
+
+    /**
+     * This method finds the average X2 pixel of the line.
+     * @return An integer containing the average X2 of the line.
+     */
     public int getAverageX2(){
         ArrayList<Cell> cells = getCellObjects();
         int allX2 = 0;
@@ -199,6 +208,10 @@ public class Column2 {
         return allX2/cells.size();
     }
 
+    /**
+     * This method creates a list of cell objects derived from the partitions in this line.
+     * @return A list containing the cell objects in this line.
+     */
     public ArrayList<Cell> getCellObjects(){
         ArrayList<Cell> cellObjects = new ArrayList<Cell>();
         for(ArrayList<Element> cell : cells){
@@ -207,6 +220,7 @@ public class Column2 {
         }
         return cellObjects;
     }
+
     public HashMap<Integer, Integer> getBoundaryMap(){
         return boundaryMap;
     }

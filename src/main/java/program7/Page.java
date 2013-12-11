@@ -107,6 +107,11 @@ public class Page {
         }
         return totalCharLength/spans.size();
     }
+
+    /**
+     * This method sets the average distance between lines. First it creates lines using the second constructor of the Line
+     * class, then it calculates the distances between them.
+     */
     private void setLineDistance(){
         double lineDistance;
         String pos;

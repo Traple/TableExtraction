@@ -27,6 +27,8 @@ public class ArgumentProcessor {
     private double verticalThresholdModifier;
     private double horizontalThresholdModifier;
 
+
+    //TODO: Create a Debug option that outputs various system.outs to debug files.
     /**
      * The constructor of this class creates a commandline with the correct options (as was given by the user) and sets
      * the local variables.

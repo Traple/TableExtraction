@@ -62,6 +62,7 @@ public class Table2 {
             this.table = new ArrayList<Line>();
 
             createLines(charLengthThreshold);
+            System.out.println(table);
             separateDataByCluster();
             filterLinesThatAreAboveY1();
 
@@ -113,12 +114,14 @@ public class Table2 {
             }
            System.out.println("~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-");
             if(rowSpanners.size() > 0){
-                System.out.println("Correct me if im wrong but the following lines are rowspanners: ");
+                System.out.println("Potential rowspanners: ");
                 for(Line line : rowSpanners){
                     System.out.println(line);
                 }
             }
             System.out.println("Validation:\n" + validation);
+            System.out.println(table);
+            setClusterCertainties();
             SemanticFramework semanticFramework = new SemanticFramework(dataInColumns, (averageLineDistance * verticalThresholdModifier), rowSpanners, charLengthThreshold * horizontalThresholdModifier, table, validation, titleAndHeaders);
             System.out.println(semanticFramework);
             write(getXMLContent(file, tableID, semanticFramework.getXML()), (workspace) ,file, tableID);
@@ -136,6 +139,9 @@ public class Table2 {
         ArrayList<Line> newTable = new ArrayList<Line>();
         for(Line line : table){
             if(!(line.getClusterSize() < 1)){
+                newTable.add(line);
+            }
+            else if (!(newTable.isEmpty())){
                 newTable.add(line);
             }
         }
@@ -413,7 +419,29 @@ public class Table2 {
         validation.setCellsWithMissingDataAddedScores(cellsWithMissingDataAdded);
     }
 
-    //TODO: Add a new rule here: the X1 of the (possible) header should be lower then the middle pixel of the previous sentence.
+    //TODO: Test this method a bit more.
+
+    /**
+     * This method finds the average distances between the partitions and parses those to the validation object for the calculation
+     * of the column confidence.
+     */
+    private void setClusterCertainties(){
+        ArrayList<Integer> totalDistances = data.get(0).getDistances();
+        for(Line line : data){
+            if(data.indexOf(line) >0){
+                for(int x =0;x<line.getDistances().size();x++){
+                    int totalDistance =  totalDistances.get(x) + line.getDistances().get(x);
+                    totalDistances.set(x, totalDistance);
+                }
+            }
+        }
+        ArrayList<Integer> averageDistances = new ArrayList<Integer>();
+        for(int distance : totalDistances){
+            averageDistances.add(distance/data.size());
+        }
+        validation.setClusterCertainty(averageDistances, data.get(0).getDistanceThreshold());
+        validation.setLineThreshold(data.get(0).getDistanceThreshold());
+    }
 
     /**
      * This method checks if the last sentence of the title should be in the headers.
@@ -477,9 +505,9 @@ public class Table2 {
      * @throws java.io.IOException
      */
     private void write(String filecontent, String location, File file, int tableID) throws IOException {
-        LOGGER.info("Writing to file: " + location + "\\" + file.getName().substring(0, file.getName().length()-10) + "-" + tableID + ".xml");
+        LOGGER.info("Writing to file: " + location + "\\" + file.getName().substring(0, file.getName().length() - 5) + "-" + tableID + ".xml");
         FileWriter fileWriter;
-        String writeLocation = location + "\\results\\" + file.getName().substring(0, file.getName().length()-10) + "-" + tableID+ ".xml";
+        String writeLocation = location + "\\results\\" + file.getName().substring(0, file.getName().length() - 5) + "-" + tableID+ ".xml";
         File newTextFile = new File(writeLocation);
         fileWriter = new FileWriter(newTextFile);
         fileWriter.write(filecontent);
@@ -507,17 +535,19 @@ public class Table2 {
      */
     public String getRawTable(){
         String rawTable = "";
-        System.out.println("~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-");
-        System.out.println("RAWData in this table is: ");
+        rawTable = rawTable + ("~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-");
+        rawTable = rawTable + ("RAWData in this table is: ");
         for(Line line : data){
-            validation.setClusterCertainty(line.getDistances(), line.getDistanceThreshold());
-            validation.setLineThreshold(line.getDistanceThreshold());
-            System.out.println(line);
+            rawTable = rawTable + (line);
         }
         LOGGER.info(rawTable);
         return rawTable;
     }
 
+    /**
+     * This method returns the name of the table.
+     * @return A string containing the name of the table
+     */
     public String getName(){
         return name;
     }

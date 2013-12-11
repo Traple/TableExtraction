@@ -69,6 +69,7 @@ public class SemanticFramework {
         this.identifiersConfidenceColumnsSpanned = new ArrayList<Integer>();
         this.title = title;
         this.titleConfidence = 1;
+        this.headers = new ArrayList<Line>();
         findMostFrequentAlignment();
         validateRowSpaners();
         identifierSpansMultipleColumns();
@@ -199,31 +200,58 @@ public class SemanticFramework {
         this.identifiersConfidenceLineDistance = identifiersConfidenceLineDistance;
     }
 
+    //TODO: Make the 5 threshold a parameter called headersize allowed.
+
     /**
      * This method will try to find the headers in the table. It does so by assuming that every line in the data is a header
      * until the vertical height threshold is smaller then the distance between the current line and the next line.
      * Validation of this method is also based on the number of lines in the headers.
      */
     private void findHeaders(){
-        ArrayList<Line> headers = new ArrayList<Line>();
-        ArrayList<Double> headerConfidence = new ArrayList<Double>();
-        double lastY2 = 0.0;
-        for(Line line : rawTable){
-            double currentY2 = line.getAverageY2();
-            double currentY1 = line.getAverageY1();
-            double distance = currentY1 - lastY2;
-            if(lastY2 != 0.0 && distance > verticalHeightThreshold/headers.size()){
-                headerConfidence.add(distance/(verticalHeightThreshold/headers.size()));
-                break;
+        int loopConfidence = 0;
+        while (true){
+            ArrayList<Line> headers = new ArrayList<Line>();
+            ArrayList<Double> headerConfidence = new ArrayList<Double>();
+            double lastY2 = 0.0;
+            System.out.println("Them threshold: " + verticalHeightThreshold);
+            for(Line line : rawTable){
+                double currentY2 = line.getAverageY2();
+                double currentY1 = line.getAverageY1();
+                double distance = currentY1 - lastY2;
+                System.out.println(line + " " + distance);
+                if(lastY2 != 0.0 && distance > verticalHeightThreshold){
+                    headerConfidence.add(distance/(verticalHeightThreshold/headers.size())+loopConfidence);
+                    break;
+                }
+                else{
+                    headers.add(line);
+                }
+                lastY2 = currentY2;
+            }
+            System.out.println(headers.size() + " <----- headersize");
+            if(headers.size() > 3){
+                loopConfidence = -1;
+                this.verticalHeightThreshold = verticalHeightThreshold/1.5;
+                headers = new ArrayList<Line>();
+                headerConfidence = new ArrayList<Double>();
+                lastY2 = 0.0;
+                continue;
             }
             else{
-                headers.add(line);
+                loopConfidence = +1;
             }
-            lastY2 = currentY2;
+
+            System.out.println("headers:" + headers);
+            this.headers.addAll(headers);
+            if(!headerConfidence.isEmpty()){
+                this.headerConfidence = headerConfidence;
+            }
+            else{
+                headerConfidence.add((double)-headers.size());
+                this.headerConfidence = headerConfidence;
+            }
+            break;
         }
-        System.out.println("headers:" + headers);
-        this.headers = headers;
-        this.headerConfidence = headerConfidence;
     }
 
     /**
@@ -233,7 +261,11 @@ public class SemanticFramework {
         ArrayList<Integer> indexToBeRemoved = new ArrayList<Integer>();
 
         for(int x = 0; x<rowSpanners.size();x++){
-            if(identifiersConfidenceAlignment.get(x)<0
+            if(identifiersConfidenceAlignment.get(x) <=-500){
+                headers.add(0,rowSpanners.get(x));
+                indexToBeRemoved.add(x);
+            }
+            else if(identifiersConfidenceAlignment.get(x)<=0
                     &&identifiersConfidenceColumnsSpanned.get(x)<3
                     &&identifiersConfidenceLineDistance.get(x)<1.5
                     &&rowSpanners.get(x).getAverageY1()>headers.get(headers.size()-1).getAverageY2()){
@@ -243,10 +275,13 @@ public class SemanticFramework {
         }
         int index = 0;
         for(int x : indexToBeRemoved){
-            this.validatedRowSpanners.add(rowSpanners.get(x-index));
-            this.rowSpannersConfidenceAlignment.add(identifiersConfidenceAlignment.get(x - index));
-            this.rowSpannersConfidenceColumnsSpanned.add(identifiersConfidenceColumnsSpanned.get(x-index));
-            this.rowSpannersConfidenceLineDistance.add(identifiersConfidenceLineDistance.get(x - index));
+            if(identifiersConfidenceAlignment.get(x-index) > -500){
+                this.validatedRowSpanners.add(rowSpanners.get(x - index));
+                this.rowSpannersConfidenceAlignment.add(identifiersConfidenceAlignment.get(x - index));
+                this.rowSpannersConfidenceColumnsSpanned.add(identifiersConfidenceColumnsSpanned.get(x-index));
+                this.rowSpannersConfidenceLineDistance.add(identifiersConfidenceLineDistance.get(x - index));
+
+            }
             rowSpanners.remove(x-index);
             identifiersConfidenceAlignment.remove(x-index);
             identifiersConfidenceColumnsSpanned.remove(x - index);
