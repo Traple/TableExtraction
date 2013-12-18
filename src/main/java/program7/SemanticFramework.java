@@ -70,12 +70,22 @@ public class SemanticFramework {
         this.title = title;
         this.titleConfidence = 1;
         this.headers = new ArrayList<Line>();
+        validateIdentifiersOnLineDistance(validation);
+        if(title.size() ==0){
+            findTitle();
+        }
+        checkTheTitle();
+        System.out.println("Title: " + title);
         findMostFrequentAlignment();
         validateRowSpaners();
         identifierSpansMultipleColumns();
-        validateIdentifiersOnLineDistance(validation);
+
         findHeaders();
+        System.out.println("Headers: " + headers);
         distinguishSubHeadersFromRowSpanners();
+        if(title.isEmpty()){
+            titleConfidence = 0;
+        }
     }
 
     /**
@@ -200,8 +210,47 @@ public class SemanticFramework {
         this.identifiersConfidenceLineDistance = identifiersConfidenceLineDistance;
     }
 
-    //TODO: Make the 5 threshold a parameter called headersize allowed.
+    /**
+     * This method finds the title and removes it from the rawTable.
+     * This method is only called for cases where the clustersize is not sufficient and might contain some obscure rules.
+     */
+    private void findTitle(){
+        if(rawTable.get(0).getClusterSize() > 1){
+            this.title.add(rawTable.get(0));
+            this.titleConfidence = 0.3;
+            rawTable.remove(0);
+        }
+    }
+    /**
+     * This method checks if the last sentence of the title should be in the headers.
+     * The method does this by looking at the last line of the title and checking if there is more space between this line
+     * and the data and this line and the rest of the title. If there is more space between the last line of the title and
+     * the rest of the title the method assumes that this is in fact a single header (with no partitions).
+     * The validation is called to show how much distance was between the title and the data.
+     */
+    private void checkTheTitle(){
+        System.out.println(title);
+        System.out.println("T-Size: " + title.size());
+        if(!(title.size() >= 2)){
+            Line lastCellInTitle = title.get(title.size()-1);
+            double distanceBetweenTitle = lastCellInTitle.getAverageY1()- title.get(title.size()-2).getAverageY2();
+            int minY1Column = Integer.MIN_VALUE;
+            for(Column2 column : table){
+                if(column.getMinY1() > minY1Column){
+                    minY1Column = column.getMinY1();
+                }
+            }
+            System.out.println(verticalHeightThreshold+" VS " + distanceBetweenTitle);
+            if((verticalHeightThreshold) < distanceBetweenTitle){
+                rowSpanners.add(0, title.get(title.size()-1));
+                title.remove(title.size()-1);
+            }
+        }
+    }
 
+
+    //TODO: Make the 5 threshold a parameter called allowedHeaderSize
+    //TODO: Make allowed header iterations a parameter.
     /**
      * This method will try to find the headers in the table. It does so by assuming that every line in the data is a header
      * until the vertical height threshold is smaller then the distance between the current line and the next line.
@@ -209,36 +258,72 @@ public class SemanticFramework {
      */
     private void findHeaders(){
         int loopConfidence = 0;
-        while (true){
+        int loops = 0;
+        boolean iterating = true;
+        while (iterating){
             ArrayList<Line> headers = new ArrayList<Line>();
             ArrayList<Double> headerConfidence = new ArrayList<Double>();
             double lastY2 = 0.0;
-            System.out.println("Them threshold: " + verticalHeightThreshold);
+            boolean breaking = false;
+//            System.out.println("Them threshold: " + verticalHeightThreshold);
+            int maxHeaderSize = 3;
             for(Line line : rawTable){
+                if(loops > 3){
+                    headers = new ArrayList<Line>();
+                    this.headers = headers;
+                    this.headerConfidence = new ArrayList<Double>();
+                    this.headerConfidence.add(0.0);
+                    iterating = false;
+                    break;
+                }
+                if(rawTable.indexOf(line) >= rawTable.size()/2){
+                    break;
+                }
                 double currentY2 = line.getAverageY2();
                 double currentY1 = line.getAverageY1();
                 double distance = currentY1 - lastY2;
-                System.out.println(line + " " + distance);
-                if(lastY2 != 0.0 && distance > verticalHeightThreshold){
+//                System.out.println(line);
+//                System.out.println(distance + " " + verticalHeightThreshold);
+//                System.out.println(headers);
+                if(distance > verticalHeightThreshold&&breaking){                                    //lastY2 != 0.0 &&
+                    if(lastY2 != 0.0 ){
+                        headers.add(rawTable.get(0));
+                    }
                     headerConfidence.add(distance/(verticalHeightThreshold/headers.size())+loopConfidence);
                     break;
                 }
-                else{
+                else if(distance > verticalHeightThreshold){                                        //lastY2 != 0.0 &&
+                    breaking = true;
+                }                                                                                        //TODO Check the code below and test.
+/*                else if(breaking){
+                    headers.add(line);
+                    maxHeaderSize +=1;                         //Add the rowSpanner to the headers
+                    breaking = false;
+                }*/
+                else if(!rowSpanners.isEmpty() && rowSpanners.get(0).getAverageY1() > currentY1 && !rowSpanners.contains(line)){
+                    headers.add(line);
+                }
+                else if(rowSpanners.isEmpty()){
                     headers.add(line);
                 }
                 lastY2 = currentY2;
             }
-            System.out.println(headers.size() + " <----- headersize");
-            if(headers.size() > 3){
+            if(headers.size() > maxHeaderSize || headers.size() < 1){
                 loopConfidence = -1;
                 this.verticalHeightThreshold = verticalHeightThreshold/1.5;
-                headers = new ArrayList<Line>();
-                headerConfidence = new ArrayList<Double>();
-                lastY2 = 0.0;
+                loops+=1;
                 continue;
             }
-            else{
-                loopConfidence = +1;
+
+            int highestClusterSize = 0;
+            for(Line line : headers){
+                if(highestClusterSize < line.getClusterSize()){
+                    highestClusterSize = line.getClusterSize();
+                }
+            }
+
+            if(highestClusterSize == table.size()){                     //if the highest amount of partitions in the header == the amount of columns found you get bonus confidence!
+                headerConfidence.set(0, headerConfidence.get(0) + 0.5);
             }
 
             System.out.println("headers:" + headers);
@@ -256,21 +341,30 @@ public class SemanticFramework {
 
     /**
      * This method uses the validation scores to determine if single partition lines are rowspanners or subheaders.
+     * It does this by looking at the three parameters found earlier.
      */
     private void distinguishSubHeadersFromRowSpanners(){
         ArrayList<Integer> indexToBeRemoved = new ArrayList<Integer>();
 
-        for(int x = 0; x<rowSpanners.size();x++){
-            if(identifiersConfidenceAlignment.get(x) <=-500){
-                headers.add(0,rowSpanners.get(x));
-                indexToBeRemoved.add(x);
-            }
-            else if(identifiersConfidenceAlignment.get(x)<=0
-                    &&identifiersConfidenceColumnsSpanned.get(x)<3
-                    &&identifiersConfidenceLineDistance.get(x)<1.5
-                    &&rowSpanners.get(x).getAverageY1()>headers.get(headers.size()-1).getAverageY2()){
-                System.out.println("Identifier! " + rowSpanners.get(x));
-                indexToBeRemoved.add(x);
+        if(!headers.isEmpty()){
+            for(int x = 0; x<rowSpanners.size();x++){
+                if(rowSpanners.size() <= x){
+                    identifiersConfidenceAlignment.add(-10.0);
+                    identifiersConfidenceColumnsSpanned.add(-10);
+                    identifiersConfidenceLineDistance.add(-10.0);
+                    break;
+                }
+                else if(identifiersConfidenceAlignment.get(x) <=-500){
+                    headers.add(0,rowSpanners.get(x));
+                    indexToBeRemoved.add(x);
+                }
+                else if(identifiersConfidenceAlignment.get(x)<=0
+                        &&identifiersConfidenceColumnsSpanned.get(x)<3
+                        &&identifiersConfidenceLineDistance.get(x)<1.5
+                        &&rowSpanners.get(x).getAverageY1()>headers.get(headers.size()-1).getAverageY2()){
+                    System.out.println("Identifier! " + rowSpanners.get(x));
+                    indexToBeRemoved.add(x);
+                }
             }
         }
         int index = 0;

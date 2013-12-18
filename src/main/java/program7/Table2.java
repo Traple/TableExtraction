@@ -45,9 +45,11 @@ public class Table2 {
      * @param verticalThresholdModifier The modifier from the configuration file that should be used to indicate how much space there should be between lines
      * @param horizontalThresholdModifier The modifier used for creating the threshold in horizontal partitioning.
      * @param averageLineDistance The average (vertical) distance between lines as calculated in the Page class.
+     * @param debugging is true if the program is in debugging mode.
      * @throws IOException
      */
-    public Table2(Elements spans, double charLengthThreshold, File file, String workspace, int tableID, double verticalThresholdModifier, double horizontalThresholdModifier, double averageLineDistance) throws IOException {
+    public Table2(Elements spans, double charLengthThreshold, File file, String workspace, int tableID, double verticalThresholdModifier, double horizontalThresholdModifier, double averageLineDistance, boolean debugging) throws IOException {
+        String debugContent = "";
         this.averageLineDistance = averageLineDistance;
         this.maxY1 = 0;
         this.spans = spans;
@@ -62,21 +64,22 @@ public class Table2 {
             this.table = new ArrayList<Line>();
 
             createLines(charLengthThreshold);
-            System.out.println(table);
+//            System.out.println(table);
             separateDataByCluster();
             filterLinesThatAreAboveY1();
 
         if(data.size()>1){
             System.out.println(getRawTable());
+            debugContent = debugContent + getRawTable()+ "\n";
             filterEmptyLines();
-            System.out.println("size: " + data.size());
             findMissingData();
             findColumns();
             createColumns(charLengthThreshold);
+            debugContent = debugContent + "lines with missing data: " + linesWithMissingData + "\n";
             if(linesWithMissingData!=null){
                 addLinesWithMissingDataToColumns();
             }
-            checkTheTitle();
+//            checkTheTitle();
         }
         else {
             LOGGER.info("The word Table was detected but no clusters were found.\n" +
@@ -125,6 +128,9 @@ public class Table2 {
             SemanticFramework semanticFramework = new SemanticFramework(dataInColumns, (averageLineDistance * verticalThresholdModifier), rowSpanners, charLengthThreshold * horizontalThresholdModifier, table, validation, titleAndHeaders);
             System.out.println(semanticFramework);
             write(getXMLContent(file, tableID, semanticFramework.getXML()), (workspace) ,file, tableID);
+            if(debugging){
+                writeDebugFile(debugContent, workspace, file);
+            }
         }
         else{
             LOGGER.info("All the found data was filtered out!");
@@ -202,8 +208,15 @@ public class Table2 {
             int x2 = Integer.parseInt(positions[3]);
             int y2 = Integer.parseInt(positions[4]);
 
-            if(!((x1>=lastX2))||(CommonMethods.calcDistance(lastY2, y1)>averageLineDistance/1.2&&spans.indexOf(span)!=0)){
+//            System.out.println(span);
+//            System.out.println((CommonMethods.calcDistance(lastY2, y1)) + " " + ((averageLineDistance*verticalThresholdModifier)/1.5) + " " +(CommonMethods.calcDistance(lastY2, y1)>(averageLineDistance*verticalThresholdModifier)/2));
+//            System.out.println((x1>=lastX2) );
+
+            if(((!(x1>=lastX2))||y1>lastY2 || CommonMethods.calcDistance(lastY2, y1)>(averageLineDistance*verticalThresholdModifier)/1.5)&&spans.indexOf(span)!=0){
                 Line line = new Line(currentLine, charLengthThreshold, horizontalThresholdModifier);
+//                System.out.println(line);
+//                System.out.println(line.getClusterSize());
+
                 table.add(line);
                 currentLine = new Elements();
             }
@@ -228,24 +241,37 @@ public class Table2 {
         ArrayList<Line> data = new ArrayList<Line>();
         boolean foundData = false;
         Line breakingLine = null;
+        Line doubleBreakingLine = null;
         ArrayList<Line> rowSpanners = new ArrayList<Line>();
+        boolean breaking = false;
         for(Line line : table){
             ArrayList<ArrayList<Element>> clusters = line.getClusters();
             int size = clusters.size();
-            if(size <1 && foundData && breakingLine != null){
+
+            if(size <1 && foundData && breakingLine != null && doubleBreakingLine != null){
                 break;               //then we have reached the end of the table.
             }
-            if(size <1 && foundData && breakingLine==null){
+            else if(size <1 && foundData && breakingLine != null){
+                doubleBreakingLine = line;
+            }
+            else if(size <1 && foundData && breakingLine==null){
                 breakingLine = line;
             }
-            else if(size < 2){
+            else if(size < 2){                                          //Found no data, so should be above it.
                 titleAndHeaders.add(line);
             }
             else if(breakingLine == null){
                 data.add(line);     //Hooray, data!
                 foundData = true;
             }
-            else{
+            else if(size > 1&&doubleBreakingLine != null && breakingLine != null){
+                rowSpanners.add(breakingLine);
+                rowSpanners.add(doubleBreakingLine);
+                data.add(line);
+                breakingLine = null;
+                doubleBreakingLine = null;
+            }
+            else if(size>1 && breakingLine!= null){
                 rowSpanners.add(breakingLine);
                 data.add(line);
                 breakingLine = null;
@@ -426,45 +452,36 @@ public class Table2 {
      * of the column confidence.
      */
     private void setClusterCertainties(){
-        ArrayList<Integer> totalDistances = data.get(0).getDistances();
-        for(Line line : data){
-            if(data.indexOf(line) >0){
-                for(int x =0;x<line.getDistances().size();x++){
-                    int totalDistance =  totalDistances.get(x) + line.getDistances().get(x);
-                    totalDistances.set(x, totalDistance);
+        method:
+        while (true){
+            ArrayList<Integer> totalDistances = data.get(0).getDistances();
+            for(Line line : data){
+                if(data.indexOf(line) >0){
+                    for(int x =0;x<line.getDistances().size();x++){
+                        if(!(x >= totalDistances.size()||x>=line.getDistances().size())){
+                            int totalDistance =  totalDistances.get(x) + line.getDistances().get(x);
+                            totalDistances.set(x, totalDistance);
+                        }
+                        else{
+                            LOGGER.info("Found a problem during the cluster certainties. I've given the table a very low confidence");
+                            ArrayList<Integer> lowValidation = new ArrayList<Integer>();
+                            for(int o : line.getDistances()){
+                                lowValidation.add(0);
+                            }
+                            validation.setClusterCertainty(lowValidation, data.get(0).getDistanceThreshold());
+                            validation.setLineThreshold(data.get(0).getDistanceThreshold());
+                            break method;
+                        }
+                    }
                 }
             }
-        }
-        ArrayList<Integer> averageDistances = new ArrayList<Integer>();
-        for(int distance : totalDistances){
-            averageDistances.add(distance/data.size());
-        }
-        validation.setClusterCertainty(averageDistances, data.get(0).getDistanceThreshold());
-        validation.setLineThreshold(data.get(0).getDistanceThreshold());
-    }
-
-    /**
-     * This method checks if the last sentence of the title should be in the headers.
-     * The method does this by looking at the last line of the title and checking if there is more space between this line
-     * and the data and this line and the rest of the title. If there is more space between the last line of the title and
-     * the rest of the title the method assumes that this is in fact a single header (with no partitions).
-     * The validation is called to show how much distance was between the title and the data.
-     */
-    private void checkTheTitle(){
-        if(!(titleAndHeaders.size() < 2)){
-            Line lastCellInTitle = titleAndHeaders.get(titleAndHeaders.size()-1);
-            double distanceBetweenTitle = lastCellInTitle.getAverageY1()- titleAndHeaders.get(titleAndHeaders.size()-2).getAverageY2();
-            int minY1Column = Integer.MIN_VALUE;
-            for(Column2 column : dataInColumns){
-                if(column.getMinY1() > minY1Column){
-                    minY1Column = column.getMinY1();
-                }
+            ArrayList<Integer> averageDistances = new ArrayList<Integer>();
+            for(int distance : totalDistances){
+                averageDistances.add(distance/data.size());
             }
-            if((averageLineDistance * verticalThresholdModifier) < distanceBetweenTitle){
-                rowSpanners.add(0, titleAndHeaders.get(titleAndHeaders.size()-1));
-                titleAndHeaders.remove(titleAndHeaders.size()-1);
-                this.validation.calculateTitleConfidence(averageLineDistance, distanceBetweenTitle, verticalThresholdModifier);
-            }
+            validation.setClusterCertainty(averageDistances, data.get(0).getDistanceThreshold());
+            validation.setLineThreshold(data.get(0).getDistanceThreshold());
+            break method;
         }
     }
 
@@ -472,6 +489,7 @@ public class Table2 {
      * This method returns the results of the extraction of the table and puts them in a XML format.
      * @param file This is the File which was used for the extraction of the Table
      * @param tableID This is the ID of the table that was extracted
+     * @param semanticXML The results from the semantic framework in XML
      * @return This method returns a String containing the results of the Table extraction in valid XML.
      */
     private String getXMLContent(File file, int tableID, String semanticXML){
@@ -497,17 +515,36 @@ public class Table2 {
         fileContent = fileContent + "</TEAFile>";
         return fileContent;
     }
+
+    /**
+     * This method writes the collected debugContent to a debug file.
+     * @param content A string containing the collected content
+     * @param location The location for the method to write to.
+     * @param file The location of the used file, for naming purpose.
+     * @throws IOException When an incorrect path has been given.
+     */
+    private void writeDebugFile(String content, String location, File file) throws IOException {
+        LOGGER.info("Writing results to file: " + location + "\\results\\" + file.getName().substring(0, file.getName().length() - 5)+ ".txt");
+        FileWriter fileWriter;
+        String writeLocation = location + "\\results\\" + file.getName().substring(0, file.getName().length() - 5)+ ".txt";
+        File newTextFile = new File(writeLocation);
+        fileWriter = new FileWriter(newTextFile);
+        fileWriter.write(content);
+        fileWriter.close();
+    }
+
     /**
      * This method writes the results to the results directory in the workspace. Output is in XML.
      * @param filecontent The results as being collected during the reconstruction of this table.
      * @param location The path to the the XML file (output).
-     * @param file The file which was used to reconstruct this table. (used for provenance purpose)
+     * @param file The file which was used to reconstruct this table. (used for provenance and file-naming purpose)
+     * @param tableID The ID of the table to make the path unique.
      * @throws java.io.IOException
      */
     private void write(String filecontent, String location, File file, int tableID) throws IOException {
-        LOGGER.info("Writing to file: " + location + "\\" + file.getName().substring(0, file.getName().length() - 5) + "-" + tableID + ".xml");
+        LOGGER.info("Writing results to file: " + location + "/" + file.getName().substring(0, file.getName().length() - 5) + "-" + tableID + ".xml");
         FileWriter fileWriter;
-        String writeLocation = location + "\\results\\" + file.getName().substring(0, file.getName().length() - 5) + "-" + tableID+ ".xml";
+        String writeLocation = location + "/results/" + file.getName().substring(0, file.getName().length() - 5) + "-" + tableID+ ".xml";
         File newTextFile = new File(writeLocation);
         fileWriter = new FileWriter(newTextFile);
         fileWriter.write(filecontent);
@@ -517,11 +554,13 @@ public class Table2 {
     /**
      * This method creates the provenance that is being used for writing the output.
      * @param file The file which was used to create this table.
+     * @param tableID The unique ID of the table.
      * @return A string containing the provenance in XML format.
      */
     private String getProvenance(File file, int tableID){
         return "    <provenane>\n"+
                 "        <fromFile>" + file.getName()+"</fromFile>\n" +
+                "        <fromPath>" + file.getAbsolutePath() +"</fromPath>\n"+
                 "        <user>Sander</user>\n"+
                 "        <detectionID>" + tableID +"</detectionID>\n"+
                 "        <usedHorizontalThresholdModifier>"+horizontalThresholdModifier+"</usedHorizontalThresholdModifier>\n"+

@@ -17,6 +17,7 @@ import java.util.logging.Logger;
  */
 public class Page {
 
+    private final boolean debugging;
     private Elements spans;
     private String workLocation;
     private File file;
@@ -28,15 +29,17 @@ public class Page {
      * The constructor of this class sets the local variables for this class and creates a Jsoup document.
      * @param file The HTML file created by the OCR.
      * @param workLocation The work location as specified by the user.
+     * @param debugging if the program is in debugging mode.
      * @throws java.io.IOException
      */
-    public Page(File file, String workLocation) throws IOException {
+    public Page(File file, String workLocation, boolean debugging) throws IOException {
         Document doc = Jsoup.parse(file, "UTF-8", "http://example.com/");
 
         this.spans = doc.select("span.ocrx_word");
         this.workLocation = workLocation;
         this.file = file;
         this.spaceDistance = findSpaceDistance();
+        this.debugging = debugging;
         setLineDistance();
         LOGGER.info("The found average length of a character is: " + getSpaceDistance());
         LOGGER.info("The found average distance between lines is: " +getLineDistance());
@@ -46,6 +49,8 @@ public class Page {
      * This method will find the tables in the content. It creates a table object for every table it finds.
      * Do note that it creates a substring of the span(word) it finds. So if it finds <span>(table</span> it will not be detected.
      * This has been done to reduce the amount of false positives (for referring to a table in the text).
+     * @param horizontalThresholdModifier The horizontal Threshold modifier.
+     * @param verticalThresholdModifier The vertical threshold modifier.
      * @return The Table2 object. This method returns an empty list if no table was found.
      * @throws java.io.IOException
      */
@@ -59,7 +64,7 @@ public class Page {
             word = span.text();
             try {
                 if(word.substring(0, 5).equals("TABLE") || word.substring(0, 5).equals("table") || word.substring(0, 5).equals("Table")&&foundATable){
-                    foundTables.add(new Table2(tableSpans, spaceDistance, file, workLocation, tableID, verticalThresholdModifier, horizontalThresholdModifier, lineDistance)); //make a new table from the collected spans
+                    foundTables.add(new Table2(tableSpans, spaceDistance, file, workLocation, tableID, verticalThresholdModifier, horizontalThresholdModifier, lineDistance, debugging)); //make a new table from the collected spans
                     tableSpans = new Elements();                                                    //reset the spans for the new Table2
                     tableSpans.add(span);
                 }
@@ -78,7 +83,7 @@ public class Page {
             tableID++;
         }
         if (foundATable) {
-            foundTables.add(new Table2(tableSpans, spaceDistance, file, workLocation, tableID, verticalThresholdModifier, horizontalThresholdModifier, lineDistance));
+            foundTables.add(new Table2(tableSpans, spaceDistance, file, workLocation, tableID, verticalThresholdModifier, horizontalThresholdModifier, lineDistance, debugging));
         }
         if(!foundATable){
             LOGGER.info("There was no table found. ");

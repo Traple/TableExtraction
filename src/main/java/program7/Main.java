@@ -37,9 +37,9 @@ public class Main {
         logMan.readConfiguration(Main.class.getResourceAsStream("/program7/log.properties"));
         logMan.addLogger(LOGGER);
 
-        LOGGER.info("Starting T.E.A. 0.6");
-        LOGGER.info("Greetings user! My name is T.E.A., which stands for Table2 Extraction Algorithm. But if you want, you can call me Bob.");
-        System.out.println("Greetings user! My name is T.E.A., which stands for Table2 Extraction Algorithm. But if you want, you can call me Bob.");
+        LOGGER.info("Starting T.E.A. 0.7");
+        LOGGER.info("Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm.");
+        System.out.println("Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm.");
 
         //processing of the arguments:
         ArgumentProcessor arguments = new ArgumentProcessor(args);
@@ -48,7 +48,7 @@ public class Main {
         ArrayList<String> pubmedIDs = arguments.getPubmedIDs();
 
         //prepare the workspace so we have a separate place to store our output files.
-        prepareWorkspace(workLocation);
+        prepareWorkspace(workLocation, arguments.getDebugging());
 
         String pathToImageMagic = arguments.getPathToImageMagick();
         System.out.println("Path to Image Magic is: " + pathToImageMagic);
@@ -59,7 +59,7 @@ public class Main {
         String resolution = "600";
         double horizontalThresholdModifier = arguments.getHorizontalThresholdModifier();
         double verticalThresholdModifier = arguments.getVerticalThresholdModifier();
-
+        boolean debugging = arguments.getDebugging();
         /*
         long start = System.currentTimeMillis();
         if(pubmedIDs == null){
@@ -97,8 +97,9 @@ public class Main {
                 System.out.println("ID: " + ID);
                 System.out.println("Worklocation: " + workLocation);
                 System.out.println("Resolution: " + resolution);
+                System.out.println("Debugging: " + debugging);
                 LOGGER.info("Currently Processing: " + ID);
-                secondMain(pathToImageMagic, workLocation, ID, resolution, pathToTesseract, pathToTesseractConfig, verticalThresholdModifier, horizontalThresholdModifier);
+                secondMain(pathToImageMagic, workLocation, ID, resolution, pathToTesseract, pathToTesseractConfig, verticalThresholdModifier, horizontalThresholdModifier, debugging);
             }
         }   /*
         if(arguments.getQuery()!=null){
@@ -169,9 +170,9 @@ public class Main {
      * @param pathToTesseractConfig The path to the configuration file to be used by Tesseract.
      * @throws java.io.IOException
      */
-    private static void secondMain(String pathToImageMagic, String workLocation, String ID, String resolution, String pathToTesseract, String pathToTesseractConfig, double verticalThresholdModifier, double horizontalThresholdModifier) throws IOException {
-
-        ImageMagick imagemagick = new ImageMagick(pathToImageMagic,workLocation, ID ,resolution);
+    private static void secondMain(String pathToImageMagic, String workLocation, String ID, String resolution, String pathToTesseract, String pathToTesseractConfig, double verticalThresholdModifier, double horizontalThresholdModifier, boolean debugging) throws IOException {
+        try{
+      /*  ImageMagick imagemagick = new ImageMagick(pathToImageMagic,workLocation, ID ,resolution);
         imagemagick.createPNGFiles();
 
         ArrayList<File> pngs = ImageMagick.findPNGFilesInWorkingDirectory(workLocation, ID);
@@ -182,18 +183,22 @@ public class Main {
             Tesseract Tesseract = new Tesseract(pathToTesseract, workLocation, ID, Integer.toString(x),pathToTesseractConfig);
             Tesseract.runTesseract();
             x++;
-        }
+        }*/
 
         System.out.println("find HTML files: ");
         ArrayList<File> HTMLFiles = Tesseract.findHTMLFilesInWorkingDirectory(workLocation, ID);
         for(File file : HTMLFiles){
             LOGGER.info("Searching for tables in: " + file.getName());
             System.out.println("Searching for tables in: " + file.getName());
-            Page page = new Page(file, workLocation);
+            Page page = new Page(file, workLocation, debugging);
             System.out.println("The found average length of a character is: " + page.getSpaceDistance());
             page.createTables(horizontalThresholdModifier, verticalThresholdModifier);
             LOGGER.info("------------------------------------------------------------------------------");
             System.out.println("------------------------------------------------------------------------------");
+        }
+        }
+        catch (Exception e){
+            LOGGER.info(e.toString());
         }
     }
 
@@ -201,7 +206,7 @@ public class Main {
      * This method prepares the workspace by creating the necessary directories.
      * Currently it only creates the results directory in the workspace to store the results.
      */
-    private static void prepareWorkspace(String workspace){
+    private static void prepareWorkspace(String workspace, boolean debugging){
         File file = new File(workspace + "/results");
 
         if (file.mkdir())
@@ -211,5 +216,10 @@ public class Main {
         {
             System.out.println("No directory was created.");
         }
+        if(debugging)   {
+            File file2 = new File(workspace + "/debuggingFiles");
+            file2.mkdir();
+        }
     }
+
 }

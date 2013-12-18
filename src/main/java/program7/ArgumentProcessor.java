@@ -26,6 +26,7 @@ public class ArgumentProcessor {
     private String pathToTesseractConfigFile;
     private double verticalThresholdModifier;
     private double horizontalThresholdModifier;
+    private boolean debugging;
 
 
     //TODO: Create a Debug option that outputs various system.outs to debug files.
@@ -41,11 +42,12 @@ public class ArgumentProcessor {
         Options options = new Options();
 
         Option help = new Option("H", "Help",false ,"This is the help file of TEA.");
-        Option optionPubmedIDs = new Option("PUB", "pubmedIDFile", true, "The file with the PubmedID's");
+        Option optionPubmedIDs = new Option("PUB", "PubmedIDFile", true, "The file with the PubmedID's");
         Option optionWorkspace = new Option("W", "workspace", true, "The workspace for the program.");
-        Option optionPDFFiles= new Option("PDF", "PDFFiles", false, "Instead of using a query or a pubmedID file, use the PDFs in the workspace.");
-        Option optionQuery= new Option("QUE", "Query", true, "Use a given query to search pubmed and extract the articles.");
+        Option optionPDFFiles= new Option("PDF", "PDFFiles", false, "Instead of using a query or a PubmedID file, use the PDFs in the workspace.");
+        Option optionQuery= new Option("QUE", "Query", true, "Use a given query to search Pubmed and extract the articles.");
         Option optionConfig = new Option("C", "Config", true, "Specify the path to the configuration file.");
+        Option optionDebugging = new Option("D", "Debugging", false, "Enter debug mode to output additional files.");
 
         options.addOption(help);
         options.addOption(optionPubmedIDs);
@@ -53,6 +55,7 @@ public class ArgumentProcessor {
         options.addOption(optionPDFFiles);
         options.addOption(optionQuery);
         options.addOption(optionConfig);
+        options.addOption(optionDebugging);
 
         CommandLine line = parser.parse(options, args);
 
@@ -61,6 +64,7 @@ public class ArgumentProcessor {
         this.workspace = setWorkspace(line);
         this.PDFFiles = setPDFFiles(line);
         this.query = setQuery(line);
+        this.debugging = setDebugging(line);
         setPathToConfigFileValues(line);
     }
     //~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
@@ -172,6 +176,10 @@ public class ArgumentProcessor {
         }
     }
 
+    private boolean setDebugging(CommandLine line){
+        return line.hasOption("D");
+    }
+
     //~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
     //The getters of this object:
 
@@ -211,5 +219,8 @@ public class ArgumentProcessor {
     }
     public double getHorizontalThresholdModifier(){
         return horizontalThresholdModifier;
+    }
+    public boolean getDebugging(){
+        return debugging;
     }
 }
