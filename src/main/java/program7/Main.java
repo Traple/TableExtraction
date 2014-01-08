@@ -1,11 +1,14 @@
 package program7;
 
+import com.sun.xml.internal.txw2.Document;
 import org.apache.commons.cli.ParseException;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,8 +16,8 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 /**
- * Welcome to the code of T.E.A. 0.6.
- * @version 0.6
+ * Welcome to the code of T.E.A. 0.7.
+ * @version 0.7
  * T.E.A. was made by Sander van Boom at the Birkbeck University in London. This was done with the help of Jan Czarnecki and Adrian Shepherd.
  * @author Sander van Boom
  * Development started at the 9th of September.
@@ -100,6 +103,7 @@ public class Main {
                 System.out.println("Debugging: " + debugging);
                 LOGGER.info("Currently Processing: " + ID);
                 secondMain(pathToImageMagic, workLocation, ID, resolution, pathToTesseract, pathToTesseractConfig, verticalThresholdModifier, horizontalThresholdModifier, debugging);
+
             }
         }   /*
         if(arguments.getQuery()!=null){
@@ -156,6 +160,7 @@ public class Main {
                 }
             }
         }  */
+        Results results = new Results(workLocation);
         LOGGER.info("T.E.A. is now entering sleep mode...");
     }
 
@@ -172,7 +177,7 @@ public class Main {
      */
     private static void secondMain(String pathToImageMagic, String workLocation, String ID, String resolution, String pathToTesseract, String pathToTesseractConfig, double verticalThresholdModifier, double horizontalThresholdModifier, boolean debugging) throws IOException {
         try{
-      /*  ImageMagick imagemagick = new ImageMagick(pathToImageMagic,workLocation, ID ,resolution);
+        /*ImageMagick imagemagick = new ImageMagick(pathToImageMagic,workLocation, ID ,resolution);
         imagemagick.createPNGFiles();
 
         ArrayList<File> pngs = ImageMagick.findPNGFilesInWorkingDirectory(workLocation, ID);
@@ -221,5 +226,4 @@ public class Main {
             file2.mkdir();
         }
     }
-
-}
+    }

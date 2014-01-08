@@ -2,22 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cc3129f9-2281-45ab-81bb-08e581b5b4f8" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/program7/PageTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/program7/ArgumentProcessor.java" afterPath="$PROJECT_DIR$/src/main/java/program7/ArgumentProcessor.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/program7/Results.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/program7/Main.java" afterPath="$PROJECT_DIR$/src/main/java/program7/Main.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/program7/Page.java" afterPath="$PROJECT_DIR$/src/main/java/program7/Page.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/program7/SemanticFramework.java" afterPath="$PROJECT_DIR$/src/main/java/program7/SemanticFramework.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/program7/Table2.java" afterPath="$PROJECT_DIR$/src/main/java/program7/Table2.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/program7/Test.java" afterPath="$PROJECT_DIR$/src/main/java/program7/Test.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/program7/Validation.java" afterPath="$PROJECT_DIR$/src/main/java/program7/Validation.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/log.xml" afterPath="$PROJECT_DIR$/log.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="TableExtraction.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Main.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1387213187066" ignored="false" />
+    <file path="/Main.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1389186519269" ignored="false" />
     <file path="/pom.xml" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1382971468862" ignored="false" />
-    <file path="/Dummy.txt" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1387364031636" ignored="false" />
+    <file path="/Dummy.txt" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1389094475100" ignored="false" />
     <file path="/HeaderMethods.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1381334666646" ignored="false" />
     <file path="/Purification.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1381757207397" ignored="false" />
     <file path="/RelativeActivity.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1381328054229" ignored="false" />
@@ -25,7 +23,7 @@
     <file path="/MetaboliteDatabase.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1381329566822" ignored="false" />
     <file path="/RestructureUsingNLP.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1381336565008" ignored="false" />
     <file path="/SemanticMethdos.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1381318086065" ignored="false" />
-    <file path="/fragment.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1387296633725" ignored="false" />
+    <file path="/fragment.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1389188688711" ignored="false" />
     <file path="/KineticsTest.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1381327441308" ignored="false" />
     <file path="/PurificationTest.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1381327605563" ignored="false" />
     <file path="/MetaboliteDatabaseTest.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1381334478434" ignored="false" />
@@ -61,16 +59,17 @@
     <file path="/REXArticleExtractor2.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1383658428397" ignored="false" />
     <file path="/REXArticleExtractor3.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1383665704154" ignored="false" />
     <file path="/Configuration.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1386780403727" ignored="false" />
-    <file path="/Table2.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1387299325770" ignored="false" />
+    <file path="/Table2.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1389183976114" ignored="false" />
     <file path="/PageTest.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1386929503067" ignored="false" />
     <file path="/TableExtraction.iml" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1384179222203" ignored="false" />
     <file path="/Line.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1386341936528" ignored="false" />
     <file path="/Column2.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1386605758987" ignored="false" />
-    <file path="/Test.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1387289700849" ignored="false" />
-    <file path="/Validation.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1386585871399" ignored="false" />
+    <file path="/Test.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1389187483776" ignored="false" />
+    <file path="/Validation.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1387372473737" ignored="false" />
     <file path="/62-2.html.html" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1384780441782" ignored="false" />
     <file path="/testPDFBox.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1385563544006" ignored="false" />
-    <file path="/SemanticFramework.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1387370967061" ignored="false" />
+    <file path="/SemanticFramework.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1387371546251" ignored="false" />
+    <file path="/Results.java" changelist="cc3129f9-2281-45ab-81bb-08e581b5b4f8" time="1389190258395" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -137,20 +136,22 @@
       <file leaf-file-name="Table2.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/program7/Table2.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="82" column="30" selection-start="3919" selection-end="3919" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="615" column="56" selection-start="29171" selection-end="29171" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#28944#28952#0" expanded="true" />
+                <element signature="e#29033#29198#0" expanded="true" />
+                <element signature="e#29187#29188#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SemanticFramework.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="SemanticFramework.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/program7/SemanticFramework.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="257" column="17" selection-start="12147" selection-end="12147" vertical-scroll-proportion="0.47972974">
-              <folding>
-                <element signature="e#12347#12353#0" expanded="true" />
-                <element signature="e#12419#12427#0" expanded="true" />
-              </folding>
+            <state line="235" column="114" selection-start="11154" selection-end="11154" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -167,7 +168,7 @@
       <file leaf-file-name="Validation.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/program7/Validation.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="42" column="6" selection-start="1853" selection-end="1853" vertical-scroll-proportion="0.0">
+            <state line="148" column="91" selection-start="8343" selection-end="8343" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -176,7 +177,7 @@
       <file leaf-file-name="Test.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/program7/Test.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="126" selection-start="279" selection-end="279" vertical-scroll-proportion="0.0">
+            <state line="14" column="112" selection-start="781" selection-end="781" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -185,7 +186,33 @@
       <file leaf-file-name="Main.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/program7/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="174" column="8" selection-start="9040" selection-end="9605" vertical-scroll-proportion="0.0">
+            <state line="73" column="23" selection-start="3456" selection-end="3456" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Results.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/program7/Results.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="74" column="20" selection-start="2840" selection-end="2840" vertical-scroll-proportion="0.44144145">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#1308#1473#0" expanded="true" />
+                <element signature="e#1462#1463#0" expanded="true" />
+                <element signature="e#1798#1806#0" expanded="true" />
+                <element signature="e#2757#2765#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ImageMagick.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/program7/ImageMagick.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="95" column="0" selection-start="3649" selection-end="4178" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -194,7 +221,7 @@
       <file leaf-file-name="enzymeKinetics.json" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/resources/program/enzymeKinetics.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+            <state line="6" column="18" selection-start="76" selection-end="76" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -225,9 +252,7 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/program7/Line.java" />
         <option value="$PROJECT_DIR$/src/main/java/program7/PubmedIDQuery.java" />
-        <option value="$PROJECT_DIR$/src/main/java/program7/Validation.java" />
         <option value="$PROJECT_DIR$/src/main/java/loft/Table2.java" />
         <option value="$PROJECT_DIR$/src/main/java/program7/Column2.java" />
         <option value="$PROJECT_DIR$/src/main/java/program7/Configuration.java" />
@@ -236,11 +261,13 @@
         <option value="$PROJECT_DIR$/src/test/java/program6/PageTest.java" />
         <option value="$PROJECT_DIR$/src/test/java/program7/PageTest.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/src/main/java/program7/Main.java" />
         <option value="$PROJECT_DIR$/src/main/resources/program7/config.txt" />
-        <option value="$PROJECT_DIR$/src/main/java/program7/Test.java" />
-        <option value="$PROJECT_DIR$/src/main/java/program7/Table2.java" />
         <option value="$PROJECT_DIR$/src/main/java/program7/SemanticFramework.java" />
+        <option value="$PROJECT_DIR$/src/main/java/program7/Validation.java" />
+        <option value="$PROJECT_DIR$/src/main/java/program7/Table2.java" />
+        <option value="$PROJECT_DIR$/src/main/java/program7/Main.java" />
+        <option value="$PROJECT_DIR$/src/main/java/program7/Results.java" />
+        <option value="$PROJECT_DIR$/src/main/java/program7/Test.java" />
       </list>
     </option>
   </component>
@@ -336,6 +363,7 @@
     </navigator>
     <panes>
       <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -383,36 +411,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="resources" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="program7" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="TableExtraction" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="TableExtraction" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="resources" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -466,7 +464,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -699,7 +696,7 @@
     <configuration default="false" name="Main.java" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="program7.Main" />
       <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="-W &quot;C:\Users\Sander van Boom\Documents\School\tables\TEA0.7RandomCorpus2\resources&quot; -PDF -C &quot;C:\Users\Sander van Boom\IdeaProjects\TableExtraction\src\main\resources\program7\config.txt&quot;" />
+      <option name="PROGRAM_PARAMETERS" value="-W &quot;C:\Users\Sander van Boom\Documents\School\tables\TEA0.7EnzymeCorpus\resources&quot; -PDF -C &quot;C:\Users\Sander van Boom\IdeaProjects\TableExtraction\src\main\resources\program7\config.txt&quot;" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -929,7 +926,11 @@
       <created>1386777977912</created>
       <updated>1386777977912</updated>
     </task>
-    <option name="localTasksCounter" value="44" />
+    <task id="LOCAL-00044" summary="improved header and title detection.">
+      <created>1387371117169</created>
+      <updated>1387371117169</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TodoView" selected-index="0">
@@ -967,10 +968,10 @@
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.40784982" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26279864" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.6587031" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.13636364" sideWeight="0.86006826" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14242424" sideWeight="0.86006826" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2219697" sideWeight="0.86006826" order="1" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4761092" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18259385" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" x="92" y="92" width="1182" height="544" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1021,7 +1022,7 @@
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Improved Header recognition by adding two rules and improved the calculation of the column confidence." />
+    <option name="LAST_COMMIT_MESSAGE" value="improved header and title detection." />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -1035,7 +1036,6 @@
     <option name="UPDATE_FILTER_BY_SCOPE" value="false" />
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
-    <MESSAGE value="T.E.A. 0.3, without the vertical mapping. See OCRTest5 for results." />
     <MESSAGE value="The start of T.E.A. 0.4" />
     <MESSAGE value="T.E.A. 0.4 with logger." />
     <MESSAGE value="T.E.A. 0.4 Trying to be implementable in Linux." />
@@ -1060,6 +1060,7 @@
     <MESSAGE value="TEA 0.7 as tested on the new corpus 1." />
     <MESSAGE value="Improved documentation and provided several toString methods. Also fixed some problems in the validation of the Semantic Framework and the arguments of the constructor." />
     <MESSAGE value="Improved Header recognition by adding two rules and improved the calculation of the column confidence." />
+    <MESSAGE value="improved header and title detection." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -1081,16 +1082,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/test/java/program6/PageTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="64" column="10" selection-start="2554" selection-end="2554" vertical-scroll-proportion="0.581749" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/program7/PageTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="128" selection-start="629" selection-end="629" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/program7/ArgumentProcessor.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="219" column="36" selection-start="8622" selection-end="8622" vertical-scroll-proportion="0.0">
@@ -1115,20 +1106,6 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/program7/Configuration.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="16" column="2" selection-start="484" selection-end="546" vertical-scroll-proportion="0.030965392">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/program/enzymeKinetics.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/program7/Validation.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="42" column="6" selection-start="1853" selection-end="1853" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -1161,33 +1138,71 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/program7/Main.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/program7/Validation.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="174" column="8" selection-start="9040" selection-end="9605" vertical-scroll-proportion="0.0">
+        <state line="148" column="91" selection-start="8343" selection-end="8343" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/program7/Test.java">
+    <entry file="file://$PROJECT_DIR$/src/main/resources/program/enzymeKinetics.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="126" selection-start="279" selection-end="279" vertical-scroll-proportion="0.0">
+        <state line="6" column="18" selection-start="76" selection-end="76" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/program7/ImageMagick.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="95" column="0" selection-start="3649" selection-end="4178" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/program7/Table2.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="82" column="30" selection-start="3919" selection-end="3919" vertical-scroll-proportion="0.0">
+        <state line="615" column="56" selection-start="29171" selection-end="29171" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#28944#28952#0" expanded="true" />
+            <element signature="e#29033#29198#0" expanded="true" />
+            <element signature="e#29187#29188#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/program7/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="73" column="23" selection-start="3456" selection-end="3456" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/program7/Test.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="112" selection-start="781" selection-end="781" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/program7/SemanticFramework.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="257" column="17" selection-start="12147" selection-end="12147" vertical-scroll-proportion="0.47972974">
+        <state line="235" column="114" selection-start="11154" selection-end="11154" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/program7/Results.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="74" column="20" selection-start="2840" selection-end="2840" vertical-scroll-proportion="0.44144145">
           <folding>
-            <element signature="e#12347#12353#0" expanded="true" />
-            <element signature="e#12419#12427#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#1308#1473#0" expanded="true" />
+            <element signature="e#1462#1463#0" expanded="true" />
+            <element signature="e#1798#1806#0" expanded="true" />
+            <element signature="e#2757#2765#0" expanded="true" />
           </folding>
         </state>
       </provider>

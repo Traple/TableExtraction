@@ -70,12 +70,12 @@ public class SemanticFramework {
         this.title = title;
         this.titleConfidence = 1;
         this.headers = new ArrayList<Line>();
-        validateIdentifiersOnLineDistance(validation);
         if(title.size() ==0){
             findTitle();
         }
         checkTheTitle();
         System.out.println("Title: " + title);
+        validateIdentifiersOnLineDistance(validation);
         findMostFrequentAlignment();
         validateRowSpaners();
         identifierSpansMultipleColumns();
@@ -231,17 +231,18 @@ public class SemanticFramework {
     private void checkTheTitle(){
         System.out.println(title);
         System.out.println("T-Size: " + title.size());
-        if(!(title.size() >= 2)){
+        if((title.size() >= 2)){
             Line lastCellInTitle = title.get(title.size()-1);
             double distanceBetweenTitle = lastCellInTitle.getAverageY1()- title.get(title.size()-2).getAverageY2();
+            double distanceBetweenTable = rawTable.get(0).getAverageY1()- lastCellInTitle.getAverageY2();
             int minY1Column = Integer.MIN_VALUE;
             for(Column2 column : table){
                 if(column.getMinY1() > minY1Column){
                     minY1Column = column.getMinY1();
                 }
             }
-            System.out.println(verticalHeightThreshold+" VS " + distanceBetweenTitle);
-            if((verticalHeightThreshold) < distanceBetweenTitle){
+            System.out.println(distanceBetweenTable+" VS " + distanceBetweenTitle);
+            if(distanceBetweenTable < distanceBetweenTitle){
                 rowSpanners.add(0, title.get(title.size()-1));
                 title.remove(title.size()-1);
             }
@@ -345,26 +346,30 @@ public class SemanticFramework {
      */
     private void distinguishSubHeadersFromRowSpanners(){
         ArrayList<Integer> indexToBeRemoved = new ArrayList<Integer>();
-
-        if(!headers.isEmpty()){
-            for(int x = 0; x<rowSpanners.size();x++){
-                if(rowSpanners.size() <= x){
-                    identifiersConfidenceAlignment.add(-10.0);
-                    identifiersConfidenceColumnsSpanned.add(-10);
-                    identifiersConfidenceLineDistance.add(-10.0);
-                    break;
-                }
-                else if(identifiersConfidenceAlignment.get(x) <=-500){
-                    headers.add(0,rowSpanners.get(x));
-                    indexToBeRemoved.add(x);
-                }
-                else if(identifiersConfidenceAlignment.get(x)<=0
-                        &&identifiersConfidenceColumnsSpanned.get(x)<3
-                        &&identifiersConfidenceLineDistance.get(x)<1.5
-                        &&rowSpanners.get(x).getAverageY1()>headers.get(headers.size()-1).getAverageY2()){
-                    System.out.println("Identifier! " + rowSpanners.get(x));
-                    indexToBeRemoved.add(x);
-                }
+        System.out.println(rowSpanners);
+        System.out.println(identifiersConfidenceLineDistance);
+        System.out.println(identifiersConfidenceColumnsSpanned);
+        System.out.println(identifiersConfidenceAlignment);
+        System.out.println(rowSpannersConfidenceAlignment);
+        System.out.println(rowSpannersConfidenceColumnsSpanned);
+        System.out.println(rowSpannersConfidenceLineDistance);
+        for(int x = 0; x<rowSpanners.size();x++){
+            if(rowSpanners.size() <= x){
+                identifiersConfidenceAlignment.add(-10.0);
+                identifiersConfidenceColumnsSpanned.add(-10);
+                identifiersConfidenceLineDistance.add(-10.0);
+                break;
+            }
+            else if(identifiersConfidenceAlignment.get(x) <=-500){
+                headers.add(0,rowSpanners.get(x));
+                indexToBeRemoved.add(x);
+            }
+            else if(identifiersConfidenceAlignment.get(x)<=0
+                    &&identifiersConfidenceColumnsSpanned.get(x)<3
+                    &&identifiersConfidenceLineDistance.get(x)<1.5
+                    &&rowSpanners.get(x).getAverageY1()>headers.get(headers.size()-1).getAverageY2()){
+                System.out.println("Identifier! " + rowSpanners.get(x));
+                indexToBeRemoved.add(x);
             }
         }
         int index = 0;

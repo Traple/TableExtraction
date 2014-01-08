@@ -5,6 +5,7 @@ import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -90,8 +91,8 @@ public class Table2 {
                 validation.setClusterCertainty(line.getDistances(), line.getDistanceThreshold());
                 validation.setLineThreshold(line.getDistanceThreshold());
             }
-            LOGGER.info("Table2: " + getName());
-            System.out.println("In Table2: " + getName());
+            LOGGER.info("Table: " + getName());
+            System.out.println("In Table: " + getName());
             System.out.println("~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-");
             System.out.println("Data in this table is: ");
 
@@ -126,6 +127,7 @@ public class Table2 {
             System.out.println(table);
             setClusterCertainties();
             SemanticFramework semanticFramework = new SemanticFramework(dataInColumns, (averageLineDistance * verticalThresholdModifier), rowSpanners, charLengthThreshold * horizontalThresholdModifier, table, validation, titleAndHeaders);
+            checkForFalsePositive();
             System.out.println(semanticFramework);
             write(getXMLContent(file, tableID, semanticFramework.getXML()), (workspace) ,file, tableID);
             if(debugging){
@@ -486,6 +488,21 @@ public class Table2 {
     }
 
     /**
+     * This method checks if the table itself is a false positive and should be flagged.
+     */
+    public void checkForFalsePositive(){
+        int almostEmptyColumns = 0;
+        for(Column2 column : dataInColumns){
+            if(column.getNumberOfCells() == 1){
+                almostEmptyColumns+=1;
+            }
+        }
+        if(almostEmptyColumns >=2){
+            validation.setFalsePositive(true);
+        }
+    }
+
+    /**
      * This method returns the results of the extraction of the table and puts them in a XML format.
      * @param file This is the File which was used for the extraction of the Table
      * @param tableID This is the ID of the table that was extracted
@@ -558,7 +575,7 @@ public class Table2 {
      * @return A string containing the provenance in XML format.
      */
     private String getProvenance(File file, int tableID){
-        return "    <provenane>\n"+
+        return "    <provenance>\n"+
                 "        <fromFile>" + file.getName()+"</fromFile>\n" +
                 "        <fromPath>" + file.getAbsolutePath() +"</fromPath>\n"+
                 "        <user>Sander</user>\n"+
@@ -589,5 +606,19 @@ public class Table2 {
      */
     public String getName(){
         return name;
+    }
+
+    public static ArrayList<String> findXMLs(String workspace){
+        ArrayList<String> PDFFiles = new ArrayList<String>();
+        File dir = new File(workspace);
+        File[] files = dir.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.toLowerCase().endsWith(".xml");
+            }
+        });
+        for(File file : files){
+            PDFFiles.add(file.getName().substring(0, file.getName().length()-4));
+        }
+        return PDFFiles;
     }
 }

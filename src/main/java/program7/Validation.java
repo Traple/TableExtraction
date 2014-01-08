@@ -20,6 +20,7 @@ public class Validation {
     private int highestAmountOfClustersOccurrences;
     private int cellsWithMissingDataAdded;
     private ArrayList<Cell> cellsWithMissingDataAddedObjects;
+    private boolean falsePositive;
 
     /**
      * This is the constructor for the Validation class. It sets the private variables of this object.
@@ -27,6 +28,7 @@ public class Validation {
     public Validation(){
         this.titleConfidence = new ArrayList<Double>();
         this.clusterCertainty = new ArrayList<Double>();
+        this.falsePositive = false;
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -65,6 +67,9 @@ public class Validation {
     public void setCellsWithMissingDataAdded(int cellsWithMissingDataAdded){
         this.cellsWithMissingDataAdded = cellsWithMissingDataAdded;
     }
+    public void setFalsePositive(boolean falsePositive){
+        this.falsePositive = falsePositive;
+    }
 
     //------------------------------------------------------------------------------------------------------------------
     //getters:
@@ -86,6 +91,9 @@ public class Validation {
     }
     public ArrayList<Double> getTitleConfidence(){
         return titleConfidence;
+    }
+    public boolean getFalsePositive(){
+        return falsePositive;
     }
 
     /**
@@ -138,6 +146,7 @@ public class Validation {
         if(titleConfidence.size() > 0){
             content = content + "        <titleConfidence>" + titleConfidence + "</titleConfidence>\n";
         }
+        content = content + "        <falsePositive>" + falsePositive + "</falsePositive>\n";
         content = content + "    </validation>\n";
         return content;
     }
