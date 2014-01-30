@@ -42,7 +42,7 @@ public class Line {
     }
 
     /**
-     * In this case you dont want to create clusters.
+     * In this case you don't want to create clusters.
      * @param words These are the words in the line.
      */
     public Line(Elements words){
@@ -195,15 +195,6 @@ public class Line {
         }
         return new Cell(wordsAsList);
     }
-
-/*    public ArrayList<Cell> getCellObjects(){
-        ArrayList<Cell> cellObjects = new ArrayList<Cell>();
-        for(ArrayList<Element> cluster : clusters){
-            Cell cell = new Cell(cluster);
-            cellObjects.add(cell);
-        }
-        return cellObjects;
-    }*/
 
     /**
      * This is the toString method for the Line class.

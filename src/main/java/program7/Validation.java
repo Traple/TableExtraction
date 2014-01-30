@@ -3,6 +3,8 @@ package program7;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+//TODO: Improve column confidence, make it take to little columns into account (which happens quite often on low quality tables).
+//TODO: Possible create a fix for the first column having incomplete lines (with fix being incomplete validation).
 /**
  * This class stores validation variables and contains methods to calculate the significance of these variables
  * as well as getters and setters for each variable.
@@ -45,6 +47,8 @@ public class Validation {
     public void setCellsWithMissingDataAddedScores(ArrayList<Cell> cells){
         this.cellsWithMissingDataAddedObjects = cells;
     }
+
+    @SuppressWarnings("UnusedDeclaration")          //For futur use.
     public void calculateTitleConfidence(double averageDistanceBetweenRows, double distanceBetweenRow, double lineDistanceModifier){
         double certainty = distanceBetweenRow/(averageDistanceBetweenRows * lineDistanceModifier);
         this.titleConfidence.add(certainty);
@@ -96,6 +100,22 @@ public class Validation {
         return falsePositive;
     }
 
+    public int getHighestAmountOfClusters(){
+        return highestAmountOfClusters;
+    }
+
+    public int getHighestAmountOfClustersOccurrences(){
+        return highestAmountOfClustersOccurrences;
+    }
+
+    public int getCellsWithMissingDataAdded(){
+        return cellsWithMissingDataAdded;
+    }
+
+    public ArrayList<Cell> getCellsWithMissingDataAddedObjects(){
+        return cellsWithMissingDataAddedObjects;
+    }
+
     /**
      * The toString method creates a summary of all the validation that has been done trough-out the program.
      * It specifies different aspects of the final table. For every variable in the validation it returns a new line in the
@@ -120,34 +140,6 @@ public class Validation {
             content = content + "A piece of the title was added as header. This was done with the following confidence: " + titleConfidence + "\n";
         }
         LOGGER.info(content);
-        return content;
-    }
-
-    //TODO: Improve column confidence, make it take to little columns into account (which happens quite often on low quality tables).
-    //TODO: Possible create a fix for the first column having incomplete lines (with fix being incomplete validation).
-    //TODO: Add a method to check for the whitespaces in a column so we can increase column confidence
-    /**
-     * This method creates valid XML from the validation scores.
-     * @return A string containing the different validation scores.
-     */
-    public String toXML(){
-        String content = "";
-        content = content + "    <validation>\n";
-        content = content + "        <columnConfidence>" + clusterCertainty + "</columnConfidence>\n";
-        content = content + "        <mostFrequentlyNumberOfClusters>" + mostFrequentNumberOfClusters+"</mostFrequentlyNumberOfClusters>\n";
-        content = content + "        <highestAmountOfClusters>" + highestAmountOfClusters + "</highestAmountOfClusters>\n";
-        content = content + "        <highestAmountOfClustersOccurrences>" + highestAmountOfClustersOccurrences + "</highestAmountOfClustersOccurrences>\n";
-        content = content + "        <clusterThreshold>" + lineThreshold+"</clusterThreshold>\n";
-        content = content + "        <cellsWithMissingDataAdded>" + cellsWithMissingDataAdded +"</cellsWithMissingDataAdded>\n";
-        if(cellsWithMissingDataAdded > 0){
-            content = content + "        <cellsWithMissingDataAddedScores>" +CommonMethods.changeIllegalXMLCharacters(cellsWithMissingDataAddedObjects.toString()) + "</cellsWithMissingDataAddedScores>\n";
-        }
-        content = content + "        <averageDistanceBetweenRows>" + averageDistanceBetweenRows + "</averageDistanceBetweenRows>\n";
-        if(titleConfidence.size() > 0){
-            content = content + "        <titleConfidence>" + titleConfidence + "</titleConfidence>\n";
-        }
-        content = content + "        <falsePositive>" + falsePositive + "</falsePositive>\n";
-        content = content + "    </validation>\n";
         return content;
     }
 }

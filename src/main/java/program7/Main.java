@@ -1,11 +1,8 @@
 package program7;
 
-import com.sun.xml.internal.txw2.Document;
 import org.apache.commons.cli.ParseException;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.*;
@@ -160,24 +157,26 @@ public class Main {
                 }
             }
         }  */
-        Results results = new Results(workLocation);
         LOGGER.info("T.E.A. is now entering sleep mode...");
     }
 
     /**
-     * This method is the second. This part of the code is always run, no matter what the current mode is.
+     * This is the second method after the initial main call. This part of the code always runs, no matter what the current mode is.
      * The starting point of this method is the workspace with the PDF files.
-     * @param pathToImageMagic The path to one of the dependencies: ImageMagick
-     * @param workLocation The work location, containing the PDF
+     * @param pathToImageMagic pathToImageMagic The path to one of the dependencies: ImageMagick
+     * @param workLocation WorkLocation The work location, containing the PDF
      * @param ID The name of the PDF with the extension.
      * @param resolution The resolution to be used by ImageMagick.
      * @param pathToTesseract The path to the second dependency : Tesseract.
      * @param pathToTesseractConfig The path to the configuration file to be used by Tesseract.
-     * @throws java.io.IOException
+     * @param verticalThresholdModifier This is the vertical threshold used for deciding if cells are in a new line.
+     * @param horizontalThresholdModifier This is the horizontal threshold used for deciding if cells are in a new column.
+     * @param debugging A boolean stating if debugging mode is on or of.
+     * @throws IOException
      */
     private static void secondMain(String pathToImageMagic, String workLocation, String ID, String resolution, String pathToTesseract, String pathToTesseractConfig, double verticalThresholdModifier, double horizontalThresholdModifier, boolean debugging) throws IOException {
         try{
-        /*ImageMagick imagemagick = new ImageMagick(pathToImageMagic,workLocation, ID ,resolution);
+        ImageMagick imagemagick = new ImageMagick(pathToImageMagic,workLocation, ID ,resolution);
         imagemagick.createPNGFiles();
 
         ArrayList<File> pngs = ImageMagick.findPNGFilesInWorkingDirectory(workLocation, ID);
@@ -188,8 +187,7 @@ public class Main {
             Tesseract Tesseract = new Tesseract(pathToTesseract, workLocation, ID, Integer.toString(x),pathToTesseractConfig);
             Tesseract.runTesseract();
             x++;
-        }*/
-
+        }
         System.out.println("find HTML files: ");
         ArrayList<File> HTMLFiles = Tesseract.findHTMLFilesInWorkingDirectory(workLocation, ID);
         for(File file : HTMLFiles){
@@ -202,7 +200,8 @@ public class Main {
             System.out.println("------------------------------------------------------------------------------");
         }
         }
-        catch (Exception e){
+        catch (IOException e){
+            System.out.println(e);
             LOGGER.info(e.toString());
         }
     }

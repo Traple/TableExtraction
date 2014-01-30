@@ -64,6 +64,10 @@ public class Column2 {
         }
     }
 
+    /**
+     * This method finds the most occurring coordinate of the left boundary in the column. It is then stored in the
+     * appropriate (private) variable.
+     */
     private void findMostFrequentX1Boundary(){
         HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
         for(ArrayList<Element> cell : cells){
@@ -153,6 +157,7 @@ public class Column2 {
     public boolean fitsInColumn(int x1, int x2){
         return x1 >= columnBoundaryX1-(AVGCharDistance/2)&&x2<=columnBoundaryX2+(AVGCharDistance/2);
     }
+
     /**
      * This method checks if the column boundaries fit inside two given coordinates.
      * The method uses the average distance of a character to compensate for cases where the column would almost fit.
@@ -164,6 +169,7 @@ public class Column2 {
     public boolean columnFitsIn(int x1, int x2){
         return x1 <= columnBoundaryX1+(AVGCharDistance/2)&&x2>=columnBoundaryX2-(AVGCharDistance/2);
     }
+
     /**
      * This method checks if one of the two given X positions is inside the column boundaries.
      * outside the column boundaries.
@@ -178,6 +184,12 @@ public class Column2 {
         return (x1 < columnBoundaryX1 && x2 >columnBoundaryX1) || (x1 > columnBoundaryX1 && x2 < columnBoundaryX2);
     }
 
+    /**
+     * This method checks if the boundaries of a given cell are beyond the column (so the cell crosses the column)
+     * @param x1 The left coordinate of the cell
+     * @param x2 The right coordinate of the cell
+     * @return True if the cell is crossing this column. False if not.
+     */
     public boolean spansColumn(double x1, double x2){
         return (x1 > columnBoundaryX1&&x1<columnBoundaryX2&&x2>columnBoundaryX2);
     }

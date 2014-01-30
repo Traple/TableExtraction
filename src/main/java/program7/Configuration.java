@@ -14,7 +14,6 @@ public class Configuration {
     private String pathToTesseract;
     private String pathToTesseractConfigFile;
 
-    //TODO: change the configuration file to being a JSSON file.
     /**
      * This constructor reads the configuration file and uses it's content to set the local variables.
      * @param pathToConfigurationFile The path to the configuration file, as given by the user on the -C argument.

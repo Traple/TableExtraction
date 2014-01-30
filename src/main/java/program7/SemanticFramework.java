@@ -89,7 +89,7 @@ public class SemanticFramework {
     }
 
     /**
-     * This method finds the most occuring alignment of a column. This will be used as a base for the column in calculating
+     * This method finds the most occurring alignment of a column. This will be used as a base for the column in calculating
      * if a single partition line is aligned with a column or not. The base is not exact as we want to take cells that differ
      * by just a couple of pixels to include the base as well.
      */
@@ -212,7 +212,7 @@ public class SemanticFramework {
 
     /**
      * This method finds the title and removes it from the rawTable.
-     * This method is only called for cases where the clustersize is not sufficient and might contain some obscure rules.
+     * This method is only called for cases where the cluster size is not sufficient and might contain some obscure rules.
      */
     private void findTitle(){
         if(rawTable.get(0).getClusterSize() > 1){
@@ -229,6 +229,9 @@ public class SemanticFramework {
      * The validation is called to show how much distance was between the title and the data.
      */
     private void checkTheTitle(){
+        for(Line line : title){
+            System.out.println(line + "" +line.getClusterSize());
+        }
         System.out.println(title);
         System.out.println("T-Size: " + title.size());
         if((title.size() >= 2)){
@@ -242,7 +245,7 @@ public class SemanticFramework {
                 }
             }
             System.out.println(distanceBetweenTable+" VS " + distanceBetweenTitle);
-            if(distanceBetweenTable < distanceBetweenTitle){
+            if(distanceBetweenTable < Math.abs(distanceBetweenTitle)){
                 rowSpanners.add(0, title.get(title.size()-1));
                 title.remove(title.size()-1);
             }
@@ -266,7 +269,6 @@ public class SemanticFramework {
             ArrayList<Double> headerConfidence = new ArrayList<Double>();
             double lastY2 = 0.0;
             boolean breaking = false;
-//            System.out.println("Them threshold: " + verticalHeightThreshold);
             int maxHeaderSize = 3;
             for(Line line : rawTable){
                 if(loops > 3){
@@ -283,9 +285,6 @@ public class SemanticFramework {
                 double currentY2 = line.getAverageY2();
                 double currentY1 = line.getAverageY1();
                 double distance = currentY1 - lastY2;
-//                System.out.println(line);
-//                System.out.println(distance + " " + verticalHeightThreshold);
-//                System.out.println(headers);
                 if(distance > verticalHeightThreshold&&breaking){                                    //lastY2 != 0.0 &&
                     if(lastY2 != 0.0 ){
                         headers.add(rawTable.get(0));
@@ -295,12 +294,7 @@ public class SemanticFramework {
                 }
                 else if(distance > verticalHeightThreshold){                                        //lastY2 != 0.0 &&
                     breaking = true;
-                }                                                                                        //TODO Check the code below and test.
-/*                else if(breaking){
-                    headers.add(line);
-                    maxHeaderSize +=1;                         //Add the rowSpanner to the headers
-                    breaking = false;
-                }*/
+                }
                 else if(!rowSpanners.isEmpty() && rowSpanners.get(0).getAverageY1() > currentY1 && !rowSpanners.contains(line)){
                     headers.add(line);
                 }
@@ -323,10 +317,9 @@ public class SemanticFramework {
                 }
             }
 
-            if(highestClusterSize == table.size()){                     //if the highest amount of partitions in the header == the amount of columns found you get bonus confidence!
+            if(highestClusterSize == table.size()&&!headerConfidence.isEmpty()){                     //if the highest amount of partitions in the header == the amount of columns found you get bonus confidence!
                 headerConfidence.set(0, headerConfidence.get(0) + 0.5);
             }
-
             System.out.println("headers:" + headers);
             this.headers.addAll(headers);
             if(!headerConfidence.isEmpty()){
@@ -337,6 +330,20 @@ public class SemanticFramework {
                 this.headerConfidence = headerConfidence;
             }
             break;
+        }
+        for(Line header : headers){
+            if(rawTable.contains(header)){
+                rawTable.remove(rawTable.indexOf(header));
+                continue;
+            }
+        }
+
+        if((!rawTable.isEmpty()&&!rowSpanners.isEmpty()&&!headers.isEmpty()) && Math.abs(rawTable.get(0).getAverageY1()  - rowSpanners.get(0).getAverageY2())> Math.abs(headers.get(headers.size()-1).getAverageY2()-rowSpanners.get(0).getAverageY1())){
+            headers.add(rowSpanners.get(0));
+            rowSpanners.remove(0);
+            identifiersConfidenceAlignment.remove(0);
+            identifiersConfidenceColumnsSpanned.remove(0);
+            identifiersConfidenceLineDistance.get(0);
         }
     }
 
@@ -360,14 +367,17 @@ public class SemanticFramework {
                 identifiersConfidenceLineDistance.add(-10.0);
                 break;
             }
-            else if(identifiersConfidenceAlignment.get(x) <=-500){
-                headers.add(0,rowSpanners.get(x));
+            else if((!headers.isEmpty())&&identifiersConfidenceAlignment.get(x)<=0
+                    &&identifiersConfidenceColumnsSpanned.get(x)<3
+                    &&identifiersConfidenceLineDistance.get(x)<1.5
+                    &&rowSpanners.get(x).getAverageY1()>headers.get(headers.size()-1).getAverageY2()){
+                System.out.println("Identifier! " + rowSpanners.get(x));
                 indexToBeRemoved.add(x);
             }
             else if(identifiersConfidenceAlignment.get(x)<=0
                     &&identifiersConfidenceColumnsSpanned.get(x)<3
                     &&identifiersConfidenceLineDistance.get(x)<1.5
-                    &&rowSpanners.get(x).getAverageY1()>headers.get(headers.size()-1).getAverageY2()){
+                    &&headers.isEmpty()){
                 System.out.println("Identifier! " + rowSpanners.get(x));
                 indexToBeRemoved.add(x);
             }
@@ -389,32 +399,53 @@ public class SemanticFramework {
         }
     }
 
-    /**
-     * This method returns the semantic parts that have been calculated in valid XML format. This can be used in the output
-     * of the program.
-     * @return A string containing the content of the class in valid XML.
-     */
-    public String getXML(){
-        String content = "";
-        content = content + "    <tableSemantics>\n";
-        content = content + "        <title>"+CommonMethods.changeIllegalXMLCharacters(title.toString())+"</title>\n";
-        content = content + "        <titleConfidence>" +titleConfidence+"</titleConfidence>\n";
-        if(!rowSpanners.isEmpty()){
-            content = content + "        <subHeaders>" + CommonMethods.changeIllegalXMLCharacters(rowSpanners.toString()) + "</subHeaders>\n";
-            content = content + "        <subHeadersConfidenceAlignment>" + identifiersConfidenceAlignment +"</subHeadersConfidenceAlignment>\n";
-            content = content + "        <subHeadersConfidenceColumnsSpanned>" + identifiersConfidenceColumnsSpanned + "</subHeadersConfidenceColumnsSpanned>\n";
-            content = content + "        <subHeadersConfidenceLineDistance>" + identifiersConfidenceLineDistance + "</subHeadersConfidenceLineDistance>\n";
-        }
-        if(!(validatedRowSpanners.isEmpty())){
-            content = content + "        <rowSpanners>" + CommonMethods.changeIllegalXMLCharacters(validatedRowSpanners.toString())+"</rowSpanners>\n";
-            content = content + "        <rowSpannersConfidenceAlignment>" + CommonMethods.makeListPositive(rowSpannersConfidenceAlignment) + "</rowSpannersConfidenceAlignment>\n";
-            content = content + "        <rowSpannersConfidenceColumnsSpanned>" + rowSpannersConfidenceColumnsSpanned + "</rowSpannersConfidenceColumnsSpanned>\n";
-            content = content + "        <rowSpannersConfidenceLineDistance>" + CommonMethods.addNumberToList(rowSpannersConfidenceLineDistance, 1.5) + "</rowSpannersConfidenceLineDistance>\n";
-        }
-        content = content + "        <headers>" + CommonMethods.changeIllegalXMLCharacters(headers.toString()) + "</headers>\n";
-        content = content + "        <headerConfidence>" + headerConfidence + "</headerConfidence>\n";
-        content = content + "    </tableSemantics>\n";
-        return content;
+    public ArrayList<Line> getTitle(){
+        return title;
+    }
+
+    public double getTitleConfidence(){
+        return titleConfidence;
+    }
+
+    public ArrayList<Line> getRowSpanners(){
+        return rowSpanners;
+    }
+
+    public ArrayList<Double> getRowSpannersConfidenceAlignment() {
+        return rowSpannersConfidenceAlignment;
+    }
+
+    public ArrayList<Integer> getRowSpannersConfidenceColumnsSpanned() {
+        return rowSpannersConfidenceColumnsSpanned;
+    }
+
+    public ArrayList<Double> getRowSpannersConfidenceLineDistance() {
+        return rowSpannersConfidenceLineDistance;
+    }
+
+    public ArrayList<Double> getHeaderConfidence() {
+        return headerConfidence;
+    }
+
+    public ArrayList<Line> getHeaders() {
+        return headers;
+    }
+
+    public ArrayList<Double> getIdentifiersConfidenceLineDistance() {
+        return identifiersConfidenceLineDistance;
+    }
+
+    public ArrayList<Integer> getIdentifiersConfidenceColumnsSpanned() {
+        return identifiersConfidenceColumnsSpanned;
+    }
+
+    public ArrayList<Double> getIdentifiersConfidenceAlignment() {
+        return identifiersConfidenceAlignment;
+    }
+
+    public ArrayList<Line> getValidatedRowSpanners(){
+        return validatedRowSpanners;
+
     }
 
     /**

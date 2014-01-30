@@ -2,11 +2,16 @@ package program7;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -80,7 +85,6 @@ public class Table2 {
             if(linesWithMissingData!=null){
                 addLinesWithMissingDataToColumns();
             }
-//            checkTheTitle();
         }
         else {
             LOGGER.info("The word Table was detected but no clusters were found.\n" +
@@ -126,10 +130,17 @@ public class Table2 {
             System.out.println("Validation:\n" + validation);
             System.out.println(table);
             setClusterCertainties();
+            System.out.println("Checking out the semantics.");
             SemanticFramework semanticFramework = new SemanticFramework(dataInColumns, (averageLineDistance * verticalThresholdModifier), rowSpanners, charLengthThreshold * horizontalThresholdModifier, table, validation, titleAndHeaders);
+            System.out.println("Checking for false positive...");
             checkForFalsePositive();
+            System.out.println("False positive: " + validation.getFalsePositive());
+            LOGGER.info("False positive: " + validation.getFalsePositive());
+            System.out.println();
+
             System.out.println(semanticFramework);
-            write(getXMLContent(file, tableID, semanticFramework.getXML()), (workspace) ,file, tableID);
+            System.out.println("Now writing to file:");
+            write2((workspace), file, tableID, semanticFramework);         //write: getXMLContent(file, tableID, semanticFramework.getXML()),
             if(debugging){
                 writeDebugFile(debugContent, workspace, file);
             }
@@ -401,6 +412,7 @@ public class Table2 {
         }
         this.dataInColumns = dataInColumns;
     }
+
     /**
      * This method adds lines with missing partitions to the current columns.
      * It loops trough lines that were flagged for containing missing data and then adds the ones to columns that they
@@ -446,8 +458,6 @@ public class Table2 {
         validation.setCellsWithMissingDataAdded(cellsWithMissingDataAdded.size());
         validation.setCellsWithMissingDataAddedScores(cellsWithMissingDataAdded);
     }
-
-    //TODO: Test this method a bit more.
 
     /**
      * This method finds the average distances between the partitions and parses those to the validation object for the calculation
@@ -503,37 +513,6 @@ public class Table2 {
     }
 
     /**
-     * This method returns the results of the extraction of the table and puts them in a XML format.
-     * @param file This is the File which was used for the extraction of the Table
-     * @param tableID This is the ID of the table that was extracted
-     * @param semanticXML The results from the semantic framework in XML
-     * @return This method returns a String containing the results of the Table extraction in valid XML.
-     */
-    private String getXMLContent(File file, int tableID, String semanticXML){
-        String fileContent = "<TEAFile>\n"+ getProvenance(file , tableID);
-        fileContent = fileContent + "    <results>\n";
-        fileContent = fileContent + "        <title>" + CommonMethods.changeIllegalXMLCharacters(name) + "</title>\n" ;
-        fileContent = fileContent + "        <title>" + CommonMethods.changeIllegalXMLCharacters(titleAndHeaders.toString()) + "</title>\n" ;
-        fileContent = fileContent + "        <columns>\n";
-        for(Column2 column : dataInColumns){
-            fileContent = fileContent + "            <column>"+ CommonMethods.changeIllegalXMLCharacters(column.toString())+"</column>\n";
-        }
-        fileContent = fileContent + "        </columns>\n";
-        if(rowSpanners.size() > 0){
-            fileContent = fileContent +"        <rowSpanners>\n";
-            for(Line line : rowSpanners){
-                fileContent = fileContent +"            <rowSpanner>" +CommonMethods.changeIllegalXMLCharacters(line.toString()) + "</rowSpanner>\n";
-            }
-            fileContent = fileContent + "        </rowSpanners>\n";
-        }
-        fileContent = fileContent + "    </results>\n";
-        fileContent = fileContent + semanticXML;
-        fileContent = fileContent + validation.toXML();
-        fileContent = fileContent + "</TEAFile>";
-        return fileContent;
-    }
-
-    /**
      * This method writes the collected debugContent to a debug file.
      * @param content A string containing the collected content
      * @param location The location for the method to write to.
@@ -551,38 +530,180 @@ public class Table2 {
     }
 
     /**
-     * This method writes the results to the results directory in the workspace. Output is in XML.
-     * @param filecontent The results as being collected during the reconstruction of this table.
-     * @param location The path to the the XML file (output).
-     * @param file The file which was used to reconstruct this table. (used for provenance and file-naming purpose)
-     * @param tableID The ID of the table to make the path unique.
-     * @throws java.io.IOException
+     * This is the new write method that uses XML methods to generate an XML file.
+     * @param location The location where the new file should be stored.
+     * @param file The file that was being used to create this table.
+     * @param tableID The ID of the table.
+     * @param semanticFramework The semantic framework object. This contains get methods that are required for the output
+     * File.
+     * @throws IOException If the given location doesn't exist.
      */
-    private void write(String filecontent, String location, File file, int tableID) throws IOException {
-        LOGGER.info("Writing results to file: " + location + "/" + file.getName().substring(0, file.getName().length() - 5) + "-" + tableID + ".xml");
-        FileWriter fileWriter;
-        String writeLocation = location + "/results/" + file.getName().substring(0, file.getName().length() - 5) + "-" + tableID+ ".xml";
-        File newTextFile = new File(writeLocation);
-        fileWriter = new FileWriter(newTextFile);
-        fileWriter.write(filecontent);
-        fileWriter.close();
-    }
+    private void write2(String location,File file ,int tableID, SemanticFramework semanticFramework) throws IOException {
+        try{
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Document doc = docBuilder.newDocument();
 
-    /**
-     * This method creates the provenance that is being used for writing the output.
-     * @param file The file which was used to create this table.
-     * @param tableID The unique ID of the table.
-     * @return A string containing the provenance in XML format.
-     */
-    private String getProvenance(File file, int tableID){
-        return "    <provenance>\n"+
-                "        <fromFile>" + file.getName()+"</fromFile>\n" +
-                "        <fromPath>" + file.getAbsolutePath() +"</fromPath>\n"+
-                "        <user>Sander</user>\n"+
-                "        <detectionID>" + tableID +"</detectionID>\n"+
-                "        <usedHorizontalThresholdModifier>"+horizontalThresholdModifier+"</usedHorizontalThresholdModifier>\n"+
-                "        <usedVerticalThresholdModifier>"+verticalThresholdModifier+"</usedVerticalThresholdModifier>\n"+
-                "    </provenance>\n";
+            org.w3c.dom.Element rootElement = doc.createElement("TEAFile");
+            doc.appendChild(rootElement);
+
+            //provenance:
+            org.w3c.dom.Element provenance = doc.createElement("provenance");
+            rootElement.appendChild(provenance);
+
+            org.w3c.dom.Element detectionID = doc.createElement("DetectionID");
+            detectionID.appendChild(doc.createTextNode(tableID + ""));
+            provenance.appendChild(detectionID);
+            org.w3c.dom.Element fromFile = doc.createElement("fromFile");
+            fromFile.appendChild(doc.createTextNode(file.getName()));
+            provenance.appendChild(fromFile);
+
+            org.w3c.dom.Element fromPath = doc.createElement("fromPath");
+            fromPath.appendChild(doc.createTextNode(file.getAbsolutePath()));
+            provenance.appendChild(fromPath);
+            org.w3c.dom.Element horizontalThresholdModifier = doc.createElement("horizontalThresholdModifier");
+            horizontalThresholdModifier.appendChild(doc.createTextNode(this.horizontalThresholdModifier + ""));
+            provenance.appendChild(horizontalThresholdModifier);
+            org.w3c.dom.Element verticalThresholdModifier = doc.createElement("horizontalThresholdModifier");
+            verticalThresholdModifier.appendChild(doc.createTextNode(this.verticalThresholdModifier + ""));
+            provenance.appendChild(verticalThresholdModifier);
+
+            //Results:
+            org.w3c.dom.Element results = doc.createElement("results");
+            rootElement.appendChild(results);
+
+            org.w3c.dom.Element title1 = doc.createElement("title1");
+            title1.appendChild(doc.createTextNode(name));
+            results.appendChild(title1);
+            org.w3c.dom.Element title2 = doc.createElement("title2");
+            title2.appendChild(doc.createTextNode(titleAndHeaders.toString()));
+            results.appendChild(title2);
+
+            org.w3c.dom.Element columns = doc.createElement("columns");
+            results.appendChild(columns);
+
+            for(Column2 columnContent : dataInColumns){
+                org.w3c.dom.Element column = doc.createElement("column");
+                column.appendChild(doc.createTextNode(columnContent.toString()));
+                columns.appendChild(column);
+            }
+
+            if(rowSpanners.size() > 0){
+                org.w3c.dom.Element rowSpanners = doc.createElement("rowSpanners");
+                results.appendChild(rowSpanners);
+                for(Line line : this.rowSpanners){
+                    org.w3c.dom.Element rowSpanner = doc.createElement("rowSpanner");
+                    rowSpanner.appendChild(doc.createTextNode(line.toString()));
+                    rowSpanners.appendChild(rowSpanner);
+                }
+            }
+
+            //Semantics:
+            org.w3c.dom.Element semantics = doc.createElement("tableSemantics");
+            rootElement.appendChild(semantics);
+            org.w3c.dom.Element title = doc.createElement("title");
+            title.appendChild(doc.createTextNode(semanticFramework.getTitle().toString()));
+            semantics.appendChild(title);
+            org.w3c.dom.Element titleConfidence = doc.createElement("titleConfidence");
+            Double semanticFrameworkDouble = semanticFramework.getTitleConfidence();
+            titleConfidence.appendChild(doc.createTextNode(semanticFrameworkDouble.toString()));
+            semantics.appendChild(titleConfidence);
+
+            if(!semanticFramework.getRowSpanners().isEmpty()){
+                org.w3c.dom.Element rowSpanners = doc.createElement("subHeaders");
+                rowSpanners.appendChild(doc.createTextNode(semanticFramework.getRowSpanners().toString()));
+                semantics.appendChild(rowSpanners);
+                org.w3c.dom.Element IdentifiersConfidenceAlignment = doc.createElement("subHeadersConfidenceAlignment");
+                IdentifiersConfidenceAlignment.appendChild(doc.createTextNode(semanticFramework.getIdentifiersConfidenceAlignment().toString()));
+                semantics.appendChild(IdentifiersConfidenceAlignment);
+                org.w3c.dom.Element getIdentifiersConfidenceColumnsSpanned = doc.createElement("subHeadersConfidenceColumnsSpanned");
+                getIdentifiersConfidenceColumnsSpanned.appendChild(doc.createTextNode(semanticFramework.getIdentifiersConfidenceColumnsSpanned().toString()));
+                semantics.appendChild(getIdentifiersConfidenceColumnsSpanned);
+                org.w3c.dom.Element IdentifiersConfidenceLineDistance= doc.createElement("subHeadersConfidenceLineDistance");
+                IdentifiersConfidenceLineDistance.appendChild(doc.createTextNode(semanticFramework.getIdentifiersConfidenceLineDistance().toString()));
+                semantics.appendChild(IdentifiersConfidenceLineDistance);
+            }
+            if(!semanticFramework.getValidatedRowSpanners().isEmpty()){
+                org.w3c.dom.Element rowSpanners = doc.createElement("rowSpanners");
+                rowSpanners.appendChild(doc.createTextNode(semanticFramework.getValidatedRowSpanners().toString()));
+                semantics.appendChild(rowSpanners);
+                org.w3c.dom.Element rowSpannersConfidenceAlignment = doc.createElement("rowSpannersConfidenceAlignment");
+                rowSpannersConfidenceAlignment.appendChild(doc.createTextNode(semanticFramework.getRowSpannersConfidenceAlignment().toString()));
+                semantics.appendChild(rowSpannersConfidenceAlignment);
+                org.w3c.dom.Element rowSpannersConfidenceColumnsSpanned = doc.createElement("rowSpannersConfidenceColumnsSpanned");
+                rowSpannersConfidenceColumnsSpanned.appendChild(doc.createTextNode(semanticFramework.getRowSpannersConfidenceColumnsSpanned().toString()));
+                semantics.appendChild(rowSpannersConfidenceColumnsSpanned);
+                org.w3c.dom.Element rowSpannersConfidenceLineDistance = doc.createElement("rowSpannersConfidenceLineDistance");
+                rowSpannersConfidenceLineDistance.appendChild(doc.createTextNode(semanticFramework.getRowSpannersConfidenceLineDistance().toString()));
+                semantics.appendChild(rowSpannersConfidenceLineDistance);
+            }
+            org.w3c.dom.Element headers = doc.createElement("headers");
+            headers.appendChild(doc.createTextNode(semanticFramework.getHeaders().toString()));
+            semantics.appendChild(headers);
+            org.w3c.dom.Element headersConfidence = doc.createElement("headersConfidence");
+            headersConfidence.appendChild(doc.createTextNode(semanticFramework.getHeaderConfidence().toString()));
+            semantics.appendChild(headersConfidence);
+
+            //validation:
+            org.w3c.dom.Element validation = doc.createElement("validation");
+            rootElement.appendChild(validation);
+
+            org.w3c.dom.Element clusterCertainty = doc.createElement("columnConfidence");
+            clusterCertainty.appendChild(doc.createTextNode(this.validation.getClusterCertainty().toString()));
+            validation.appendChild(clusterCertainty);
+            org.w3c.dom.Element mostFrequentNumberOfClusters = doc.createElement("mostFrequentNumberOfClusters");
+            mostFrequentNumberOfClusters.appendChild(doc.createTextNode(this.validation.getMostFrequentNumberOfClusters()+""));
+            validation.appendChild(mostFrequentNumberOfClusters);
+            org.w3c.dom.Element highestAmountOfClusters = doc.createElement("highestAmountOfClusters");
+            highestAmountOfClusters.appendChild(doc.createTextNode(this.validation.getHighestAmountOfClusters()+""));
+            validation.appendChild(highestAmountOfClusters);
+            org.w3c.dom.Element highestAmountOfClustersOccurrences = doc.createElement("highestAmountOfClustersOccurrences");
+            highestAmountOfClustersOccurrences.appendChild(doc.createTextNode(this.validation.getHighestAmountOfClustersOccurrences()+""));
+            validation.appendChild(highestAmountOfClustersOccurrences);
+            org.w3c.dom.Element clusterThreshold = doc.createElement("clusterThreshold");
+            clusterThreshold.appendChild(doc.createTextNode(this.validation.getLineThreshold()+""));
+            validation.appendChild(clusterThreshold);
+            org.w3c.dom.Element cellsWithMissingDataAdded = doc.createElement("cellsWithMissingDataAdded");
+            cellsWithMissingDataAdded.appendChild(doc.createTextNode(this.validation.getCellsWithMissingDataAdded()+""));
+            validation.appendChild(cellsWithMissingDataAdded);
+            if(this.validation.getCellsWithMissingDataAdded() > 0){
+                org.w3c.dom.Element cellsWithMissingDataAddedScores = doc.createElement("cellsWithMissingDataAddedScores");
+                cellsWithMissingDataAddedScores.appendChild(doc.createTextNode(this.validation.getCellsWithMissingDataAddedObjects()+""));
+                validation.appendChild(cellsWithMissingDataAddedScores);
+            }
+            org.w3c.dom.Element averageDistanceBetweenRows = doc.createElement("averageDistanceBetweenRows");
+            averageDistanceBetweenRows.appendChild(doc.createTextNode(this.validation.getAverageDistanceBetweenRows()+""));
+            validation.appendChild(averageDistanceBetweenRows);
+            if(this.validation.getTitleConfidence().size() > 0){
+                org.w3c.dom.Element TitleConfidence = doc.createElement("TitleConfidence");
+                TitleConfidence.appendChild(doc.createTextNode(this.validation.getTitleConfidence()+""));
+                validation.appendChild(TitleConfidence);
+            }
+            org.w3c.dom.Element falsePositive = doc.createElement("falsePositive");
+            falsePositive.appendChild(doc.createTextNode(this.validation.getFalsePositive()+""));
+            validation.appendChild(falsePositive);
+
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(doc);
+            File file2 = new File(location + "\\results\\" + file.getName().substring(0, file.getName().length() - 5) + "-" + tableID+ ".xml");
+            Writer output = new BufferedWriter(new FileWriter(file2));
+            StreamResult result = new StreamResult(output);
+
+            // Output to console for testing
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            transformer.transform(source, result);
+            output.close();
+            System.out.println("File saved.");
+
+        } catch (ParserConfigurationException pce) {
+            pce.printStackTrace();
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -592,7 +713,7 @@ public class Table2 {
     public String getRawTable(){
         String rawTable = "";
         rawTable = rawTable + ("~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-");
-        rawTable = rawTable + ("RAWData in this table is: ");
+        rawTable = rawTable + ("RAWData in this table is: \n");
         for(Line line : data){
             rawTable = rawTable + (line);
         }
@@ -606,19 +727,5 @@ public class Table2 {
      */
     public String getName(){
         return name;
-    }
-
-    public static ArrayList<String> findXMLs(String workspace){
-        ArrayList<String> PDFFiles = new ArrayList<String>();
-        File dir = new File(workspace);
-        File[] files = dir.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return name.toLowerCase().endsWith(".xml");
-            }
-        });
-        for(File file : files){
-            PDFFiles.add(file.getName().substring(0, file.getName().length()-4));
-        }
-        return PDFFiles;
     }
 }

@@ -28,24 +28,23 @@ public class ArgumentProcessor {
     private double horizontalThresholdModifier;
     private boolean debugging;
 
-
     //TODO: Create a Debug option that outputs various system.outs to debug files.
     /**
      * The constructor of this class creates a commandline with the correct options (as was given by the user) and sets
      * the local variables.
      * @param args The arguments as given by the user.
-     * @throws org.apache.commons.cli.ParseException
-     * @throws java.io.IOException
+     * @throws org.apache.commons.cli.ParseException if the given arguments are incorrect.
+     * @throws java.io.IOException if a given file doesn't exists
      */
     public ArgumentProcessor(String[] args) throws ParseException, IOException {
         CommandLineParser parser = new PosixParser();
         Options options = new Options();
 
         Option help = new Option("H", "Help",false ,"This is the help file of TEA.");
-        Option optionPubmedIDs = new Option("PUB", "PubmedIDFile", true, "The file with the PubmedID's");
+        Option optionPubmedIDs = new Option("PUB", "PubmedIDFile", true, "The file with the PubmedID's");        //Currently Disabled
         Option optionWorkspace = new Option("W", "workspace", true, "The workspace for the program.");
         Option optionPDFFiles= new Option("PDF", "PDFFiles", false, "Instead of using a query or a PubmedID file, use the PDFs in the workspace.");
-        Option optionQuery= new Option("QUE", "Query", true, "Use a given query to search Pubmed and extract the articles.");
+        Option optionQuery= new Option("QUE", "Query", true, "Use a given query to search Pubmed and extract the articles.");       //Currently Disabled
         Option optionConfig = new Option("C", "Config", true, "Specify the path to the configuration file.");
         Option optionDebugging = new Option("D", "Debugging", false, "Enter debug mode to output additional files.");
 
@@ -76,6 +75,16 @@ public class ArgumentProcessor {
      * @return a boolean that is only true when the commandline contains the help option
      */
     private boolean setHelp(CommandLine line){
+        if(line.hasOption("H")){
+            System.out.println("This is the help of TEA.");
+            System.out.println("The following arguments are available: ");
+            System.out.println("-H : Well you just pressed it. Happy?");
+            System.out.println("-W [pathToWorkspace] : Define the path to the workspace");
+            System.out.println("-PDF : Tells TEA that there are PDF files in the workspace. True by default.");
+            System.out.println("-C [pathToConfigurationFile] : Define the path to the configuration file");
+            System.out.println("-D : Tells the program it needs to go in debugging mode and output additional output files.");
+            System.exit(0);
+        }
         return(line.hasOption("H"));
     }
 
@@ -97,10 +106,10 @@ public class ArgumentProcessor {
 
         //Open the file and read the PubmedIDs
         BufferedReader br = new BufferedReader(new FileReader(pubmedFile));
-        String readline;
+        String readLine;
         ArrayList<String> pubmedIDs = new ArrayList<String>();
-        while ((readline = br.readLine()) != null) {
-            pubmedIDs.add(readline);
+        while ((readLine = br.readLine()) != null) {
+            pubmedIDs.add(readLine);
         }
         br.close();
         LOGGER.info("Found " + pubmedIDs.size() + " pubmedIDs from the PubmedID file.");
@@ -130,7 +139,7 @@ public class ArgumentProcessor {
      * @return a boolean that is only true when the user used -PDF in his arguments.
      */
     private boolean setPDFFiles(CommandLine line){
-        return line.hasOption("PDF");
+        return !line.hasOption("QUE")&&!line.hasOption("PUB");
     }
 
     /**
@@ -149,10 +158,10 @@ public class ArgumentProcessor {
     }
 
     /**
-     * This method checks if the user added a configuration file. If so it creates a Configuration object
+     * This method checks if the user added a configuration file. If so it creates a configuration object
      * and calls the getters of this class to set local variables that have to do with the configuration file.
      * @param line the commandline as made by the constructor
-     * @throws java.io.IOException
+     * @throws java.io.IOException if the location is invalid (such shame).
      */
     private void setPathToConfigFileValues(CommandLine line) throws IOException {
         if(line.hasOption("C")){
@@ -176,12 +185,19 @@ public class ArgumentProcessor {
         }
     }
 
+    /**
+     * This method returns true if the debugging mode has been activated by the user.
+     * Debugging mode outputs extra files to help the user in debugging.
+     * @param line The commandline as specified by the user (-D)
+     * @return True if the mode has been activated. False if not.
+     */
     private boolean setDebugging(CommandLine line){
         return line.hasOption("D");
     }
 
     //~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
     //The getters of this object:
+    //Note, some of the getters have no current use but are added to make this class a bit easier to use.
 
     public boolean getHelp(){
         return help;
