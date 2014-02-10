@@ -15,6 +15,7 @@ public class Cell {
     private int y2;
     private int x1;
     private int x2;
+    private int lineNumber;
 
     /**
      * This constructor stores the content as well as the addition score of the given cell.
@@ -22,8 +23,9 @@ public class Cell {
      * @param content A list containing the HTML words of the cell.
      * @param additionScore The score that was used to add this cell to the table.
      */
-    public Cell(ArrayList<Element> content, int additionScore){
+    public Cell(ArrayList<Element> content, int additionScore, int lineNumber){
         this.additionScore = additionScore;
+        this.lineNumber = lineNumber;
         ArrayList<String> newContent = new ArrayList<String>();
         for(Element word : content){
             newContent.add(word.text());
@@ -38,8 +40,9 @@ public class Cell {
      * already in the first iteration).
      * @param content A list of HTML words that forms the content of this cell.
      */
-    public Cell(ArrayList<Element> content){
+    public Cell(ArrayList<Element> content, int lineNumber){
         this.additionScore = 0;
+        this.lineNumber = lineNumber;
         ArrayList<String> newContent = new ArrayList<String>();
         for(Element word : content){
             newContent.add(word.text());
@@ -90,8 +93,13 @@ public class Cell {
         this.y1 = lowestY1;
         this.y2 = highestY2;
     }
+
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
     public int getY1(){
-    return y1;
+        return y1;
     }
     public int getY2(){
         return y2;

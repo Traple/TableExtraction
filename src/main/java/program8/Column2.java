@@ -11,6 +11,7 @@ import java.util.HashMap;
  * a method to check if this is viable by returning an internal score.
  */
 public class Column2 {
+    private ArrayList<Line> data;
     private ArrayList<ArrayList<Element>> cells;
     private int columnBoundaryX1;
     private int columnBoundaryX2;
@@ -23,9 +24,15 @@ public class Column2 {
      * @param cells This is a list containing the the partitions of the words in the column.
      * @param AVGCharDistance The average distance of a character as calculated in the page class.
      */
-    public Column2(ArrayList<ArrayList<Element>> cells, double AVGCharDistance){
+    public Column2(ArrayList<ArrayList<Element>> cells, double AVGCharDistance, ArrayList<Line> data){
         this.cells = cells;
         this.AVGCharDistance = AVGCharDistance;
+        this.data = data;
+
+//        System.out.println("~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-");
+//        for(ArrayList<Element> cell : cells){
+//            System.out.println(cell.get(0));
+//        }
 
         findColumnBoundaries();
         findMostFrequentX1Boundary();
@@ -124,6 +131,7 @@ public class Column2 {
         this.cells = newCells;
         findColumnBoundaries();
     }
+
     //~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
     //Getters:
 
@@ -227,7 +235,22 @@ public class Column2 {
     public ArrayList<Cell> getCellObjects(){
         ArrayList<Cell> cellObjects = new ArrayList<Cell>();
         for(ArrayList<Element> cell : cells){
-            Cell currentCell = new Cell(cell);
+            //Now we need to find out in which line this cell is:
+            String pos;
+            String[] positions;
+            pos = cell.get(0).attr("title");
+            positions = pos.split("\\s+");
+            int cellY1 = Integer.parseInt(positions[4]);
+            int lineNumber = 0;
+
+            for(Line line : data){
+                if(line.getAverageY1()>cellY1){
+                    break;
+                }
+                lineNumber = line.getLineNumber();
+            }
+
+            Cell currentCell = new Cell(cell, lineNumber);
             cellObjects.add(currentCell);
         }
         return cellObjects;

@@ -1,6 +1,8 @@
 package program8;
 
+import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Element;
+import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
 import org.w3c.dom.Document;
 
@@ -18,7 +20,7 @@ import java.util.logging.Logger;
 
 /**
  * this class is called Table2 because it rewritten from scratch using only some of the methods used in the Table2 class
- * of TEA 0.5. The developer apologizes for any inconvenience.
+ * of TEA 0.5. The developer apologizes for any inconvenience this may cause.
  */
 public class Table2 {
 
@@ -69,7 +71,6 @@ public class Table2 {
             this.table = new ArrayList<Line>();
 
             createLines(charLengthThreshold);
-//            System.out.println(table);
             separateDataByCluster();
             filterLinesThatAreAboveY1();
 
@@ -84,7 +85,9 @@ public class Table2 {
             if(linesWithMissingData!=null){
                 addLinesWithMissingDataToColumns();
             }
+            fillBlankCells();
         }
+
         else {
             LOGGER.info("The word Table was detected but no clusters were found.\n" +
                     "It was found at position: " + maxY1);
@@ -136,9 +139,9 @@ public class Table2 {
             System.out.println("False positive: " + validation.getFalsePositive());
             LOGGER.info("False positive: " + validation.getFalsePositive());
             System.out.println();
-
+            fillBlankCells();
             System.out.println(semanticFramework);
-            System.out.println("Now writing to file:");
+            System.out.println("Now writing to file.");
             write2((workspace), file, tableID, semanticFramework);         //write: getXMLContent(file, tableID, semanticFramework.getXML()),
             if(debugging){
                 writeDebugFile(debugContent, workspace, file);
@@ -212,6 +215,8 @@ public class Table2 {
         int lastY2 = 0;
         Elements currentLine = new Elements();
 
+        int lineNumber = 0;
+
         for(Element span : spans){
             pos = span.attr("title");
             positions = pos.split("\\s+");
@@ -220,17 +225,12 @@ public class Table2 {
             int x2 = Integer.parseInt(positions[3]);
             int y2 = Integer.parseInt(positions[4]);
 
-//            System.out.println(span);
-//            System.out.println((CommonMethods.calcDistance(lastY2, y1)) + " " + ((averageLineDistance*verticalThresholdModifier)/1.5) + " " +(CommonMethods.calcDistance(lastY2, y1)>(averageLineDistance*verticalThresholdModifier)/2));
-//            System.out.println((x1>=lastX2) );
-
             if(((!(x1>=lastX2))||y1>lastY2 || CommonMethods.calcDistance(lastY2, y1)>(averageLineDistance*verticalThresholdModifier)/1.5)&&spans.indexOf(span)!=0){
                 Line line = new Line(currentLine, charLengthThreshold, horizontalThresholdModifier);
-//                System.out.println(line);
-//                System.out.println(line.getClusterSize());
-
+                line.setLineNumber(lineNumber);
                 table.add(line);
                 currentLine = new Elements();
+                lineNumber+=1;
             }
             lastX2 = x2;
             lastY2 = y2;
@@ -324,12 +324,14 @@ public class Table2 {
         ArrayList<Integer> numberOfClusters = new ArrayList<Integer>();
         int highestAmountOfClusters = 0;
 
+        //calculating the highest amount of clusters:
         for(Line line : data){
             numberOfClusters.add(line.getClusterSize());
             if(line.getClusterSize() > highestAmountOfClusters){
                 highestAmountOfClusters = line.getClusterSize();
             }
         }
+        //calculate the highest amount of cluster occurrences:
         int highestAmountOfClustersOccurrences =0;
         ArrayList<Integer> numberOfClustersSave = new ArrayList<Integer>(numberOfClusters);
         while(numberOfClusters.contains(highestAmountOfClusters)){
@@ -368,6 +370,10 @@ public class Table2 {
             }
             this.linesWithMissingData = linesWithMissingData;
             this.data = dataWithoutMissingLines;
+            System.out.println("Lines without missing data: ");
+            for (Line line :  data){                             //TODO: This data needs to be refined before going in columns. Try finding if the lines need to be aligned first.
+                System.out.println(line);
+            }
         }
     }
 
@@ -399,6 +405,8 @@ public class Table2 {
         this.dataByColumn = columnMap;
     }
 
+
+
     /**
      * This method uses the map that was created in the findColumns method to create the Column objects
      * @param AVGCharDistance The Average character Distance as calculated in the Page class.
@@ -406,7 +414,7 @@ public class Table2 {
     private void createColumns(double AVGCharDistance){
         ArrayList<Column2> dataInColumns = new ArrayList<Column2>();
         for(int key : dataByColumn.keySet()){
-            Column2 column = new Column2(dataByColumn.get(key), AVGCharDistance);
+            Column2 column = new Column2(dataByColumn.get(key), AVGCharDistance, data);
             dataInColumns.add(column);
         }
         this.dataInColumns = dataInColumns;
@@ -431,7 +439,7 @@ public class Table2 {
                         newDataInColumns.remove(column);
                         column.addCell(cluster);
                         newDataInColumns.add(column);
-                        Cell cell = new Cell(cluster, 3);
+                        Cell cell = new Cell(cluster, 3, line.getLineNumber());
                         cellsWithMissingDataAdded.add(cell);
                     }
                     else if(column.fitsInColumn(Line.getClusterX1(cluster), Line.getClusterX2(cluster)) ||
@@ -440,7 +448,7 @@ public class Table2 {
                         newDataInColumns.remove(column);
                         column.addCell(cluster);
                         newDataInColumns.add(column);
-                        Cell cell = new Cell(cluster, 2);
+                        Cell cell = new Cell(cluster, 2, line.getLineNumber());
                         cellsWithMissingDataAdded.add(cell);
                     }
                     else if(column.touchesColumn(Line.getClusterX1(cluster), Line.getClusterX2(cluster))){
@@ -448,7 +456,7 @@ public class Table2 {
                         newDataInColumns.remove(column);
                         column.addCell(cluster);
                         newDataInColumns.add(column);
-                        Cell cell = new Cell(cluster, 1);
+                        Cell cell = new Cell(cluster, 1, line.getLineNumber());
                         cellsWithMissingDataAdded.add(cell);
                     }
                 }
@@ -508,6 +516,47 @@ public class Table2 {
         }
         if(almostEmptyColumns >=2){
             validation.setFalsePositive(true);
+        }
+    }
+
+    /**
+     * This method is used for extraction of tables with lot of empty cells in it. It is required for the successful extraction of
+     * most Matrix tables.
+     */
+    private void fillBlankCells(){
+        //We say: cells get a line number. If a column does not contain a cell on a certain line, add a whitespace.
+        //Any cell that is not filled must be empty:
+        for(Line line : data){
+            int lineNumber = line.getLineNumber();
+            columnLoop:
+            for(Column2 column : dataInColumns){
+                for(Cell cell : column.getCellObjects()){
+                    if(cell.getLineNumber() == lineNumber){
+//                        System.out.println("Cell: " + cell + " has table line number: " + lineNumber);
+                        break;
+                    }
+                    if(cell.getLineNumber()>line.getLineNumber()){                //the last cell?
+                        //Add a blank cell to this column.
+//                        System.out.println("Add line to :" + column + " in line: " + line.getLineNumber());
+
+                        //<span class='ocrx_word' id='word_9' title="bbox 2175 514 2346 555">were</span>
+
+                        Tag t = Tag.valueOf("span");
+                        Attributes attributes = new Attributes();
+                        attributes.put("class", "ocrx_word");
+                        attributes.put("id", "word_ADDEDBYTEA");
+                        attributes.put("title", "bbox " + (int) column.getAverageX1() + " " + (int) line.getAverageY1() + " " + (int) column.getAverageX2() + " " + (int) line.getAverageY2());
+
+                        Element newElement = new Element(t, "localhost:8080", attributes);
+                        newElement.text(" ");
+                        ArrayList<Element> newCell = new ArrayList<Element>();
+                        newCell.add(newElement);
+                        System.out.println("adding: " +newElement.text());
+                        column.addCell(newCell);
+                        break columnLoop;
+                    }
+                }
+            }
         }
     }
 
@@ -685,6 +734,7 @@ public class Table2 {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource source = new DOMSource(doc);
+            LOGGER.info("Written file: " + location + "\\results\\" + file.getName().substring(0, file.getName().length() - 5) + "-" + tableID+ ".xml");
             File file2 = new File(location + "\\results\\" + file.getName().substring(0, file.getName().length() - 5) + "-" + tableID+ ".xml");
             Writer output = new BufferedWriter(new FileWriter(file2));
             StreamResult result = new StreamResult(output);

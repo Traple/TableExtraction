@@ -13,8 +13,8 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 /**
- * Welcome to the code of T.E.A. 0.7.
- * @version 0.7
+ * Welcome to the code of T.E.A. 0.8.
+ * @version 0.8
  * T.E.A. was made by Sander van Boom at the Birkbeck University in London. This was done with the help of Jan Czarnecki and Adrian Shepherd.
  * @author Sander van Boom
  * Development started at the 9th of September.
@@ -30,14 +30,14 @@ public class Main {
     public static Logger LOGGER = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, TransformerException, ParseException, InterruptedException {
-        System.out.println("Starting T.E.A. 0.7");
+        System.out.println("Starting T.E.A. 0.8");
 
         System.setProperty("java.util.logging.config.file", "/program6/log.properties");
         LogManager logMan=LogManager.getLogManager();
         logMan.readConfiguration(Main.class.getResourceAsStream("/program7/log.properties"));
         logMan.addLogger(LOGGER);
 
-        LOGGER.info("Starting T.E.A. 0.7");
+        LOGGER.info("Starting T.E.A. 0.8");
         LOGGER.info("Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm.");
         System.out.println("Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm.");
 
@@ -45,7 +45,6 @@ public class Main {
         ArgumentProcessor arguments = new ArgumentProcessor(args);
         String workLocation = arguments.getWorkspace();
         System.out.println("The worklocation is: " + workLocation);
-        ArrayList<String> pubmedIDs = arguments.getPubmedIDs();
 
         //prepare the workspace so we have a separate place to store our output files.
         prepareWorkspace(workLocation, arguments.getDebugging());
@@ -60,6 +59,7 @@ public class Main {
         double horizontalThresholdModifier = arguments.getHorizontalThresholdModifier();
         double verticalThresholdModifier = arguments.getVerticalThresholdModifier();
         boolean debugging = arguments.getDebugging();
+        boolean rotating = arguments.getRotateTables();
 
         if(arguments.getContainsPDFFiles()){
             LOGGER.info("Entering PDF mode");
@@ -71,7 +71,7 @@ public class Main {
                 System.out.println("Resolution: " + resolution);
                 System.out.println("Debugging: " + debugging);
                 LOGGER.info("Currently Processing: " + ID);
-                secondMain(pathToImageMagic, workLocation, ID, resolution, pathToTesseract, pathToTesseractConfig, verticalThresholdModifier, horizontalThresholdModifier, debugging);
+                secondMain(pathToImageMagic, workLocation, ID, resolution, pathToTesseract, pathToTesseractConfig, verticalThresholdModifier, horizontalThresholdModifier, debugging, rotating);
 
             }
         }
@@ -92,31 +92,47 @@ public class Main {
      * @param debugging A boolean stating if debugging mode is on or of.
      * @throws java.io.IOException
      */
-    private static void secondMain(String pathToImageMagic, String workLocation, String ID, String resolution, String pathToTesseract, String pathToTesseractConfig, double verticalThresholdModifier, double horizontalThresholdModifier, boolean debugging) throws IOException {
+    private static void secondMain(String pathToImageMagic, String workLocation, String ID, String resolution, String pathToTesseract, String pathToTesseractConfig, double verticalThresholdModifier, double horizontalThresholdModifier, boolean debugging, boolean rotating) throws IOException {
         try{
-        ImageMagick imagemagick = new ImageMagick(pathToImageMagic,workLocation, ID ,resolution);
-        imagemagick.createPNGFiles();
+            ImageMagick imagemagick = new ImageMagick(pathToImageMagic,workLocation, ID ,resolution);
+            imagemagick.createPNGFiles();
 
-        ArrayList<File> pngs = ImageMagick.findPNGFilesInWorkingDirectory(workLocation, ID);
-
-        int x =0;
-        for(File file : pngs){
-            LOGGER.info("Hand me my equipment. I'm going to perform OCR on " + file.getName());
-            Tesseract Tesseract = new Tesseract(pathToTesseract, workLocation, ID, Integer.toString(x),pathToTesseractConfig);
-            Tesseract.runTesseract();
-            x++;
-        }
-        System.out.println("find HTML files: ");
-        ArrayList<File> HTMLFiles = Tesseract.findHTMLFilesInWorkingDirectory(workLocation, ID);
-        for(File file : HTMLFiles){
-            LOGGER.info("Searching for tables in: " + file.getName());
-            System.out.println("Searching for tables in: " + file.getName());
-            Page page = new Page(file, workLocation, debugging);
-            System.out.println("The found average length of a character is: " + page.getSpaceDistance());
-            page.createTables(horizontalThresholdModifier, verticalThresholdModifier);
-            LOGGER.info("------------------------------------------------------------------------------");
-            System.out.println("------------------------------------------------------------------------------");
-        }
+            ArrayList<File> pngs = ImageMagick.findPNGFilesInWorkingDirectory(workLocation, ID);
+            if(rotating){
+                Rotate rotate = new Rotate(pathToImageMagic, pngs, workLocation);
+                LOGGER.info("Now rotating the image");
+                System.out.println("Rotating!");
+                rotate.createRotatedImage();
+                pngs = ImageMagick.findPNGFilesInWorkingDirectory(workLocation, ID);
+            }
+            if(!rotating){
+                int x =0;
+                for(File file : pngs){
+                    LOGGER.info("Hand me my equipment. I'm going to perform OCR on " + file.getName());
+                Tesseract tesseract = new Tesseract(pathToTesseract, workLocation, ID, Integer.toString(x),pathToTesseractConfig);
+                tesseract.runTesseract();
+                x++;
+                }
+            }
+            else {
+                System.out.println("Rotating.");
+                for(File file : pngs){
+                    LOGGER.info("Hand me my equipment. I'm going to perform OCR on " + file.getName());
+                    Tesseract tesseract = new Tesseract(pathToTesseract, file, workLocation, pathToTesseractConfig);
+                    tesseract.runTesseract();
+                }
+            }
+            System.out.println("find HTML files: ");
+            ArrayList<File> HTMLFiles = Tesseract.findHTMLFilesInWorkingDirectory(workLocation, ID);
+            for(File file : HTMLFiles){
+                LOGGER.info("Searching for tables in: " + file.getName());
+                System.out.println("Searching for tables in: " + file.getName());
+                Page page = new Page(file, workLocation, debugging);
+                System.out.println("The found average length of a character is: " + page.getSpaceDistance());
+                page.createTables(horizontalThresholdModifier, verticalThresholdModifier);
+                LOGGER.info("------------------------------------------------------------------------------");
+                System.out.println("------------------------------------------------------------------------------");
+            }
         }
         catch (IOException e){
             System.out.println(e);

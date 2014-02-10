@@ -27,8 +27,8 @@ public class ArgumentProcessor {
     private double verticalThresholdModifier;
     private double horizontalThresholdModifier;
     private boolean debugging;
+    private boolean rotateTables;
 
-    //TODO: Create a Debug option that outputs various system.outs to debug files.
     /**
      * The constructor of this class creates a commandline with the correct options (as was given by the user) and sets
      * the local variables.
@@ -47,6 +47,7 @@ public class ArgumentProcessor {
         Option optionQuery= new Option("QUE", "Query", true, "Use a given query to search Pubmed and extract the articles.");       //Currently Disabled
         Option optionConfig = new Option("C", "Config", true, "Specify the path to the configuration file.");
         Option optionDebugging = new Option("D", "Debugging", false, "Enter debug mode to output additional files.");
+        Option optionRotateTables = new Option("R", "RotateTables", false, "Rotate all pages to see if the tables are vertical");
 
         options.addOption(help);
         options.addOption(optionPubmedIDs);
@@ -55,6 +56,7 @@ public class ArgumentProcessor {
         options.addOption(optionQuery);
         options.addOption(optionConfig);
         options.addOption(optionDebugging);
+        options.addOption(optionRotateTables);
 
         CommandLine line = parser.parse(options, args);
 
@@ -64,6 +66,7 @@ public class ArgumentProcessor {
         this.PDFFiles = setPDFFiles(line);
         this.query = setQuery(line);
         this.debugging = setDebugging(line);
+        this.rotateTables = setRotateTables(line);
         setPathToConfigFileValues(line);
     }
     //~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
@@ -195,6 +198,15 @@ public class ArgumentProcessor {
         return line.hasOption("D");
     }
 
+    /**
+     * This method returns true if the rotate Tables option is in the command line.
+     * @param line the commandline.
+     * @return True if the option R is in the commandline.
+     */
+    private boolean setRotateTables(CommandLine line){
+        return line.hasOption("R");
+    }
+
     //~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
     //The getters of this object:
     //Note, some of the getters have no current use but are added to make this class a bit easier to use.
@@ -238,5 +250,8 @@ public class ArgumentProcessor {
     }
     public boolean getDebugging(){
         return debugging;
+    }
+    public boolean getRotateTables() {
+        return rotateTables;
     }
 }

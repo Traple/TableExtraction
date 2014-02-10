@@ -29,6 +29,13 @@ public class Tesseract {
         this.command = new String[] {pathToTesseract, input, output,"hocr",pathToConfig};
     }
 
+    public Tesseract(String pathToTesseract, File inputFile, String workspace, String pathToConfig){
+        String input = inputFile.getName();
+        String output = workspace +"/"+ inputFile.getName().substring(0, inputFile.getName().length()-4);
+        input = inputFile.getAbsolutePath();
+        this.command = new String[] {pathToTesseract, input, output,"hocr",pathToConfig};
+    }
+
     /**
      * this void method runs the command created in the constructor.
      */

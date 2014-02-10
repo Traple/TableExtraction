@@ -17,6 +17,10 @@ public class Line {
     private double averageY1;
     private double averageY2;
 
+
+
+    private int lineNumber;
+
     /**
      * This is the constructor of the Line class.
      * It sets three internal variables (words, LineThreshold and the ThresholdModifier)
@@ -118,6 +122,10 @@ public class Line {
         this.averageY1 = totalY1/words.size();
         this.averageY2 = totalY2/words.size();
     }
+
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
+    }
     //~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
     //Getters:
 
@@ -163,6 +171,9 @@ public class Line {
         }
         return clusterBoundaryX2;
     }
+    public int getLineNumber() {
+        return lineNumber;
+    }
 
     public ArrayList<ArrayList<Element>> getClusters(){
         return clusters;
@@ -193,7 +204,7 @@ public class Line {
         for(Element word : words){
             wordsAsList.add(word);
         }
-        return new Cell(wordsAsList);
+        return new Cell(wordsAsList,lineNumber);
     }
 
     /**
