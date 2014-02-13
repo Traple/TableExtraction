@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 public class SemanticFramework {
 
     public static Logger LOGGER = Logger.getLogger(SemanticFramework.class.getName());
+    private int allowedHeaderSize;
     private ArrayList<Column2> table = new ArrayList<Column2>();
     private ArrayList<Line> rawTable;
     private double verticalHeightThreshold;
@@ -43,6 +44,7 @@ public class SemanticFramework {
     private ArrayList<Double> rowSpannersConfidenceAlignment;
     private ArrayList<Integer> rowSpannersConfidenceColumnsSpanned;
     private ArrayList<Double> rowSpannersConfidenceLineDistance;
+    private int allowedHeaderIterations;
 
     /**
      * This is the constructor of the SemanticFramework class.
@@ -55,7 +57,9 @@ public class SemanticFramework {
      * @param validation The validation object as calculated in the table class.
      * @param title The potential title of the table.
      */
-    public SemanticFramework(ArrayList<Column2> table, double verticalHeightThreshold, ArrayList<Line> rowSpanners, double horizontalLengthThreshold, ArrayList<Line> rawTable, Validation validation, ArrayList<Line> title){
+    public SemanticFramework(ArrayList<Column2> table, double verticalHeightThreshold, ArrayList<Line> rowSpanners,
+                             double horizontalLengthThreshold, ArrayList<Line> rawTable, Validation validation, ArrayList<Line> title,
+                             int allowedHeaderSize, int allowedHeaderIterations){
         LOGGER.info("Starting table semantics");
         this.table = table;
         this.rawTable = rawTable;
@@ -72,6 +76,8 @@ public class SemanticFramework {
         this.title = title;
         this.titleConfidence = 1;
         this.headers = new ArrayList<Line>();
+        this.allowedHeaderSize = allowedHeaderSize;
+        this.allowedHeaderIterations = allowedHeaderIterations;
         if(title.size() ==0){
             findTitle();
         }
@@ -254,9 +260,6 @@ public class SemanticFramework {
         }
     }
 
-
-    //TODO: Make the 5 threshold a parameter called allowedHeaderSize
-    //TODO: Make allowed header iterations a parameter.
     /**
      * This method will try to find the headers in the table. It does so by assuming that every line in the data is a header
      * until the vertical height threshold is smaller then the distance between the current line and the next line.
@@ -271,9 +274,9 @@ public class SemanticFramework {
             ArrayList<Double> headerConfidence = new ArrayList<Double>();
             double lastY2 = 0.0;
             boolean breaking = false;
-            int maxHeaderSize = 3;
+            int maxHeaderSize = allowedHeaderSize;
             for(Line line : rawTable){
-                if(loops > 3){
+                if(loops > allowedHeaderIterations){
                     headers = new ArrayList<Line>();
                     this.headers = headers;
                     this.headerConfidence = new ArrayList<Double>();
@@ -336,7 +339,6 @@ public class SemanticFramework {
         for(Line header : headers){
             if(rawTable.contains(header)){
                 rawTable.remove(rawTable.indexOf(header));
-                continue;
             }
         }
 
@@ -369,17 +371,21 @@ public class SemanticFramework {
                 identifiersConfidenceLineDistance.add(-10.0);
                 break;
             }
-            else if((!headers.isEmpty())&&identifiersConfidenceAlignment.get(x)<=0
+            //According to 53-5, if there is a figure then these scores may get corrupted.
+            else if((!headers.isEmpty())&&!(identifiersConfidenceAlignment.size()-1<x)&&!(identifiersConfidenceColumnsSpanned.size()-1<x)
+                    &&!(identifiersConfidenceLineDistance.size()-1<x)
+                    &&identifiersConfidenceAlignment.get(x)<=0
                     &&identifiersConfidenceColumnsSpanned.get(x)<3
                     &&identifiersConfidenceLineDistance.get(x)<1.5
                     &&rowSpanners.get(x).getAverageY1()>headers.get(headers.size()-1).getAverageY2()){
                 System.out.println("Identifier! " + rowSpanners.get(x));
                 indexToBeRemoved.add(x);
             }
-            else if(identifiersConfidenceAlignment.get(x)<=0
+            else if((headers.isEmpty()||(identifiersConfidenceAlignment.size()-1<x)
+                    ||(identifiersConfidenceColumnsSpanned.size()-1<x)||(identifiersConfidenceLineDistance.size()-1<x))
+                    ||(identifiersConfidenceAlignment.get(x)<=0
                     &&identifiersConfidenceColumnsSpanned.get(x)<3
-                    &&identifiersConfidenceLineDistance.get(x)<1.5
-                    &&headers.isEmpty()){
+                    &&identifiersConfidenceLineDistance.get(x)<1.5)){
                 System.out.println("Identifier! " + rowSpanners.get(x));
                 indexToBeRemoved.add(x);
             }

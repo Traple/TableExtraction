@@ -58,6 +58,8 @@ public class Main {
         String resolution = "600";
         double horizontalThresholdModifier = arguments.getHorizontalThresholdModifier();
         double verticalThresholdModifier = arguments.getVerticalThresholdModifier();
+        int allowedHeaderSize = arguments.getAllowedHeaderSize();
+        int allowedHeaderIterations = arguments.getAllowedHeaderIterations();
         boolean debugging = arguments.getDebugging();
         boolean rotating = arguments.getRotateTables();
 
@@ -71,7 +73,7 @@ public class Main {
                 System.out.println("Resolution: " + resolution);
                 System.out.println("Debugging: " + debugging);
                 LOGGER.info("Currently Processing: " + ID);
-                secondMain(pathToImageMagic, workLocation, ID, resolution, pathToTesseract, pathToTesseractConfig, verticalThresholdModifier, horizontalThresholdModifier, debugging, rotating);
+                secondMain(pathToImageMagic, workLocation, ID, resolution, pathToTesseract, pathToTesseractConfig, verticalThresholdModifier, horizontalThresholdModifier, debugging, rotating, allowedHeaderSize, allowedHeaderIterations);
 
             }
         }
@@ -92,7 +94,7 @@ public class Main {
      * @param debugging A boolean stating if debugging mode is on or of.
      * @throws java.io.IOException
      */
-    private static void secondMain(String pathToImageMagic, String workLocation, String ID, String resolution, String pathToTesseract, String pathToTesseractConfig, double verticalThresholdModifier, double horizontalThresholdModifier, boolean debugging, boolean rotating) throws IOException {
+    private static void secondMain(String pathToImageMagic, String workLocation, String ID, String resolution, String pathToTesseract, String pathToTesseractConfig, double verticalThresholdModifier, double horizontalThresholdModifier, boolean debugging, boolean rotating, int allowedHeaderSize, int allowedHeaderIterations) throws IOException {
         try{
             ImageMagick imagemagick = new ImageMagick(pathToImageMagic,workLocation, ID ,resolution);
             imagemagick.createPNGFiles();
@@ -129,7 +131,7 @@ public class Main {
                 System.out.println("Searching for tables in: " + file.getName());
                 Page page = new Page(file, workLocation, debugging);
                 System.out.println("The found average length of a character is: " + page.getSpaceDistance());
-                page.createTables(horizontalThresholdModifier, verticalThresholdModifier);
+                page.createTables(horizontalThresholdModifier, verticalThresholdModifier, allowedHeaderSize, allowedHeaderIterations);
                 LOGGER.info("------------------------------------------------------------------------------");
                 System.out.println("------------------------------------------------------------------------------");
             }

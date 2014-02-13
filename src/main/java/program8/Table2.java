@@ -39,6 +39,7 @@ public class Table2 {
     private ArrayList<Column2> dataInColumns;
     private ArrayList<Line> rowSpanners;
     private Validation validation;
+    private ArrayList<ArrayList<Element>> missPlacedCells;
 
     /**
      * This is the constructor of the table class. It takes it's parameters and sets them as local variables.
@@ -55,7 +56,9 @@ public class Table2 {
      * @param debugging is true if the program is in debugging mode.
      * @throws java.io.IOException
      */
-    public Table2(Elements spans, double charLengthThreshold, File file, String workspace, int tableID, double verticalThresholdModifier, double horizontalThresholdModifier, double averageLineDistance, boolean debugging) throws IOException {
+    public Table2(Elements spans, double charLengthThreshold, File file, String workspace, int tableID, double verticalThresholdModifier,
+                  double horizontalThresholdModifier, double averageLineDistance, boolean debugging, int allowedHeaderSize, int allowedHeaderIterations)
+            throws IOException {
         String debugContent = "";
         this.averageLineDistance = averageLineDistance;
         this.maxY1 = 0;
@@ -81,6 +84,7 @@ public class Table2 {
             findMissingData();
             findColumns();
             createColumns(charLengthThreshold);
+            checkColumns();
             debugContent = debugContent + "lines with missing data: " + linesWithMissingData + "\n";
             if(linesWithMissingData!=null){
                 addLinesWithMissingDataToColumns();
@@ -133,7 +137,8 @@ public class Table2 {
             System.out.println(table);
             setClusterCertainties();
             System.out.println("Checking out the semantics.");
-            SemanticFramework semanticFramework = new SemanticFramework(dataInColumns, (averageLineDistance * verticalThresholdModifier), rowSpanners, charLengthThreshold * horizontalThresholdModifier, table, validation, titleAndHeaders);
+            SemanticFramework semanticFramework = new SemanticFramework(dataInColumns, (averageLineDistance * verticalThresholdModifier),
+                    rowSpanners, charLengthThreshold * horizontalThresholdModifier, table, validation, titleAndHeaders, allowedHeaderSize, allowedHeaderIterations);
             System.out.println("Checking for false positive...");
             checkForFalsePositive();
             System.out.println("False positive: " + validation.getFalsePositive());
@@ -371,7 +376,7 @@ public class Table2 {
             this.linesWithMissingData = linesWithMissingData;
             this.data = dataWithoutMissingLines;
             System.out.println("Lines without missing data: ");
-            for (Line line :  data){                             //TODO: This data needs to be refined before going in columns. Try finding if the lines need to be aligned first.
+            for (Line line :  data){
                 System.out.println(line);
             }
         }
@@ -385,6 +390,16 @@ public class Table2 {
         int counterForColumns = 0;
         Map<Integer, ArrayList<ArrayList<Element>>> columnMap = new HashMap<Integer, ArrayList<ArrayList<Element>>>();
 
+        //Find highest amount of clusters:
+        int highestAmountOfClusters = 0;
+        for(Line line : data){
+            if(line.getClusterSize() > highestAmountOfClusters){
+                highestAmountOfClusters = line.getClusterSize();
+            }
+        }
+        for(Line line : data){
+            System.out.println(line.getClusterSize());
+        }
         for(Line line : data){
             for(ArrayList<Element>cluster : line.getClusters()){
                 if(columnMap.containsKey(counterForColumns)){
@@ -403,9 +418,9 @@ public class Table2 {
             counterForColumns = 0;
         }
         this.dataByColumn = columnMap;
+        System.out.println("columMap: ");
+        System.out.println(dataByColumn);
     }
-
-
 
     /**
      * This method uses the map that was created in the findColumns method to create the Column objects
@@ -418,6 +433,39 @@ public class Table2 {
             dataInColumns.add(column);
         }
         this.dataInColumns = dataInColumns;
+    }
+
+    /**
+     * This method tries to check the columns. If there are any cells that don't fit in the column, they are moved to another
+     * column or create a new column.
+     */
+    private void checkColumns(){
+        for(Column2 column : dataInColumns){
+            if(!column.checkFirstThreeCells()){
+                this.missPlacedCells = column.getWrongCells();
+            }
+        }
+    }
+
+    private void replaceMissPlacedCells(){
+        for(ArrayList<Element> cluster : missPlacedCells){
+            for(Column2 column : dataInColumns){
+                if(column.fitsInColumn(Line.getClusterX1(cluster), Line.getClusterX2(cluster)) &&
+                        column.columnFitsIn(Line.getClusterX1(cluster), Line.getClusterX2(cluster))){
+                    //then we need to add this cluster to that column:
+                    column.addCell(cluster);
+                }
+                else if(column.fitsInColumn(Line.getClusterX1(cluster), Line.getClusterX2(cluster)) ||
+                        column.columnFitsIn(Line.getClusterX1(cluster), Line.getClusterX2(cluster))){
+                    //then we need to add this cluster to that column:
+                    column.addCell(cluster);
+                }
+                else if(column.touchesColumn(Line.getClusterX1(cluster), Line.getClusterX2(cluster))){
+                    System.out.println("CLUSTER: " + cluster + " touches: " + column);
+                    column.addCell(cluster);
+                }
+            }
+        }
     }
 
     /**
@@ -528,7 +576,7 @@ public class Table2 {
         //Any cell that is not filled must be empty:
         for(Line line : data){
             int lineNumber = line.getLineNumber();
-            columnLoop:
+            COLUMNLOOP:
             for(Column2 column : dataInColumns){
                 for(Cell cell : column.getCellObjects()){
                     if(cell.getLineNumber() == lineNumber){
@@ -553,7 +601,7 @@ public class Table2 {
                         newCell.add(newElement);
                         System.out.println("adding: " +newElement.text());
                         column.addCell(newCell);
-                        break columnLoop;
+                        break COLUMNLOOP;
                     }
                 }
             }

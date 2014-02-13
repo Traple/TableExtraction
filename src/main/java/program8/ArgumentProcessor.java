@@ -28,6 +28,8 @@ public class ArgumentProcessor {
     private double horizontalThresholdModifier;
     private boolean debugging;
     private boolean rotateTables;
+    private int allowedHeaderSize;
+    private int allowedHeaderIterations;
 
     /**
      * The constructor of this class creates a commandline with the correct options (as was given by the user) and sets
@@ -176,6 +178,8 @@ public class ArgumentProcessor {
             pathToTesseractConfigFile = config.getPathToTesseractConfigFile();
             verticalThresholdModifier = config.getVerticalThresholdModifier();
             horizontalThresholdModifier = config.getHorizontalThresholdModifier();
+            allowedHeaderSize = config.getAllowedHeaderSize();
+            allowedHeaderIterations = config.getAllowedHeaderIterations();
         }
         else{
             LOGGER.warning("No configuration file detected! Working with default installation locations!");
@@ -185,6 +189,8 @@ public class ArgumentProcessor {
             pathToTesseractConfigFile = "/usr/bin/config.txt";
             verticalThresholdModifier = 1.0;
             horizontalThresholdModifier = 2.0;
+            allowedHeaderSize = 4;
+            allowedHeaderIterations = 3;
         }
     }
 
@@ -221,6 +227,12 @@ public class ArgumentProcessor {
 
     public String getWorkspace(){
         return workspace;
+    }
+    public int getAllowedHeaderSize(){
+        return allowedHeaderSize;
+    }
+    public int getAllowedHeaderIterations(){
+        return allowedHeaderIterations;
     }
     public boolean getContainsPDFFiles(){
         return PDFFiles;

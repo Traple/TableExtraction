@@ -17,6 +17,7 @@ public class Column2 {
     private int columnBoundaryX2;
     private double AVGCharDistance;
     private HashMap<Integer, Integer> boundaryMap;
+    private ArrayList<ArrayList<Element>> wrongCells;
 
     /**
      * This is the constructor of the Column class. It will set up two private variables and after that calculate the
@@ -28,6 +29,7 @@ public class Column2 {
         this.cells = cells;
         this.AVGCharDistance = AVGCharDistance;
         this.data = data;
+        this.wrongCells = new ArrayList<ArrayList<Element>>();
 
 //        System.out.println("~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-");
 //        for(ArrayList<Element> cell : cells){
@@ -134,6 +136,53 @@ public class Column2 {
 
     //~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
     //Getters:
+
+    /**
+     * This method is only invoked if the appropriate option is enabled ( -CC )
+     * It checks the first three cells in the column. If they do not fit in the rest of the column they are moved to another column.
+     * @return checks if the first three cells in this column are correct.
+     */
+    public boolean checkFirstThreeCells(){
+        boolean fitInColumn = true;
+        try{
+            ArrayList<ArrayList<Element>> firstThreeCells = new ArrayList<ArrayList<Element>>();
+            firstThreeCells.add(cells.get(0));
+            firstThreeCells.add(cells.get(1));
+            firstThreeCells.add(cells.get(2));
+
+            topLoop:
+            for(ArrayList<Element> currentCell : firstThreeCells){
+                String pos;
+                String[] positions;
+                pos = currentCell.get(0).attr("title");
+                positions = pos.split("\\s+");
+                int currentCellX1 = Integer.parseInt(positions[3]);
+                for(ArrayList<Element> cellInColumn : cells){
+                    pos = cellInColumn.get(0).attr("title");
+                    positions = pos.split("\\s+");
+                    int cellInColumnX2 = Integer.parseInt(positions[3]);
+
+                    if(!firstThreeCells.contains(cellInColumn)){
+                        if(cellInColumnX2>currentCellX1){
+                            continue topLoop;
+                        }
+                    }
+                }
+                System.out.println("This cell: " + currentCell.get(0).text() + " does not belong in this fair column!");
+                this.wrongCells.add(currentCell);
+//                this.cells.remove(currentCell);                //TODO: This doesn't work. In some tables it removes the entire column.
+                fitInColumn = false;
+            }
+        }
+        catch (IndexOutOfBoundsException e){
+            fitInColumn = true;
+        }
+        return fitInColumn;
+    }
+
+    public ArrayList<ArrayList<Element>> getWrongCells(){
+        return wrongCells;
+    }
 
     /**
      * This method will find the lowest Y value (i.o.w. the start of the column).
@@ -287,7 +336,9 @@ public class Column2 {
             line = line.substring(0, line.length()-1);
             line = line + ", ";
         }
-        line = line.substring(0, line.length()-2);
+        if(line.length()!=0){
+            line = line.substring(0, line.length()-2);
+        }
         return line;
     }
 }

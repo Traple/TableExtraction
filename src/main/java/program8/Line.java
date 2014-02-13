@@ -16,9 +16,6 @@ public class Line {
     private ArrayList<Integer> distances;
     private double averageY1;
     private double averageY2;
-
-
-
     private int lineNumber;
 
     /**
