@@ -81,7 +81,7 @@ public class Line {
             int x2 = Integer.parseInt(positions[3]);
             int distance = -(lastX2 - x1);
 
-            if((distance) >lineThreshold*thresholdModifier){
+            if((distance) >(lineThreshold*thresholdModifier)){
                 distances.add(distance);
                 clusters.add(cluster);
                 cluster = new ArrayList<Element>();

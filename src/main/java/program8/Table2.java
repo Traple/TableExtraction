@@ -54,7 +54,9 @@ public class Table2 {
      * @param horizontalThresholdModifier The modifier used for creating the threshold in horizontal partitioning.
      * @param averageLineDistance The average (vertical) distance between lines as calculated in the Page class.
      * @param debugging is true if the program is in debugging mode.
-     * @throws java.io.IOException
+     * @param allowedHeaderIterations The amount of iterations that the program is allowed to run, searching for headers.
+     * @param allowedHeaderSize The amount of headers supported by the program. Implemented as a last cut-off if thresholding fails.
+     * @throws IOException When one of the files cant be found
      */
     public Table2(Elements spans, double charLengthThreshold, File file, String workspace, int tableID, double verticalThresholdModifier,
                   double horizontalThresholdModifier, double averageLineDistance, boolean debugging, int allowedHeaderSize, int allowedHeaderIterations)
@@ -91,9 +93,8 @@ public class Table2 {
             }
             fillBlankCells();
         }
-
-        else {
-            LOGGER.info("The word Table was detected but no clusters were found.\n" +
+            else {
+                LOGGER.info("The word Table was detected but no clusters were found.\n" +
                     "It was found at position: " + maxY1);
         }
         if(data.size() > 1){
@@ -230,8 +231,14 @@ public class Table2 {
             int x2 = Integer.parseInt(positions[3]);
             int y2 = Integer.parseInt(positions[4]);
 
-            if(((!(x1>=lastX2))||y1>lastY2 || CommonMethods.calcDistance(lastY2, y1)>(averageLineDistance*verticalThresholdModifier)/1.5)&&spans.indexOf(span)!=0){
+            //TODO: Calculate the default values and put them as a resource in the parameter files.
+            //This is where the modifier can be placed for the 1,2,3 parameter as described in the version test:
+            if(((x1<=lastX2)||y1>lastY2 || CommonMethods.calcDistance(lastY2, y1)>(averageLineDistance*verticalThresholdModifier))
+                    &&spans.indexOf(span)!=0){
+                System.out.println(CommonMethods.calcDistance(lastY2, y1) + " "+ (averageLineDistance*verticalThresholdModifier));
+                System.out.println((y1>lastY2) +" "+ (x1<=lastX2));
                 Line line = new Line(currentLine, charLengthThreshold, horizontalThresholdModifier);
+                System.out.println(line);
                 line.setLineNumber(lineNumber);
                 table.add(line);
                 currentLine = new Elements();
@@ -261,9 +268,12 @@ public class Table2 {
         Line doubleBreakingLine = null;
         ArrayList<Line> rowSpanners = new ArrayList<Line>();
         boolean breaking = false;
+        System.out.println("---------------------------------------------------------");
         for(Line line : table){
             ArrayList<ArrayList<Element>> clusters = line.getClusters();
             int size = clusters.size();
+
+            System.out.println(size + " " + line);
 
             if(size <1 && foundData && breakingLine != null && doubleBreakingLine != null){
                 break;               //then we have reached the end of the table.
@@ -310,7 +320,7 @@ public class Table2 {
         for (Line line : data){
             if(maxY1 > line.getY1OfFirstWord()||maxY1 > line.getY1OfLastWord()){
                 LOGGER.info("Something is wrong, I detected the following line, which was above the title!");
-                LOGGER.info(maxY1 + " " + line.getY1OfFirstWord());
+                LOGGER.info(line.toString() + " " + maxY1 + " " + line.getY1OfFirstWord());
                 removedLines.add(line);
             }
         }
@@ -580,7 +590,6 @@ public class Table2 {
             for(Column2 column : dataInColumns){
                 for(Cell cell : column.getCellObjects()){
                     if(cell.getLineNumber() == lineNumber){
-//                        System.out.println("Cell: " + cell + " has table line number: " + lineNumber);
                         break;
                     }
                     if(cell.getLineNumber()>line.getLineNumber()){                //the last cell?
@@ -593,7 +602,7 @@ public class Table2 {
                         Attributes attributes = new Attributes();
                         attributes.put("class", "ocrx_word");
                         attributes.put("id", "word_ADDEDBYTEA");
-                        attributes.put("title", "bbox " + (int) column.getAverageX1() + " " + (int) line.getAverageY1() + " " + (int) column.getAverageX2() + " " + (int) line.getAverageY2());
+                        attributes.put("title", "bbox " + column.getAverageX1() + " " + (int) line.getAverageY1() + " " + column.getAverageX2() + " " + (int) line.getAverageY2());
 
                         Element newElement = new Element(t, "localhost:8080", attributes);
                         newElement.text(" ");
@@ -613,7 +622,7 @@ public class Table2 {
      * @param content A string containing the collected content
      * @param location The location for the method to write to.
      * @param file The location of the used file, for naming purpose.
-     * @throws java.io.IOException When an incorrect path has been given.
+     * @throws IOException When an incorrect path has been given.
      */
     private void writeDebugFile(String content, String location, File file) throws IOException {
         LOGGER.info("Writing results to file: " + location + "\\results\\" + file.getName().substring(0, file.getName().length() - 5)+ ".txt");
@@ -632,7 +641,7 @@ public class Table2 {
      * @param tableID The ID of the table.
      * @param semanticFramework The semantic framework object. This contains get methods that are required for the output
      * File.
-     * @throws java.io.IOException If the given location doesn't exist.
+     * @throws IOException If the given location doesn't exist.
      */
     private void write2(String location,File file ,int tableID, SemanticFramework semanticFramework) throws IOException {
         try{

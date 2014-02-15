@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  * T.E.A. was made by Sander van Boom at the Birkbeck University in London. This was done with the help of Jan Czarnecki and Adrian Shepherd.
  * @author Sander van Boom
  * Development started at the 9th of September.
- * The current state of the software is development.
+ * The current state of the software is Alpha Test.
  *
  * What the code does:
  * You put some Pubmed ID's in your T.E.A. and T.E.A. extracts the PDF and uses ImageMagick (PDF -> bitmap converter) and
@@ -27,18 +27,19 @@ import java.util.logging.Logger;
  */
 public class Main {
 
+    //TODO: Change the location where the log file is saved.
+    //TODO: Evaluate the Logger and improve accordingly.
     public static Logger LOGGER = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, TransformerException, ParseException, InterruptedException {
         System.out.println("Starting T.E.A. 0.8");
 
-        System.setProperty("java.util.logging.config.file", "/program6/log.properties");
+        System.setProperty("java.util.logging.config.file", "/program8/log.properties");
         LogManager logMan=LogManager.getLogManager();
-        logMan.readConfiguration(Main.class.getResourceAsStream("/program7/log.properties"));
+        logMan.readConfiguration(Main.class.getResourceAsStream("/program8/log.properties"));
         logMan.addLogger(LOGGER);
 
         LOGGER.info("Starting T.E.A. 0.8");
-        LOGGER.info("Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm.");
         System.out.println("Greetings user! My name is T.E.A., which stands for Table Extraction Algorithm.");
 
         //processing of the arguments:
@@ -49,6 +50,7 @@ public class Main {
         //prepare the workspace so we have a separate place to store our output files.
         prepareWorkspace(workLocation, arguments.getDebugging());
 
+        //Extract information from the option file / command line.
         String pathToImageMagic = arguments.getPathToImageMagick();
         System.out.println("Path to Image Magic is: " + pathToImageMagic);
         String pathToTesseract = arguments.getPathToTesseract();
@@ -110,7 +112,7 @@ public class Main {
             if(!rotating){
                 int x =0;
                 for(File file : pngs){
-                    LOGGER.info("Hand me my equipment. I'm going to perform OCR on " + file.getName());
+                    LOGGER.info("Performing OCR on: " + file.getName());
                 Tesseract tesseract = new Tesseract(pathToTesseract, workLocation, ID, Integer.toString(x),pathToTesseractConfig);
                 tesseract.runTesseract();
                 x++;
@@ -119,7 +121,7 @@ public class Main {
             else {
                 System.out.println("Rotating.");
                 for(File file : pngs){
-                    LOGGER.info("Hand me my equipment. I'm going to perform OCR on " + file.getName());
+                    LOGGER.info("Performing OCR on: " + file.getName());
                     Tesseract tesseract = new Tesseract(pathToTesseract, file, workLocation, pathToTesseractConfig);
                     tesseract.runTesseract();
                 }
@@ -132,7 +134,6 @@ public class Main {
                 Page page = new Page(file, workLocation, debugging);
                 System.out.println("The found average length of a character is: " + page.getSpaceDistance());
                 page.createTables(horizontalThresholdModifier, verticalThresholdModifier, allowedHeaderSize, allowedHeaderIterations);
-                LOGGER.info("------------------------------------------------------------------------------");
                 System.out.println("------------------------------------------------------------------------------");
             }
         }
@@ -152,6 +153,7 @@ public class Main {
         if (file.mkdir())
         {
             System.out.println("Directory = " + file.getAbsolutePath() + " was created.");
+            LOGGER.info("Directory = " + file.getAbsolutePath() + " was created.");
         } else
         {
             System.out.println("No directory was created.");
