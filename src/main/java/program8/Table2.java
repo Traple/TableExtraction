@@ -23,7 +23,6 @@ import java.util.logging.Logger;
  * of TEA 0.5. The developer apologizes for any inconvenience this may cause.
  */
 public class Table2 {
-
     public static Logger LOGGER = Logger.getLogger(Table2.class.getName());
     private final double verticalThresholdModifier;
     private final double horizontalThresholdModifier;
@@ -235,8 +234,8 @@ public class Table2 {
             //This is where the modifier can be placed for the 1,2,3 parameter as described in the version test:
             if(((x1<=lastX2)||y1>lastY2 || CommonMethods.calcDistance(lastY2, y1)>(averageLineDistance*verticalThresholdModifier))
                     &&spans.indexOf(span)!=0){
-                System.out.println(CommonMethods.calcDistance(lastY2, y1) + " "+ (averageLineDistance*verticalThresholdModifier));
-                System.out.println((y1>lastY2) +" "+ (x1<=lastX2));
+//                System.out.println(CommonMethods.calcDistance(lastY2, y1) + " "+ (averageLineDistance*verticalThresholdModifier));
+//                System.out.println((y1>lastY2) +" "+ (x1<=lastX2));
                 Line line = new Line(currentLine, charLengthThreshold, horizontalThresholdModifier);
                 System.out.println(line);
                 line.setLineNumber(lineNumber);
@@ -328,6 +327,7 @@ public class Table2 {
             data.remove(line);
         }
     }
+
     /**
     * This method removes the lines that have missing data and stores them in a separate variable.
     * These lines might contain valuable information about the content or could be a mistake by the OCR or separator.
@@ -689,7 +689,7 @@ public class Table2 {
 
             for(Column2 columnContent : dataInColumns){
                 org.w3c.dom.Element column = doc.createElement("column");
-                column.appendChild(doc.createTextNode(columnContent.toString()));
+                column.appendChild(doc.createTextNode(columnContent.toString().replace("�", "")));
                 columns.appendChild(column);
             }
 

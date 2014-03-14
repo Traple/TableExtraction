@@ -32,7 +32,7 @@ public class Main {
     public static Logger LOGGER = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, TransformerException, ParseException, InterruptedException {
-        System.out.println("Starting T.E.A. 0.8");
+        System.out.println("Starting T.E.A. 0.8 - Alpha version");
 
         System.setProperty("java.util.logging.config.file", "/program8/log.properties");
         LogManager logMan=LogManager.getLogManager();
@@ -46,6 +46,11 @@ public class Main {
         ArgumentProcessor arguments = new ArgumentProcessor(args);
         String workLocation = arguments.getWorkspace();
         System.out.println("The worklocation is: " + workLocation);
+        if(workLocation==null){
+            LOGGER.info("Workspace equals null. User didn't specify a workspace on the commandline. System shutting down.");
+            System.out.println("Workspace equals null. User didn't specify a workspace on the commandline. System shutting down.");
+            System.exit(1);
+        }
 
         //prepare the workspace so we have a separate place to store our output files.
         prepareWorkspace(workLocation, arguments.getDebugging());
@@ -68,8 +73,13 @@ public class Main {
         if(arguments.getContainsPDFFiles()){
             LOGGER.info("Entering PDF mode");
             ArrayList<String> PDFFiles = ImageMagick.findPDFs(workLocation);
+            if(PDFFiles.size()< 1){
+                LOGGER.info("There were no PDF files found in the given workspace. System shutting down.");
+                System.out.println("There were no PDF files found in the given workspace. System shutting down.");
+                System.exit(1);
+            }
             for(String ID : PDFFiles){
-                System.out.println("Path to Magic: " + pathToImageMagic);
+                System.out.println("Path to ImageMagick: " + pathToImageMagic);
                 System.out.println("ID: " + ID);
                 System.out.println("Worklocation: " + workLocation);
                 System.out.println("Resolution: " + resolution);

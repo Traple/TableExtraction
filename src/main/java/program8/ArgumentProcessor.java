@@ -2,7 +2,6 @@ package program8;
 
 
 import org.apache.commons.cli.*;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -43,25 +42,41 @@ public class ArgumentProcessor {
         Options options = new Options();
 
         Option help = new Option("H", "Help",false ,"This is the help file of TEA.");
-        Option optionPubmedIDs = new Option("PUB", "PubmedIDFile", true, "The file with the PubmedID's");        //Currently Disabled
+//        Option optionPubmedIDs = new Option("PUB", "PubmedIDFile", true, "The file with the PubmedID's");        //Currently Disabled
         Option optionWorkspace = new Option("W", "workspace", true, "The workspace for the program.");
         Option optionPDFFiles= new Option("PDF", "PDFFiles", false, "Instead of using a query or a PubmedID file, use the PDFs in the workspace.");
-        Option optionQuery= new Option("QUE", "Query", true, "Use a given query to search Pubmed and extract the articles.");       //Currently Disabled
+//        Option optionQuery= new Option("QUE", "Query", true, "Use a given query to search Pubmed and extract the articles.");       //Currently Disabled
         Option optionConfig = new Option("C", "Config", true, "Specify the path to the configuration file.");
         Option optionDebugging = new Option("D", "Debugging", false, "Enter debug mode to output additional files.");
         Option optionRotateTables = new Option("R", "RotateTables", false, "Rotate all pages to see if the tables are vertical");
 
         options.addOption(help);
-        options.addOption(optionPubmedIDs);
+//        options.addOption(optionPubmedIDs);
         options.addOption(optionWorkspace);
         options.addOption(optionPDFFiles);
-        options.addOption(optionQuery);
+//        options.addOption(optionQuery);
         options.addOption(optionConfig);
         options.addOption(optionDebugging);
         options.addOption(optionRotateTables);
 
-        CommandLine line = parser.parse(options, args);
-
+        CommandLine line = null;
+        try{
+            line = parser.parse(options, args);
+        }
+        catch(UnrecognizedOptionException e){
+            LOGGER.info("There was an option given by the user that isn't supported by TEA. The system is shutting down. This is the error it produced: " + e);
+            System.out.println("There was an option given by the user that isn't supported by TEA. System shutting down.");
+            System.exit(1);
+        }
+        catch(MissingArgumentException e){
+            LOGGER.info("One of the options given by the user did not contain any value. " +
+                    "The workspace option ( -W ) and the configuration file option ( -C ) need to contain a full path behind them. " +
+                    "System shutting down.");
+            System.out.println("One of the options given by the user did not contain any value. " +
+                    "The workspace option ( -W ) and the configuration file option ( -C ) need to contain a full path behind them. " +
+                    "System shutting down.");
+            System.exit(1);
+        }
         this.help = setHelp(line);
         this.pubmedIDs = setPubmedIDs(line);
         this.workspace = setWorkspace(line);
@@ -169,7 +184,7 @@ public class ArgumentProcessor {
      * @throws java.io.IOException if the location is invalid (such shame).
      */
     private void setPathToConfigFileValues(CommandLine line) throws IOException {
-        if(line.hasOption("C")){
+        if(line.hasOption("C")&&!line.getOptionValue("C").equals(null)){
             LOGGER.info("Configuration file detected.");
             pathToConfigFile = line.getOptionValue("C");
             Configuration config = new Configuration(pathToConfigFile);
@@ -182,7 +197,8 @@ public class ArgumentProcessor {
             allowedHeaderIterations = config.getAllowedHeaderIterations();
         }
         else{
-            LOGGER.warning("No configuration file detected! Working with default installation locations!");
+            LOGGER.warning("No configuration file detected or the path is incorrect! Working with default installation locations!");
+            System.out.println("No configuration file detected or the path is incorrect! Working with default installation locations!");
             pathToConfigFile = null;
             pathToImageMagick = "/usr/bin/convert";
             pathToTesseract = "/usr/bin/tesseract";

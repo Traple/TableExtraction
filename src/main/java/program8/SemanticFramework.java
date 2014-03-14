@@ -392,18 +392,22 @@ public class SemanticFramework {
         }
         int index = 0;
         for(int x : indexToBeRemoved){
-            if(identifiersConfidenceAlignment.get(x-index) > -500){
+            if(!identifiersConfidenceAlignment.isEmpty()&&!identifiersConfidenceColumnsSpanned.isEmpty()&&(identifiersConfidenceLineDistance.size()>x-index)
+                    &&identifiersConfidenceAlignment.get(x-index) > -500){
                 this.validatedRowSpanners.add(rowSpanners.get(x - index));
                 this.rowSpannersConfidenceAlignment.add(identifiersConfidenceAlignment.get(x - index));
                 this.rowSpannersConfidenceColumnsSpanned.add(identifiersConfidenceColumnsSpanned.get(x-index));
                 this.rowSpannersConfidenceLineDistance.add(identifiersConfidenceLineDistance.get(x - index));
 
             }
-            rowSpanners.remove(x-index);
-            identifiersConfidenceAlignment.remove(x-index);
-            identifiersConfidenceColumnsSpanned.remove(x - index);
-            identifiersConfidenceLineDistance.get(x - index);
-            index +=1;
+            else if(!rowSpanners.isEmpty()&&!identifiersConfidenceAlignment.isEmpty()&&!identifiersConfidenceColumnsSpanned.isEmpty()
+                    &&!identifiersConfidenceLineDistance.isEmpty()&&(identifiersConfidenceLineDistance.size()>x-index)){
+                rowSpanners.remove(x-index);
+                identifiersConfidenceAlignment.remove(x-index);
+                identifiersConfidenceColumnsSpanned.remove(x - index);
+                identifiersConfidenceLineDistance.get(x - index);
+                index +=1;
+            }
         }
     }
 

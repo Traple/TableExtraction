@@ -1,9 +1,10 @@
 package program8;
 import java.io.*;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Logger;
-
+import java.nio.file.Files;
 /**
  * This class calls one of the dependencies ImageMagick.
  * there are four parameters: Path to ImageMagick, the workspace, the ID of the pdf file and the resolution used by ImageMagick
@@ -29,8 +30,18 @@ public class ImageMagick {
      * @param resolution The resolution for ImageMagick to run with. Default = 600.
      */
     public ImageMagick(String path, String workspace, String ID, String resolution){
+//        File file = new File(path, "convert.exe");
+
+//            LOGGER.info("The path to ImageMagick is incorrect. " +
+//                    "Please make sure that ImageMagick is installed on the default Linux location or specify a new path in the configuration file. " +
+//                    "System Shutting down.");
+//            System.out.println("The path to ImageMagick is incorrect. " +
+//                    "Please make sure that ImageMagick is installed on the default Linux location or specify a new path in the configuration file. " +
+//                    "System Shutting down.");
+//            System.exit(1);
+
         this.workspace = workspace + "/";
-        String output = workspace+"/" + ID + ".png";
+        String output = workspace+"results/" + ID + ".png";
         String input = workspace +"/"+ ID + ".pdf";
         this.command = new String[] {path, "-density", resolution, "-units", "PixelsPerInch", input, output};
     }
@@ -96,6 +107,11 @@ public class ImageMagick {
     public static ArrayList<String> findPDFs(String workspace){
         ArrayList<String> PDFFiles = new ArrayList<String>();
         File dir = new File(workspace);
+        if (!dir.exists() || !dir.isDirectory()) {
+            LOGGER.info("The workspace directory is incorrect or is not a directory. System shutting down.");
+            System.out.println("The workspace directory is incorrect or is not a directory. System shutting down.");
+            System.exit(1);
+        }
         File[] files = dir.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
                 return name.toLowerCase().endsWith(".pdf");
