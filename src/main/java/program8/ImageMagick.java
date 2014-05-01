@@ -1,10 +1,8 @@
 package program8;
 import java.io.*;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Logger;
-import java.nio.file.Files;
 /**
  * This class calls one of the dependencies ImageMagick.
  * there are four parameters: Path to ImageMagick, the workspace, the ID of the pdf file and the resolution used by ImageMagick
@@ -30,18 +28,8 @@ public class ImageMagick {
      * @param resolution The resolution for ImageMagick to run with. Default = 600.
      */
     public ImageMagick(String path, String workspace, String ID, String resolution){
-//        File file = new File(path, "convert.exe");
-
-//            LOGGER.info("The path to ImageMagick is incorrect. " +
-//                    "Please make sure that ImageMagick is installed on the default Linux location or specify a new path in the configuration file. " +
-//                    "System Shutting down.");
-//            System.out.println("The path to ImageMagick is incorrect. " +
-//                    "Please make sure that ImageMagick is installed on the default Linux location or specify a new path in the configuration file. " +
-//                    "System Shutting down.");
-//            System.exit(1);
-
         this.workspace = workspace + "/";
-        String output = workspace+"results/" + ID + ".png";
+        String output = workspace +"/" + ID + ".png";
         String input = workspace +"/"+ ID + ".pdf";
         this.command = new String[] {path, "-density", resolution, "-units", "PixelsPerInch", input, output};
     }
@@ -49,10 +37,10 @@ public class ImageMagick {
     /**
      * this method was re-written in the conversion between TEA 0.4 and 0.5. This was required for supporting Linux.
      * The script runs the command on the commandline.
-     * @throws java.io.IOException
      */
-    public void createPNGFiles() throws IOException {
+    public void createPNGFiles() {
         System.out.println("Trying to run command: "+ Arrays.toString(command));
+        try{
         ProcessBuilder probuilder = new ProcessBuilder(command);
         probuilder.directory(new File(workspace));
 
@@ -74,6 +62,13 @@ public class ImageMagick {
             System.out.println("\n\nExit Value is " + exitValue);
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+        }
+        catch (IOException e){
+            System.out.println("Failed to run ImageMagick. Is the path to convert.exe correct? " +
+                    "\\n If not change the parameter file.");
+            System.out.println("TEA shutting down.");
+            System.exit(1);
         }
 
     }

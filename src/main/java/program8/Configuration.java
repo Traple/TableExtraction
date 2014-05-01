@@ -6,12 +6,14 @@ import java.util.logging.Logger;
 
 //The configuration class provides methods that process the configuration file.
 public class Configuration {
+
     private String pathToImageMagick;
     private String pathToTesseract;
     private String pathToTesseractConfigFile;
     private int allowedHeaderIterations;
     private double horizontalThresholdModifier;
     private double verticalThresholdModifier;
+    private double imageMagickResolution;
     private int allowedHeaderSize;
     public static Logger LOGGER = Logger.getLogger(Configuration.class.getName());
 
@@ -55,6 +57,7 @@ public class Configuration {
             System.exit(1);
         }
         try{
+            this.imageMagickResolution = Double.parseDouble(reader.readLine());
             this.horizontalThresholdModifier = Double.parseDouble(reader.readLine());
             this.verticalThresholdModifier = Double.parseDouble(reader.readLine());
             this.allowedHeaderSize = Integer.parseInt(reader.readLine());
@@ -94,6 +97,10 @@ public class Configuration {
     }
     public int getAllowedHeaderIterations(){
         return allowedHeaderIterations;
+    }
+
+    public double getImageMagickResolution() {
+        return imageMagickResolution;
     }
 }
 

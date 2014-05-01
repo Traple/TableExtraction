@@ -15,19 +15,18 @@ import java.util.logging.Logger;
 /**
  * Welcome to the code of T.E.A. 0.8.
  * @version 0.8
- * T.E.A. was made by Sander van Boom at the Birkbeck University in London. This was done with the help of Jan Czarnecki and Adrian Shepherd.
+ * T.E.A. was made by Sander van Boom at the Birkbeck, University of London. This was done with the help of Jan Czarnecki and Dr. Adrian Shepherd.
  * @author Sander van Boom
  * Development started at the 9th of September.
  * The current state of the software is Alpha Test.
  *
  * What the code does:
- * You put some Pubmed ID's in your T.E.A. and T.E.A. extracts the PDF and uses ImageMagick (PDF -> bitmap converter) and
- * Tesseract (OCR software) to create an HTML of the words.
- * The rest of the code extracts the table and stores it in an XML file.
+ * TODO: Explain what the code does
+ *
+ * See also:
+ * The readme file and the example data provided in the directory. This can help you to get started.
  */
 public class Main {
-
-    //TODO: Change the location where the log file is saved.
     //TODO: Evaluate the Logger and improve accordingly.
     public static Logger LOGGER = Logger.getLogger(Main.class.getName());
 
@@ -62,7 +61,8 @@ public class Main {
         System.out.println("And the path to Tesseract is: " + pathToTesseract);
         String pathToTesseractConfig = arguments.getPathToTesseractConfigFile();
         System.out.println("Which uses the following configuration file: " + pathToTesseractConfig);
-        String resolution = "600";
+//        String resolution = "600";
+        String resolution = arguments.getImageMagickResolution() + "";
         double horizontalThresholdModifier = arguments.getHorizontalThresholdModifier();
         double verticalThresholdModifier = arguments.getVerticalThresholdModifier();
         int allowedHeaderSize = arguments.getAllowedHeaderSize();
@@ -86,7 +86,6 @@ public class Main {
                 System.out.println("Debugging: " + debugging);
                 LOGGER.info("Currently Processing: " + ID);
                 secondMain(pathToImageMagic, workLocation, ID, resolution, pathToTesseract, pathToTesseractConfig, verticalThresholdModifier, horizontalThresholdModifier, debugging, rotating, allowedHeaderSize, allowedHeaderIterations);
-
             }
         }
         LOGGER.info("T.E.A. is now entering sleep mode...");
@@ -108,7 +107,7 @@ public class Main {
      */
     private static void secondMain(String pathToImageMagic, String workLocation, String ID, String resolution, String pathToTesseract, String pathToTesseractConfig, double verticalThresholdModifier, double horizontalThresholdModifier, boolean debugging, boolean rotating, int allowedHeaderSize, int allowedHeaderIterations) throws IOException {
         try{
-            ImageMagick imagemagick = new ImageMagick(pathToImageMagic,workLocation, ID ,resolution);
+       /*     ImageMagick imagemagick = new ImageMagick(pathToImageMagic,workLocation, ID ,resolution);
             imagemagick.createPNGFiles();
 
             ArrayList<File> pngs = ImageMagick.findPNGFilesInWorkingDirectory(workLocation, ID);
@@ -135,7 +134,7 @@ public class Main {
                     Tesseract tesseract = new Tesseract(pathToTesseract, file, workLocation, pathToTesseractConfig);
                     tesseract.runTesseract();
                 }
-            }
+            }*/
             System.out.println("find HTML files: ");
             ArrayList<File> HTMLFiles = Tesseract.findHTMLFilesInWorkingDirectory(workLocation, ID);
             for(File file : HTMLFiles){

@@ -30,12 +30,6 @@ public class Column2 {
         this.AVGCharDistance = AVGCharDistance;
         this.data = data;
         this.wrongCells = new ArrayList<ArrayList<Element>>();
-
-//        System.out.println("~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-");
-//        for(ArrayList<Element> cell : cells){
-//            System.out.println(cell.get(0));
-//        }
-
         findColumnBoundaries();
         findMostFrequentX1Boundary();
     }
@@ -309,13 +303,25 @@ public class Column2 {
         return boundaryMap;
     }
 
-    @SuppressWarnings("UnusedDeclaration")              //We want to offer these methods for future use.
     public int getColumnBoundaryX1(){
         return columnBoundaryX1;
     }
-    @SuppressWarnings("UnusedDeclaration")              //We want to offer these methods for future use.
     public int getColumnBoundaryX2(){
         return columnBoundaryX2;
+    }
+    public int getColumnBoundaryY2(){
+        int columnBoundaryY2 = Integer.MIN_VALUE;
+        for(ArrayList<Element> cell : cells){
+            for(Element word : cell){
+                String pos = word.attr("title");
+                String[] positions = pos.split("\\s+");
+                int y2 = Integer.parseInt(positions[4]);
+                if(y2 > columnBoundaryY2){
+                    columnBoundaryY2 = y2;
+                }
+            }
+        }
+        return columnBoundaryY2;
     }
     @SuppressWarnings("UnusedDeclaration")              //We want to offer these methods for future use.
     public int getNumberOfCells(){

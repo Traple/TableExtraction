@@ -3,6 +3,7 @@ package program8;
 import org.jsoup.nodes.Element;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 //This class is mainly used for storing the information about the cells. This makes it easier to represent cells directly form a list
 //because the toString method for each cell will be called as well.
@@ -33,6 +34,13 @@ public class Cell {
         this.content = newContent;
         this.spans = content;
         calculatePositions();
+    }
+
+    /**
+     * This constructor creates an empty cell.
+     */
+    public Cell(){
+        this.content = new ArrayList<String>(Arrays.asList(""));
     }
 
     /**
@@ -118,9 +126,9 @@ public class Cell {
     public String toString(){
         String cell = "";
         for(String word : content){
-            cell = cell + word + ": " + additionScore + "||";
+            cell = cell + word ;                                     //+ ": " + additionScore + "||"
         }
 
-        return cell.substring(0,cell.length()-1);
+        return cell.substring(0);                  //                        ,cell.length()-1
     }
 }

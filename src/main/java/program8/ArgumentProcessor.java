@@ -29,6 +29,7 @@ public class ArgumentProcessor {
     private boolean rotateTables;
     private int allowedHeaderSize;
     private int allowedHeaderIterations;
+    private double imageMagickResolution;
 
     /**
      * The constructor of this class creates a commandline with the correct options (as was given by the user) and sets
@@ -43,7 +44,7 @@ public class ArgumentProcessor {
 
         Option help = new Option("H", "Help",false ,"This is the help file of TEA.");
 //        Option optionPubmedIDs = new Option("PUB", "PubmedIDFile", true, "The file with the PubmedID's");        //Currently Disabled
-        Option optionWorkspace = new Option("W", "workspace", true, "The workspace for the program.");
+        Option optionWorkspace = new Option("W", "workspace", true, "The workspace of the program.");
         Option optionPDFFiles= new Option("PDF", "PDFFiles", false, "Instead of using a query or a PubmedID file, use the PDFs in the workspace.");
 //        Option optionQuery= new Option("QUE", "Query", true, "Use a given query to search Pubmed and extract the articles.");       //Currently Disabled
         Option optionConfig = new Option("C", "Config", true, "Specify the path to the configuration file.");
@@ -100,9 +101,11 @@ public class ArgumentProcessor {
             System.out.println("The following arguments are available: ");
             System.out.println("-H : Well you just pressed it. Happy?");
             System.out.println("-W [pathToWorkspace] : Define the path to the workspace");
-            System.out.println("-PDF : Tells TEA that there are PDF files in the workspace. True by default.");
             System.out.println("-C [pathToConfigurationFile] : Define the path to the configuration file");
             System.out.println("-D : Tells the program it needs to go in debugging mode and output additional output files.");
+            System.out.println("-PDF : Tells TEA that there are PDF files in the workspace. True by default.");
+            System.out.println("Please not that the TEA packages also comes with TEA Link which can be used to link similar tables and their headers with each other.");
+            System.out.println("For more information on TEA Link check the README file.");
             System.exit(0);
         }
         return(line.hasOption("H"));
@@ -191,6 +194,7 @@ public class ArgumentProcessor {
             pathToImageMagick = config.getPathToImageMagick();
             pathToTesseract = config.getPathToTesseract();
             pathToTesseractConfigFile = config.getPathToTesseractConfigFile();
+            imageMagickResolution = config.getImageMagickResolution();
             verticalThresholdModifier = config.getVerticalThresholdModifier();
             horizontalThresholdModifier = config.getHorizontalThresholdModifier();
             allowedHeaderSize = config.getAllowedHeaderSize();
@@ -281,5 +285,9 @@ public class ArgumentProcessor {
     }
     public boolean getRotateTables() {
         return rotateTables;
+    }
+
+    public double getImageMagickResolution() {
+        return imageMagickResolution;
     }
 }

@@ -3,8 +3,6 @@ package program8;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-//TODO: Possible create a fix for the first column having incomplete lines (with fix being incomplete validation).
-
 /**
  * This class stores validation variables and contains methods to calculate the significance of these variables
  * as well as getters and setters for each variable.

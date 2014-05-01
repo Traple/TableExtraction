@@ -17,6 +17,8 @@ public class Line {
     private double averageY1;
     private double averageY2;
     private int lineNumber;
+    private int lowestY1;
+    private int highestY2;
 
     /**
      * This is the constructor of the Line class.
@@ -40,6 +42,34 @@ public class Line {
         positions = pos.split("\\s+");
         this.Y1OfLastWord = Integer.parseInt(positions[2]);
         setAverageY1andY2();
+        setLowestY1();
+        setHighestY2();
+    }
+
+    private void setLowestY1() {
+        int lowestY1 = Integer.MAX_VALUE;
+        for(Element word : words){
+            String pos = word.attr("title");
+            String[] positions = pos.split("\\s+");
+            int y1 = Integer.parseInt(positions[2]);
+            if(y1 < lowestY1){
+                lowestY1 = y1;
+            }
+        }
+        this.lowestY1 = lowestY1;
+    }
+
+    private void setHighestY2() {
+        int highestY2 = Integer.MIN_VALUE;
+        for(Element word : words){
+            String pos = word.attr("title");
+            String[] positions = pos.split("\\s+");
+            int y2 = Integer.parseInt(positions[4]);
+            if(y2 > highestY2){
+                highestY2 = y2;
+            }
+        }
+        this.highestY2 = highestY2;
     }
 
     /**
@@ -204,6 +234,28 @@ public class Line {
         return new Cell(wordsAsList,lineNumber);
     }
 
+    public int getFirstX1(){
+        String pos;
+        String[] positions;
+        int firstX1;
+        Element word = words.get(0);
+        pos = word.attr("title");
+        positions = pos.split("\\s+");
+        firstX1 = Integer.parseInt(positions[1]);
+        return firstX1;
+    }
+
+    public int getLastX2(){
+        String pos;
+        String[] positions;
+        int firstX1;
+        Element word = words.get(words.size()-1);
+        pos = word.attr("title");
+        positions = pos.split("\\s+");
+        firstX1 = Integer.parseInt(positions[3]);
+        return firstX1;
+    }
+
     /**
      * This is the toString method for the Line class.
      * The method returns the content of the line by looping trough each word(.text()) and adding that to the content.
@@ -215,5 +267,13 @@ public class Line {
             line = line + word.text() + " ";
         }
         return line;
+    }
+
+    public int getLowestY1() {
+        return lowestY1;
+    }
+
+    public int getHighestY2() {
+        return highestY2;
     }
 }

@@ -351,6 +351,7 @@ public class SemanticFramework {
         }
     }
 
+    //TODO: Fix the duplication of subheader / rowspans. There can be only one!
     /**
      * This method uses the validation scores to determine if single partition lines are rowspanners or subheaders.
      * It does this by looking at the three parameters found earlier.
@@ -371,14 +372,12 @@ public class SemanticFramework {
                 identifiersConfidenceLineDistance.add(-10.0);
                 break;
             }
-            //According to 53-5, if there is a figure then these scores may get corrupted.
             else if((!headers.isEmpty())&&!(identifiersConfidenceAlignment.size()-1<x)&&!(identifiersConfidenceColumnsSpanned.size()-1<x)
                     &&!(identifiersConfidenceLineDistance.size()-1<x)
                     &&identifiersConfidenceAlignment.get(x)<=0
                     &&identifiersConfidenceColumnsSpanned.get(x)<3
                     &&identifiersConfidenceLineDistance.get(x)<1.5
                     &&rowSpanners.get(x).getAverageY1()>headers.get(headers.size()-1).getAverageY2()){
-                System.out.println("Identifier! " + rowSpanners.get(x));
                 indexToBeRemoved.add(x);
             }
             else if((headers.isEmpty()||(identifiersConfidenceAlignment.size()-1<x)
@@ -386,19 +385,17 @@ public class SemanticFramework {
                     ||(identifiersConfidenceAlignment.get(x)<=0
                     &&identifiersConfidenceColumnsSpanned.get(x)<3
                     &&identifiersConfidenceLineDistance.get(x)<1.5)){
-                System.out.println("Identifier! " + rowSpanners.get(x));
                 indexToBeRemoved.add(x);
             }
         }
         int index = 0;
         for(int x : indexToBeRemoved){
-            if(!identifiersConfidenceAlignment.isEmpty()&&!identifiersConfidenceColumnsSpanned.isEmpty()&&(identifiersConfidenceLineDistance.size()>x-index)
-                    &&identifiersConfidenceAlignment.get(x-index) > -500){
+            if(!identifiersConfidenceAlignment.isEmpty()&&!identifiersConfidenceColumnsSpanned.isEmpty()
+                    &&(identifiersConfidenceLineDistance.size()>x-index)&&identifiersConfidenceAlignment.get(x-index) > -500){
                 this.validatedRowSpanners.add(rowSpanners.get(x - index));
                 this.rowSpannersConfidenceAlignment.add(identifiersConfidenceAlignment.get(x - index));
                 this.rowSpannersConfidenceColumnsSpanned.add(identifiersConfidenceColumnsSpanned.get(x-index));
                 this.rowSpannersConfidenceLineDistance.add(identifiersConfidenceLineDistance.get(x - index));
-
             }
             else if(!rowSpanners.isEmpty()&&!identifiersConfidenceAlignment.isEmpty()&&!identifiersConfidenceColumnsSpanned.isEmpty()
                     &&!identifiersConfidenceLineDistance.isEmpty()&&(identifiersConfidenceLineDistance.size()>x-index)){

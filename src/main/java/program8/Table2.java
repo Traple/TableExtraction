@@ -39,6 +39,10 @@ public class Table2 {
     private ArrayList<Line> rowSpanners;
     private Validation validation;
     private ArrayList<ArrayList<Element>> missPlacedCells;
+    private int minY1;
+    private int minX1;
+    private int maxX2;
+    private int maxY2;
 
     /**
      * This is the constructor of the table class. It takes it's parameters and sets them as local variables.
@@ -146,6 +150,8 @@ public class Table2 {
             System.out.println();
             fillBlankCells();
             System.out.println(semanticFramework);
+            System.out.println("Calculating final table statistics.");
+            setTableBoundaries(semanticFramework);
             System.out.println("Now writing to file.");
             write2((workspace), file, tableID, semanticFramework);         //write: getXMLContent(file, tableID, semanticFramework.getXML()),
             if(debugging){
@@ -230,14 +236,11 @@ public class Table2 {
             int x2 = Integer.parseInt(positions[3]);
             int y2 = Integer.parseInt(positions[4]);
 
-            //TODO: Calculate the default values and put them as a resource in the parameter files.
             //This is where the modifier can be placed for the 1,2,3 parameter as described in the version test:
             if(((x1<=lastX2)||y1>lastY2 || CommonMethods.calcDistance(lastY2, y1)>(averageLineDistance*verticalThresholdModifier))
                     &&spans.indexOf(span)!=0){
-//                System.out.println(CommonMethods.calcDistance(lastY2, y1) + " "+ (averageLineDistance*verticalThresholdModifier));
-//                System.out.println((y1>lastY2) +" "+ (x1<=lastX2));
                 Line line = new Line(currentLine, charLengthThreshold, horizontalThresholdModifier);
-                System.out.println(line);
+//                System.out.println(line);
                 line.setLineNumber(lineNumber);
                 table.add(line);
                 currentLine = new Elements();
@@ -267,12 +270,12 @@ public class Table2 {
         Line doubleBreakingLine = null;
         ArrayList<Line> rowSpanners = new ArrayList<Line>();
         boolean breaking = false;
-        System.out.println("---------------------------------------------------------");
+//        System.out.println("---------------------------------------------------------");
         for(Line line : table){
             ArrayList<ArrayList<Element>> clusters = line.getClusters();
             int size = clusters.size();
 
-            System.out.println(size + " " + line);
+//            System.out.println(size + " " + line);
 
             if(size <1 && foundData && breakingLine != null && doubleBreakingLine != null){
                 break;               //then we have reached the end of the table.
@@ -304,7 +307,7 @@ public class Table2 {
             }
 
         }
-        System.out.println("breaking line: " + breakingLine);
+//        System.out.println("breaking line: " + breakingLine);
         this.titleAndHeaders = titleAndHeaders;
         this.data = data;
         this.rowSpanners = rowSpanners;
@@ -385,10 +388,10 @@ public class Table2 {
             }
             this.linesWithMissingData = linesWithMissingData;
             this.data = dataWithoutMissingLines;
-            System.out.println("Lines without missing data: ");
-            for (Line line :  data){
-                System.out.println(line);
-            }
+//            System.out.println("Lines without missing data: ");
+//            for (Line line :  data){
+//                System.out.println(line);
+//            }
         }
     }
 
@@ -407,9 +410,9 @@ public class Table2 {
                 highestAmountOfClusters = line.getClusterSize();
             }
         }
-        for(Line line : data){
-            System.out.println(line.getClusterSize());
-        }
+//        for(Line line : data){
+//            System.out.println(line.getClusterSize());
+//        }
         for(Line line : data){
             for(ArrayList<Element>cluster : line.getClusters()){
                 if(columnMap.containsKey(counterForColumns)){
@@ -471,7 +474,7 @@ public class Table2 {
                     column.addCell(cluster);
                 }
                 else if(column.touchesColumn(Line.getClusterX1(cluster), Line.getClusterX2(cluster))){
-                    System.out.println("CLUSTER: " + cluster + " touches: " + column);
+//                    System.out.println("CLUSTER: " + cluster + " touches: " + column);
                     column.addCell(cluster);
                 }
             }
@@ -510,7 +513,7 @@ public class Table2 {
                         cellsWithMissingDataAdded.add(cell);
                     }
                     else if(column.touchesColumn(Line.getClusterX1(cluster), Line.getClusterX2(cluster))){
-                        System.out.println("CLUSTER: " + cluster + " touches: " + column);
+//                        System.out.println("CLUSTER: " + cluster + " touches: " + column);
                         newDataInColumns.remove(column);
                         column.addCell(cluster);
                         newDataInColumns.add(column);
@@ -608,7 +611,7 @@ public class Table2 {
                         newElement.text(" ");
                         ArrayList<Element> newCell = new ArrayList<Element>();
                         newCell.add(newElement);
-                        System.out.println("adding: " +newElement.text());
+//                        System.out.println("adding: " +newElement.text());
                         column.addCell(newCell);
                         break COLUMNLOOP;
                     }
@@ -616,6 +619,164 @@ public class Table2 {
             }
         }
     }
+
+    /**
+     * This method calculates the X1, X2, Y1 and Y2 values of the table.
+     */
+    private void setTableBoundaries(SemanticFramework semanticFramework){
+        this.minY1 = semanticFramework.getTitle().get(0).getLowestY1();
+
+        int maxY2 = Integer.MIN_VALUE;
+        int y2 = 0;
+        for(Column2 column : dataInColumns){
+            y2 = column.getColumnBoundaryY2();
+            if(y2 > maxY2 ){
+                maxY2 = y2;
+            }
+        }
+        this.maxY2 = y2;
+        this.minX1 = dataInColumns.get(0).getColumnBoundaryX1();
+        this.maxX2 = dataInColumns.get(dataInColumns.size()-1).getColumnBoundaryX2();
+    }
+
+    //This method will try to recreate the original lines of the table using all the previous information about the table.
+    private ArrayList<ArrayList<Cell>> recreateTableLines(SemanticFramework semanticFramework){
+        ArrayList<ArrayList<Cell>> table = new ArrayList<ArrayList<Cell>>();
+        for(Column2 column : dataInColumns){
+            ArrayList<Cell> cells = column.getCellObjects();
+            table.add(cells);
+        }
+        int maxLength = Integer.MIN_VALUE;
+        for(ArrayList<Cell> column : table){
+            int length = column.size();
+            if(length > maxLength){
+                maxLength = length;
+            }
+        }
+        ArrayList<ArrayList<Cell>> newTable = new ArrayList<ArrayList<Cell>>();
+        ArrayList<Column2> incompleteRowColumns = new ArrayList<Column2>();
+        ArrayList<Cell> col = new ArrayList<Cell>();
+
+        int counter = 0;
+        while(counter < maxLength){
+            ArrayList<Cell> line = new ArrayList<Cell>();
+            newTable.add(line);
+            counter++;
+        }
+
+        for(Column2 column : dataInColumns){
+            if(column.getCellObjects().size()==maxLength){
+                col = column.getCellObjects();
+                for(ArrayList<Cell> line : newTable){
+                    if(line.size()>= dataInColumns.indexOf(column)){
+                        line.add(dataInColumns.indexOf(column),col.get(newTable.indexOf(line)));
+                    }
+                    else{
+                        line.add(col.get(newTable.indexOf(line)));
+                    }
+                }
+            }
+            else{
+                incompleteRowColumns.add(column);         //gonna be mapped
+            }
+        }
+        for(Column2 column : incompleteRowColumns){
+            ArrayList<Cell> cells = column.getCellObjects();
+            for(Cell cellOfNewColumn : cells){
+                System.out.println(cellOfNewColumn);
+                boolean breaking = false;
+                Cells:
+                for(ArrayList<Cell> line : newTable){
+                    for(Cell cell : line){
+                        if(cell.getY1() >= cellOfNewColumn.getY2()){        //||(CommonMethods.calcDistance(cell.getY2(), cellOfNewColumn.getY1())>(averageLineDistance*verticalThresholdModifier))&&line.indexOf(cellOfNewColumn)!=0)
+                            System.out.println(newTable.indexOf(line) + " " + cell + " " + cellOfNewColumn + " " + newTable.size() + " " + dataInColumns.indexOf(column) + " " + line.size());
+                            if(newTable.indexOf(line)!=0){
+                                System.out.println(newTable.get(newTable.indexOf(line)-1).size()+" " +dataInColumns.indexOf(column));
+                                if(newTable.get(newTable.indexOf(line)-1).size() >= dataInColumns.indexOf(column)){
+                                    newTable.get(newTable.indexOf(line)-1).add(dataInColumns.indexOf(column),cellOfNewColumn);
+                                    breaking = true;
+                                    break Cells;
+                                }
+                                else{
+                                    newTable.get(newTable.indexOf(line)-1).add(cellOfNewColumn);
+                                    breaking = true;
+                                    break Cells;
+                                }
+                            }
+                            else{
+                                newTable.add(0, new ArrayList<Cell>());
+                                newTable.get(0).add(cellOfNewColumn);
+                                breaking = true;
+                                break Cells;
+                            }
+                        }
+                    }
+
+                }
+                if(!breaking){
+                    System.out.println("wasn't breaking. Now it is!");
+                    System.out.println(newTable.size() + " " + dataInColumns.indexOf(column) + " " + newTable.get(newTable.size()-1).size());
+                    System.out.println(dataInColumns.indexOf(column) + " "+ (newTable.size()-1));
+                    if(dataInColumns.indexOf(column)<=newTable.get(newTable.size()-1).size()-1){
+                        newTable.get(newTable.size()-1).add(dataInColumns.indexOf(column),cellOfNewColumn);
+                        breaking = true;
+                    }
+                    else{
+                        newTable.get(newTable.size()-1).add(cellOfNewColumn);
+                        breaking = true;
+                    }
+                }
+            }
+        }
+
+        //TODO: Implement missing data by looking at the touchcolumn of the rowspan and add all the columns from data in columns as empty cells.
+        double totalY2 = 0;
+        double averageY2;
+        for(Line rowSpanner : semanticFramework.getValidatedRowSpanners()){
+            for(ArrayList<Cell> line : newTable){
+                for(Cell cell : line){
+                    totalY2 = totalY2 + cell.getY2();
+                }
+                averageY2 = totalY2 / line.size();
+                if(rowSpanner.getAverageY1() < averageY2){
+                        newTable.add(newTable.indexOf(line), new ArrayList<Cell>());
+                        newTable.get(newTable.indexOf(line)-1).add(rowSpanner.getCellObject());
+                        break;
+                }
+            }
+        }
+
+        for(Line subHeader : semanticFramework.getRowSpanners()){
+            for(ArrayList<Cell> line : newTable){
+                for(Cell cell : line){
+                    totalY2 = totalY2 + cell.getY2();
+                }
+                int firstMappedColumn = 0;
+                averageY2 = totalY2 / line.size();
+                if(subHeader.getAverageY1() < averageY2){
+                    newTable.add(newTable.indexOf(line), new ArrayList<Cell>());
+                    for(Column2 column : dataInColumns){
+                        newTable.get(newTable.indexOf(line)-1).add(new Cell());
+                        if(column.touchesColumn(subHeader.getFirstX1(), subHeader.getLastX2())){
+                            firstMappedColumn = dataInColumns.indexOf(column);
+                        }
+                    }
+                    newTable.get(newTable.indexOf(line)-1).set(firstMappedColumn,subHeader.getCellObject());
+                    break;
+                }
+            }
+
+        }
+
+        System.out.println("NEWTABLE:");
+        System.out.println(newTable);
+        return newTable;
+    }
+
+    /*
+    ( y1>lastY2 || CommonMethods.calcDistance(lastY2, y1)>(averageLineDistance*verticalThresholdModifier))
+                    &&spans.indexOf(span)!=0
+     */
 
     /**
      * This method writes the collected debugContent to a debug file.
@@ -677,6 +838,20 @@ public class Table2 {
             org.w3c.dom.Element results = doc.createElement("results");
             rootElement.appendChild(results);
 
+            org.w3c.dom.Element minX1 = doc.createElement("TableBoundaryX1");
+            minX1.appendChild(doc.createTextNode(this.minX1+""));
+            results.appendChild(minX1);
+            org.w3c.dom.Element maxX2 = doc.createElement("TableBoundaryX2");
+            maxX2.appendChild(doc.createTextNode(this.maxX2+""));
+            results.appendChild(maxX2);
+            org.w3c.dom.Element minY1 = doc.createElement("TableBoundaryY1");
+            minY1.appendChild(doc.createTextNode(this.minY1 + ""));
+            results.appendChild(minY1);
+            org.w3c.dom.Element maxY2 = doc.createElement("TableBoundaryY2");
+            maxY2.appendChild(doc.createTextNode(this.maxY2 + ""));
+            results.appendChild(maxY2);
+
+
             org.w3c.dom.Element title1 = doc.createElement("title1");
             title1.appendChild(doc.createTextNode(name));
             results.appendChild(title1);
@@ -693,6 +868,30 @@ public class Table2 {
                 columns.appendChild(column);
             }
 
+            org.w3c.dom.Element lines = doc.createElement("lines");
+            results.appendChild(lines);
+
+            ArrayList<ArrayList<Cell>> table = recreateTableLines(semanticFramework);
+
+            for(ArrayList<Cell> line : table){
+                org.w3c.dom.Element XMLLine = doc.createElement("line");
+                XMLLine.appendChild(doc.createTextNode(line.toString().replace("�", "")));
+                lines.appendChild(XMLLine);
+            }
+
+            /*System.out.println("table:" + table);
+
+            for(Line line : data){
+                if(line.getHighestY2()<=this.maxY2&&line.getLowestY1()>=this.minY1&&line.getClusterSize()>1){
+                    org.w3c.dom.Element XMLLine = doc.createElement("line");
+                    XMLLine.appendChild(doc.createTextNode(line.toString().replace("�", "")));
+                    lines.appendChild(XMLLine);
+                }
+                else{
+                    System.out.println("NO GOOD: " + line);
+                }
+            }
+*/
             if(rowSpanners.size() > 0){
                 org.w3c.dom.Element rowSpanners = doc.createElement("rowSpanners");
                 results.appendChild(rowSpanners);

@@ -1,6 +1,7 @@
 "C:\Program Files (x86)\ImageMagick-6.8.7-Q16\convert.exe"
 "C:\Program Files (x86)\Tesseract-OCR\tesseract.exe"
 "C:\Users\Sander van Boom\IdeaProjects\TableExtraction\src\main\resources\program6\configTesseract.txt"
+600
 2
 1.2
 4
