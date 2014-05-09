@@ -26,6 +26,7 @@ public class Table2 {
     public static Logger LOGGER = Logger.getLogger(Table2.class.getName());
     private final double verticalThresholdModifier;
     private final double horizontalThresholdModifier;
+    private final int pageNumber;
     private int maxY1;
     private Elements spans;
     private String name;
@@ -61,7 +62,7 @@ public class Table2 {
      * @param allowedHeaderSize The amount of headers supported by the program. Implemented as a last cut-off if thresholding fails.
      * @throws IOException When one of the files cant be found
      */
-    public Table2(Elements spans, double charLengthThreshold, File file, String workspace, int tableID, double verticalThresholdModifier,
+    public Table2(Elements spans, double charLengthThreshold, File file, int pageNumber, String workspace, int tableID, double verticalThresholdModifier,
                   double horizontalThresholdModifier, double averageLineDistance, boolean debugging, int allowedHeaderSize, int allowedHeaderIterations)
             throws IOException {
         String debugContent = "";
@@ -73,6 +74,7 @@ public class Table2 {
         this.verticalThresholdModifier = verticalThresholdModifier;
         this.validation = new Validation();
         this.validation.setAverageDistanceBetweenRows(averageLineDistance);
+        this.pageNumber = pageNumber;
 
         if(spans.size() > 0){
             setMaxY1();
@@ -823,10 +825,13 @@ public class Table2 {
             org.w3c.dom.Element fromFile = doc.createElement("fromFile");
             fromFile.appendChild(doc.createTextNode(file.getName()));
             provenance.appendChild(fromFile);
-
             org.w3c.dom.Element fromPath = doc.createElement("fromPath");
             fromPath.appendChild(doc.createTextNode(file.getAbsolutePath()));
             provenance.appendChild(fromPath);
+            org.w3c.dom.Element fromPage = doc.createElement("fromPage");
+            fromPage.appendChild(doc.createTextNode(Integer.toString(pageNumber)));
+            provenance.appendChild(fromPage);
+
             org.w3c.dom.Element horizontalThresholdModifier = doc.createElement("horizontalThresholdModifier");
             horizontalThresholdModifier.appendChild(doc.createTextNode(this.horizontalThresholdModifier + ""));
             provenance.appendChild(horizontalThresholdModifier);

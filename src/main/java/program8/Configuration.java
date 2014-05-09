@@ -3,7 +3,6 @@ package program8;
 import java.io.*;
 import java.util.logging.Logger;
 
-
 //The configuration class provides methods that process the configuration file.
 public class Configuration {
 
@@ -57,11 +56,22 @@ public class Configuration {
             System.exit(1);
         }
         try{
-            this.imageMagickResolution = Double.parseDouble(reader.readLine());
-            this.horizontalThresholdModifier = Double.parseDouble(reader.readLine());
-            this.verticalThresholdModifier = Double.parseDouble(reader.readLine());
-            this.allowedHeaderSize = Integer.parseInt(reader.readLine());
-            this.allowedHeaderIterations = Integer.parseInt(reader.readLine());
+
+            String line = reader.readLine();
+            System.out.println(line);
+            this.imageMagickResolution = Double.parseDouble(line);
+            line = reader.readLine();
+            System.out.println(line);
+            this.horizontalThresholdModifier = Double.parseDouble(line);
+            line = reader.readLine();
+            System.out.println(line);
+            this.verticalThresholdModifier = Double.parseDouble(line);
+            line = reader.readLine();
+            System.out.println(line);
+            this.allowedHeaderSize = Integer.parseInt(line);
+            line = reader.readLine();
+            System.out.println(line);
+            this.allowedHeaderIterations = Integer.parseInt(line);
         }
         catch(NullPointerException e){
             LOGGER.info("One of the parameters in the configuration file does not contain an appropriate value. System shutting down.");

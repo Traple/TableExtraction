@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 public class Page {
 
     private final boolean debugging;
+    private final int pageNumber;
     private Elements spans;
     private String workLocation;
     private File file;
@@ -32,9 +33,10 @@ public class Page {
      * @param debugging if the program is in debugging mode.
      * @throws java.io.IOException
      */
-    public Page(File file, String workLocation, boolean debugging) throws IOException {
+    public Page(File file, int pageNumber, String workLocation, boolean debugging) throws IOException {
         Document doc = Jsoup.parse(file, "UTF-8", "http://example.com/");
 
+        this.pageNumber = pageNumber;
         this.spans = doc.select("span.ocrx_word");
         this.workLocation = workLocation;
         this.file = file;
@@ -64,7 +66,7 @@ public class Page {
             word = span.text();
             try {
                 if(word.substring(0, 5).equals("TABLE") || word.substring(0, 5).equals("table") || word.substring(0, 5).equals("Table")&&foundATable){
-                    foundTables.add(new Table2(tableSpans, spaceDistance, file, workLocation, tableID, verticalThresholdModifier, horizontalThresholdModifier, lineDistance, debugging, allowedHeaderSize, allowedHeaderIterations)); //make a new table from the collected spans
+                    foundTables.add(new Table2(tableSpans, spaceDistance, file, pageNumber, workLocation, tableID, verticalThresholdModifier, horizontalThresholdModifier, lineDistance, debugging, allowedHeaderSize, allowedHeaderIterations)); //make a new table from the collected spans
                     tableSpans = new Elements();                                                    //reset the spans for the new Table2
                     tableSpans.add(span);
                 }
@@ -83,7 +85,7 @@ public class Page {
             tableID++;
         }
         if (foundATable) {
-            foundTables.add(new Table2(tableSpans, spaceDistance, file, workLocation, tableID, verticalThresholdModifier, horizontalThresholdModifier, lineDistance, debugging, allowedHeaderSize, allowedHeaderIterations));
+            foundTables.add(new Table2(tableSpans, spaceDistance, file, pageNumber, workLocation, tableID, verticalThresholdModifier, horizontalThresholdModifier, lineDistance, debugging, allowedHeaderSize, allowedHeaderIterations));
         }
         if(!foundATable){
             LOGGER.info("There was no table found. ");

@@ -31,6 +31,7 @@ public class Main {
     public static Logger LOGGER = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException, XPathExpressionException, TransformerException, ParseException, InterruptedException {
+
         System.out.println("Starting T.E.A. 0.8 - Alpha version");
 
         System.setProperty("java.util.logging.config.file", "/program8/log.properties");
@@ -107,7 +108,7 @@ public class Main {
      */
     private static void secondMain(String pathToImageMagic, String workLocation, String ID, String resolution, String pathToTesseract, String pathToTesseractConfig, double verticalThresholdModifier, double horizontalThresholdModifier, boolean debugging, boolean rotating, int allowedHeaderSize, int allowedHeaderIterations) throws IOException {
         try{
-       /*     ImageMagick imagemagick = new ImageMagick(pathToImageMagic,workLocation, ID ,resolution);
+            ImageMagick imagemagick = new ImageMagick(pathToImageMagic,workLocation, ID ,resolution);
             imagemagick.createPNGFiles();
 
             ArrayList<File> pngs = ImageMagick.findPNGFilesInWorkingDirectory(workLocation, ID);
@@ -134,16 +135,18 @@ public class Main {
                     Tesseract tesseract = new Tesseract(pathToTesseract, file, workLocation, pathToTesseractConfig);
                     tesseract.runTesseract();
                 }
-            }*/
+            }
             System.out.println("find HTML files: ");
             ArrayList<File> HTMLFiles = Tesseract.findHTMLFilesInWorkingDirectory(workLocation, ID);
+            int pageNumber = 0;
             for(File file : HTMLFiles){
                 LOGGER.info("Searching for tables in: " + file.getName());
                 System.out.println("Searching for tables in: " + file.getName());
-                Page page = new Page(file, workLocation, debugging);
+                Page page = new Page(file, pageNumber, workLocation, debugging);
                 System.out.println("The found average length of a character is: " + page.getSpaceDistance());
                 page.createTables(horizontalThresholdModifier, verticalThresholdModifier, allowedHeaderSize, allowedHeaderIterations);
                 System.out.println("------------------------------------------------------------------------------");
+                pageNumber++;
             }
         }
         catch (IOException e){
